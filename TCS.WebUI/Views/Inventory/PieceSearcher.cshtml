@@ -1,0 +1,169 @@
+﻿@model IEnumerable<INVENTORY.EF.Entidades.TmsPiece>
+@{
+    ViewData["Title"] = SharedLocalizer["piecesearcher"].ToString();
+    ViewData["PageName"] = "inventory_piecesearcher";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + SharedLocalizer["piecesearcher"].ToString();
+}
+@section HeadBlock
+{
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+}
+<head>
+</head>
+
+<div id="panel-1" class="panel">
+    <div class="panel-hdr">
+        <div style="width : 97%">
+        </div>
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            <div class="flex-grow-1">
+                <div class="form-group mb-3">
+                    <div class="input-group">
+                        <input type="search" id="search_textbox" class="form-control" placeholder="@SharedLocalizer["search"]..." autocomplete="off" />
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="@(Settings.Theme.IconPrefix) fa-search"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="loadingSpinner" style="width:100%">
+                <div class="card-body">
+                    <div class="w-100 text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">@SharedLocalizer["loading"]...</span>
+                        </div><br />
+                    </div>
+                </div>
+            </div>
+            <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100">
+                <thead class="bg-primary-500">
+                    <tr class="text-center tr-head">
+                        <th>@SharedLocalizer["piecenumber"]</th>
+                        <th>@SharedLocalizer["department"]</th>
+                        <th>@SharedLocalizer["shade"]</th>
+                        <th>@SharedLocalizer["quality"]</th>
+                        <th>@SharedLocalizer["design"]</th>
+                        <th>@SharedLocalizer["location"]</th>
+                        <th>RackNo</th>
+                        <th>@SharedLocalizer["loom"]</th>
+                        <th>@SharedLocalizer["notes"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="tr-body">
+                            <td data-toggle="true">
+                                @Html.DisplayFor(modelItem => item.PieceNo)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Department.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Shade)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Quality)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Design)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Location)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RackNo)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.LoomNo)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Notes)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<style>
+    .badge-danger {
+        background-color: red
+    }
+
+    .badge-success {
+        background-color: forestgreen
+    }
+
+    .tr-head {
+        font-size: 1.35em;
+    }
+
+    .tr-body {
+        font-size: 1.15em;
+    }
+</style>
+@section ScriptsBlock
+{
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    @{ if (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "es")
+        {
+            <script src="~/js/datagrid/datatables/datatables.bundle.es.js"></script>
+        }
+    }
+    <script>
+        $(document).ready(function () {
+            // initialize datatable
+            $('#dt-basic-example').dataTable({
+                responsive: true,
+                lengthChange: false,
+                fixedHeader: true,
+                ordering: false,
+                pageLength: 60,
+                dom:"lrtip",
+                buttons: [
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF',
+                        titleAttr: 'Generate PDF',
+                        className: 'btn-outline-danger btn-sm mr-1'
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        titleAttr: 'Generate Excel',
+                        className: 'btn-outline-success btn-sm mr-1'
+                    },
+                    {
+                        extend: 'print',
+                        text: 'Print',
+                        titleAttr: 'Print Table',
+                        className: 'btn-outline-primary btn-sm'
+                    }
+                ],
+                initComplete: function (settings, json) {
+                    $('#loadingSpinner').hide();
+                    $('#dt-basic-example').show();
+                }
+            });
+
+            $('#search_textbox').keyup(function () {
+                table.search($(this).val()).draw();
+            })
+            $('#search_textbox').change(function () {
+                table.search($(this).val()).draw();
+            })
+            $('#search_textbox').on("search", function () {
+                table.search($(this).val()).draw();
+            })
+        });
+    </script>
+}

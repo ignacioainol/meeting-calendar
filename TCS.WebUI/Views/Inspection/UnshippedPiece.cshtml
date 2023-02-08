@@ -1,0 +1,701 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["unshippedpiece"].ToString();
+    ViewData["PageName"] = "inspection_unshippedpiece";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i>" + SharedLocalizer["unshippedpiece"].ToString();
+    string culture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" href="~/css/notifications/sweetalert2/sweetalert2.min.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/fa-regular.css">
+}
+
+<div class="panel">
+    <div class="grid-container-header">
+        <div>
+        </div>
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+        </div>
+    </div>
+    <div class="grid-container-body">
+        <div class="grid-container-search">
+             <label>Código</label>  
+             <input id="input-codigo">
+             <button id="button-codigo">x</button>
+             <label>Cliente</label>
+             <input id="input-cliente">
+             <button id="button-cliente">x</button>
+             <button id = "button-search">Buscar</button>
+        </div>
+        <div class="grid-container-list">
+             <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th class="text-center">
+                            Código
+                        </th>
+                        <th class="text-center">
+                            Fecha de Inspección
+                        </th>
+                        <th class="text-center">
+                            Calidad
+                        </th>
+                    </tr>
+                    </thead>
+                <tbody id="tdbody-unshipped-piece">
+                   <template id="template-unshipped-piece">
+                      <tr style="font-size: 15px;" cursor: pointer;">
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                      </tr>
+                    </template>
+                </tbody>
+             </table>
+        </div>
+        <div class="grid-container-info">
+            <label class="display-4">Código: </label>
+            <label id ="label-codigo" class="display-4"></label>
+            <label class="h1">Cliente: </label>
+            <label id ="label-cliente" class="h1"></label>
+            <label>Fecha de Inspección: </label>
+            <label id ="label-fecha-inspeccion"></label> 
+            <label>Calidad de la Pieza: </label>
+            <label id ="label-calidad"></label>
+            <label class="text-danger">Pieza no despachada</label>
+            
+            <div class="div-grid-element-print">
+                <div class="div-tab-buttons row m-1 mt-2">
+                    <button data-tabs type="button" class="col-3">Tarjeta</button>
+                    <button data-tabs type="button" class="col-3">Fallas</button>
+                    <button data-tabs type="button" class="col-3">Cortes</button>
+                    <button data-tabs type="button" class="col-3">Info</button>
+                </div>
+                <div class="div-tabs mr-1 ml-1 mb-2">
+                    <div data-tabs-content id="div-table-content" class="div-tabs-content">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Metros
+                                    </th>
+                                    <th>
+                                        Color
+                                    </th>
+                                    <th>
+                                        Código
+                                    </th>
+                                    <th>
+                                        Izquierda
+                                    </th>
+                                    <th>
+                                        Centro
+                                    </th>
+                                    <th>
+                                        Derecha
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="tdbody-card">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div data-tabs-content class="div-tabs-content">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">
+                                        Falla
+                                    </th>
+                                    <th class="text-center">
+                                        Color
+                                    </th>
+                                    <th class="text-right">
+                                        Metro
+                                    </th>
+                                    <th class="text-right">
+                                        Bonificacón
+                                    </th>
+                                    <th class="text-right">
+                                        Mapeo
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="tdbody-fails">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div data-tabs-content class="div-tabs-content">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">
+                                        Calidad
+                                    </th>
+                                    <th class="text-right">
+                                        Inicial
+                                    </th>
+                                    <th class="text-right">
+                                        Final
+                                    </th>
+                                    <th class="text-right">
+                                        Ancho
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="tdbody-cuts">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div data-tabs-content class="div-tabs-content-final">
+                            <div class="row mr-1 ml-1">
+                                <label class="col-6">Total de Fallas</label>
+                                <label id="label-total-fallas" class="col-2">???</label>
+                                <label class=" col-4"></label>
+                            </div>
+                            <div class="row mr-1 ml-1">
+                                <label class="col-6">Fallas Verdes</label>
+                                <label id="label-fallas-verdes" class="col-2">???</label>
+                                <label class="col-4"><span class="div-green-circle"></span></label>
+                            </div>
+                            <div class="row mr-1 ml-1">
+                                <label class="col-6">Fallas Amarillas</label>
+                                <label id="label-fallas-amarillas" class="col-2"> ???</label>
+                                <label class="col-4"><span class="div-yellow-circle"></span></label>
+                            </div>
+                            <div class="row mr-1 ml-1">
+                                <label class="col-6">Fallas Blancas</label>
+                                <label id="label-fallas-blancas" class="col-2">???</label>
+                                <label class="col-4"><span class="div-gray-circle"></span></label>
+                            </div>
+                            <div class="row mr-1 ml-1">
+                                <label class="col-6">Total de Cortes</label>
+                                <label id="label-total-cortes" class="col-2">???</label>
+                                <label class="col-4 "> <i class="fa-3x far fa-cut" style="margin:0 auto"></i></label>
+                            </div>
+                            <div class="row mr-1 ml-1">
+                                <label class="col-5">Total mts. bonificación</label>
+                                <label id="label-total-mts-bon" class="col-7">??? mts.</label>
+                            </div>
+                            <div class="row mr-1 ml-1">
+                                <label class="col-5">Total mts. cortes</label>
+                                <label id="label-total-mts-cortes" class="col-7">??? mts.</label>
+                            </div>
+                            <div class="row mr-1 ml-1">
+                                <label class="col-5">Metros Netos</label>
+                                <label id="label-mts-netos" class="col-7">??? mts.</label>
+                            </div>
+                            <div class="row mr-1 ml-1">
+                                <label class="col-5">Retazos A</label>
+                                <label id="label-retazos-a" class="col-7">???</label>
+                            </div>
+                            <div class="row mr-1 ml-1">
+                                <label class="col-5">Retazos C</label>
+                                <label id="label-retazos-c" class="col-7">???</label>
+                            </div>
+                    </div>
+                </div>
+                <div class="div-tab-footer row mr-1 ml-1 mb-2">
+                    <div class="col-8"></div>
+                    <button id="button-print-tab" class="btn btn-info col-4"><i class="far fa-print"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .div-grid-element-print {
+        grid-row: 6 / 6;
+        grid-column: 1 / 3;
+        background-color: lightgray;
+        display: grid;
+        grid-template-rows: 1fr 15fr 1fr;
+        height:55vh;
+    }
+
+    .div-tabs {
+        overflow-y: auto;
+        overflow-x: auto;
+    }
+
+    .div-tab-buttons button {
+        font-size: 1.2rem;
+        border-right: 1px solid black;
+        border-top: 1px solid black;
+        border-left: 1px solid black;
+        border-bottom: 0px solid black;
+        background-color: darkgray;
+        border-top-left-radius: 0.3rem;
+        border-top-right-radius: 0.3rem
+    }
+
+    .div-tabs-content-final {
+        display: grid;
+        grid-template-rows: repeat(10, 1fr);
+        height: 100%;
+    }
+
+    .div-tabs-content-final label {
+        border: 0.015rem solid white;
+        display: flex;
+        align-items: center;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .div-tabs-content-final > div > label {
+        font-size: 1.1rem;
+    }
+
+    .grid-container-body {
+        display: grid;
+        grid-template-columns: 4fr 6fr;
+        grid-template-rows: 1fr 13fr;
+        grid-template-areas:
+        "search   info"
+        "list     info";
+        height:75vh;
+        padding: 3px;
+        gap: 3px;
+    }
+    .grid-container-header {
+        display: grid;
+        grid-template-columns: 1fr 1.4rem;
+        padding: 0.7rem 1.1rem 0.7rem 1.1rem;
+        border-bottom: 0.1em solid lightgray;
+        gap: 3px;
+    }
+   .grid-container-search{
+       grid-area: search;
+       border-radius: 0.3rem;
+       display: grid;
+       grid-template-columns: 2fr 5fr 1fr 2fr;
+       grid-template-rows: 1fr 1fr;
+       gap: 1px;
+       align-items: center;
+    }
+    #button-search
+    {
+        grid-row: 1 / 3;
+        grid-column: 4 / 4;
+        font-size: 2rem;
+        border-radius: 0.3rem;
+        color: white;
+        background-color: #167BBF;
+        border: 0;
+        width:100%;
+        height:100%;
+    }
+    .grid-container-search > label{
+        font-size: 1rem;
+        text-align: left;
+        margin:0;
+        padding-left:0.2rem;
+    }
+
+    .grid-container-search > button{
+        font-size: 1rem;
+        border-radius: 0.3rem;
+        color: white;
+        background-color: #167BBF;
+        border: 0;
+        width:100%;
+        height:100%;
+    }
+
+    .grid-container-search > input{
+        border-radius: 0.3rem;
+        border: 0.015rem solid gray;
+        padding-right: 0.6rem;
+        padding-left: 0.6rem;
+        width:100%;
+        height:100%;
+    }
+
+    .grid-container-list{
+       grid-area: list;
+       border-radius: 0.3rem;
+       overflow-y:auto;
+    }
+
+    .grid-container-info{
+        font-weight:bold;
+        grid-area: info;
+        background-color: lightgray;
+        border-radius: 0.3rem;
+        padding:8px;
+        display:grid;
+        grid-template-columns: 1fr 4fr;
+        grid-template-rows: 3fr 2fr 1fr 1fr 1fr 30fr;
+    }
+
+    .div-green-circle {
+    height: 55px;
+    width: 55px;
+    background-color: #159900;
+    border-radius: 50%;
+    margin: 0 auto;
+    border: 0.1rem solid black;
+    }
+
+    .div-yellow-circle {
+        height: 55px;
+        width: 55px;
+        background-color: #FFC500;
+        border-radius: 50%;
+        margin: 0 auto;
+        border: 0.1rem solid black;
+    }
+
+    .div-gray-circle {
+        height: 55px;
+        width: 55px;
+        background-color: lightgray;
+        border-radius: 50%;
+        margin: 0 auto;
+        border: 0.1rem solid black;
+    }
+</style>
+
+@section ScriptsBlock
+{
+    <script src="~/js/dependency/moment/moment.js"></script>
+    <script src="~/js/notifications/sweetalert2/sweetalert2.min.js"></script>
+    <script>
+        const inputCodigo = document.querySelector('#input-codigo');
+        const buttonCodigo = document.querySelector('#button-codigo');
+        const inputCliente = document.querySelector('#input-cliente');
+        const buttonCliente = document.querySelector('#button-cliente');
+        const buttonSearch = document.querySelector('#button-search');
+
+        const labelCodigo = document.querySelector('#label-codigo');
+        const labelCliente = document.querySelector('#label-cliente');
+        const labelFechaInspeccion = document.querySelector('#label-fecha-inspeccion');
+        const labelCalidad = document.querySelector('#label-calidad');
+
+        const tbodyUnshippedPiece = document.querySelector('#tdbody-unshipped-piece');
+        const templateUnshippedPiece = document.querySelector('#template-unshipped-piece');
+        const fragment = document.createDocumentFragment();
+        
+        const tdbodyCard = document.querySelector('#tdbody-card');
+        const tdbodyFails = document.querySelector('#tdbody-fails');
+        const tdbodyCuts = document.querySelector('#tdbody-cuts');
+        const buttonSaveChanges = document.querySelector('#button-save-changes');
+        const buttonCleanAll = document.querySelector('#button-clean-all');
+        const divTableContent = document.querySelector('#div-table-content');
+        const dataTabs = document.querySelectorAll('[data-tabs]');
+        const dataTabsContent = document.querySelectorAll('[data-tabs-content]');
+
+        const labelTotalFallas = document.querySelector('#label-total-fallas');
+        const labelFallasVerdes = document.querySelector('#label-fallas-verdes');
+        const labelFallasAmarillas = document.querySelector('#label-fallas-amarillas');
+        const labelFallasBlancas = document.querySelector('#label-fallas-blancas');
+        const labelTotalCortes = document.querySelector('#label-total-cortes');
+
+        const labelTotalMtsBon = document.querySelector('#label-total-mts-bon');
+        const labelTotalMtsCortes = document.querySelector('#label-total-mts-cortes');
+        const labelMtsNetos = document.querySelector('#label-mts-netos');
+        const labelRetazosA = document.querySelector('#label-retazos-a');
+        const labelRetazosC = document.querySelector('#label-retazos-c');
+
+        const buttonPrintTab = document.querySelector('#button-print-tab');
+
+        const colores = [{ codColor: 'A', Color: 'Amarillo', hexColor: '#FFC500' },
+        { codColor: 'B', Color: 'Blanco', hexColor: 'lightgray' },
+        { codColor: 'V', Color: 'Verde', hexColor: '#159900' }];
+
+        const mapeos = [{ mapping: 'C', TextMapping: 'Centro' },
+        { mapping: 'D', TextMapping: 'Derecha' },
+        { mapping: 'I', TextMapping: 'Izquierda' },
+        { mapping: 'T', TextMapping: 'Todo' }];
+
+        eventListeners();
+
+        function eventListeners()
+        {
+            CargarTabla();
+            buttonCodigo.addEventListener('click', ClearCodigoInput);
+            buttonCliente.addEventListener('click', ClearClienteInput);
+            buttonSearch.addEventListener('click', CargarTabla);
+
+            dataTabsContent[0].hidden = false;
+            dataTabsContent[1].hidden = true;
+            dataTabsContent[2].hidden = true;
+            dataTabsContent[3].hidden = true;
+
+            dataTabs[0].addEventListener('click', () => {
+                dataTabsContent[0].hidden = false;
+                dataTabsContent[1].hidden = true;
+                dataTabsContent[2].hidden = true;
+                dataTabsContent[3].hidden = true;
+                dataTabs[0].classList.add("checked-button");
+                dataTabs[1].classList.remove("checked-button");
+                dataTabs[2].classList.remove("checked-button");
+                dataTabs[3].classList.remove("checked-button");
+            });
+
+            dataTabs[1].addEventListener('click', () => {
+                dataTabsContent[0].hidden = true;
+                dataTabsContent[1].hidden = false;
+                dataTabsContent[2].hidden = true;
+                dataTabsContent[3].hidden = true;
+                dataTabs[0].classList.remove("checked-button");
+                dataTabs[1].classList.add("checked-button");
+                dataTabs[2].classList.remove("checked-button");
+                dataTabs[3].classList.remove("checked-button");
+            });
+
+            dataTabs[2].addEventListener('click', () => {
+                dataTabsContent[0].hidden = true;
+                dataTabsContent[1].hidden = true;
+                dataTabsContent[2].hidden = false;
+                dataTabsContent[3].hidden = true;
+                dataTabs[0].classList.remove("checked-button");
+                dataTabs[1].classList.remove("checked-button");
+                dataTabs[2].classList.add("checked-button");
+                dataTabs[3].classList.remove("checked-button");
+            });
+
+            dataTabs[3].addEventListener('click', () => {
+                dataTabsContent[0].hidden = true;
+                dataTabsContent[1].hidden = true;
+                dataTabsContent[2].hidden = true;
+                dataTabsContent[3].hidden = false;
+                dataTabs[0].classList.remove("checked-button");
+                dataTabs[1].classList.remove("checked-button");
+                dataTabs[2].classList.remove("checked-button");
+                dataTabs[3].classList.add("checked-button");
+            });
+        }
+
+        async function CargarTabla() 
+        {
+            let url = `Inspection/GetUnshippedPiece?codigo=${inputCodigo.value}&cliente=${inputCliente.value}`;
+            const respuesta = await fetch(url);
+            const resultado = await respuesta.json();
+
+            tbodyUnshippedPiece.innerHTML = '';
+
+            resultado.forEach(data => {
+                const td = templateUnshippedPiece.content.querySelectorAll('td');
+
+                td[0].textContent = data.codeTmsPiece;
+                td[1].textContent = moment(data.inspectionDate).format('DD-MM-YYYY HH:mm:ss');
+                td[2].textContent = data.pieceQuality;
+
+                const clone = templateUnshippedPiece.content.cloneNode(true);
+                fragment.appendChild(clone);
+            });
+
+            tbodyUnshippedPiece.appendChild(fragment);
+
+            tbodyUnshippedPiece.childNodes.forEach(tr => {
+                tr.addEventListener('click', async () =>{ 
+                    GetPieceInfo(tr.children[0].textContent);
+                });
+            });
+        }
+
+        async function GetPieceInfo(pieceNumber)
+        {
+            let url = `Inspection/GetPieceInfo?pieceNumber=${pieceNumber}`;
+            const respuesta = await fetch(url);
+            const resultado = await respuesta.json();
+
+            labelCodigo.textContent = resultado.codeTmsPiece;
+            labelCliente.textContent = resultado.nameCustomer;
+            labelFechaInspeccion.textContent = moment(resultado.inspectionDate).format('DD-MM-YYYY HH:mm:ss');
+            labelCalidad.textContent = resultado.pieceQuality;
+
+            GetPiece(pieceNumber);
+        }
+
+        async function GetPiece(pieceid) {
+            let url = "Inspection/GetPiece?pieceid=" + pieceid;
+            const respuesta = await fetch(url);
+            resultado = await respuesta.json();
+            
+            let htmlCard = '';
+            let htmlFails = '';
+            let htmlCuts = '';
+
+            if (resultado != 'nodata') 
+            {
+
+                isValidPiece = true;
+
+                let isCut;
+
+                const pieceFailures = resultado.inspectedPiece.pieceFailures;
+
+                for (let i = 0; i <= resultado.inspectedPiece.finalMeters * 10; i++) {
+                    const item = i / 10;
+
+                    if (pieceFailures.find(x => x.initMeter == item) != null) {
+                        const pieceFail = pieceFailures.find(x => x.initMeter == item);
+                        htmlCard += `<tr style="background-color:${colores.find(x => x.codColor == pieceFail.colourBonus).hexColor}">
+                                                <td>${pieceFail.initMeter}</td>
+                                                <td>${colores.find(x => x.codColor == pieceFail.colourBonus).Color}</td>
+                                                <td>${pieceFail.codeFailure}</td>
+                                                <td class="text-center">${((pieceFail.mapping == 'I' || pieceFail.mapping == 'T')) ? "••" : ""}</td>
+                                                <td class="text-center">${((pieceFail.mapping == 'C' || pieceFail.mapping == 'T')) ? "••" : ""}</td>
+                                                <td class="text-center">${((pieceFail.mapping == 'D' || pieceFail.mapping == 'T')) ? "••" : ""}</td>
+                                                </tr>`;
+                    }
+                    else if (resultado.inspectedPiece.cuts.find(x => x.initMeter == item) != null) {
+                        const cut = resultado.inspectedPiece.cuts.find(x => x.initMeter == item);
+                        htmlCard += `<tr style="background-color:red;color:white">
+                                                <td>${cut.initMeter}</td>
+                                                <td></td>
+                                                <td>[${cut.quality}]</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                    </tr>`;
+                        isCut = true;
+                    }
+                    else if (resultado.inspectedPiece.cuts.find(x => x.finalMeter == item) != null) {
+                        const cut = resultado.inspectedPiece.cuts.find(x => x.finalMeter == item);
+                        htmlCard += `<tr style="background-color:red;color:white">
+                                                <td>${cut.finalMeter}</td>
+                                                <td></td>
+                                                <td>[${cut.quality}]</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                </tr>`;
+                        isCut = false;
+                    }
+                    else {
+                        if (i % 10 === 0) {
+                            htmlCard += `<tr style="background-color:${(isCut) ? "gray" : "white"}">
+                                                    <td>${item}</td>
+                                                    <td></td>
+                                                    <td ></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                            </tr>`;
+                        }
+                    }
+                }
+
+                let countCuts = 0;
+                resultado.inspectedPiece.cuts.forEach(data => {
+                    htmlCuts += `<tr>
+                                            <td class="text-center">${data.quality}</td>
+                                            <td class="text-right">${data.initMeter}</td>
+                                            <td class="text-right">${data.finalMeter}</td>
+                                            <td class="text-right">${data.width}</td>
+                                            <td class="text-center"><button onclick="EliminarCorte(${countCuts})" class="btn btn-danger">Eliminar</button></td>
+                                                </tr>`;
+                    countCuts = countCuts + 1;
+                });
+                countCuts = 0;
+
+                let countFail = 0;
+
+                pieceFailures.sort(function (x, y) {
+                    return y.initMeter - x.initMeter;
+                }).forEach(data => {
+                    htmlFails += `<tr style='background-color:${colores.find(x => x.codColor == data.colourBonus).hexColor}'>
+                                        <td class="text-center">${data.codeFailure}</td>
+                                        <td class="text-center">${colores.find(x => x.codColor == data.colourBonus).Color}</td>
+                                        <td class="text-right">${data.initMeter}</td>
+                                        <td class="text-right">${data.bonusQuantity}</td>
+                                        <td class="text-center">${mapeos.find(x => x.mapping == data.mapping).TextMapping}</td>
+                                        <td class="text-center"><button onclick="EliminarFalla(${countFail})" class="btn btn-danger">Eliminar</button></td>
+                                        </tr>`;
+
+                    countFail = countFail + 1;
+                });
+
+                countFail = 0;
+
+                labelTotalFallas.textContent = pieceFailures.length;
+                labelFallasVerdes.textContent = pieceFailures.filter(x => x.colourBonus == 'V').length;
+                labelFallasAmarillas.textContent = pieceFailures.filter(x => x.colourBonus == 'A').length;
+                labelFallasBlancas.textContent = pieceFailures.filter(x => x.colourBonus == 'B').length;
+                labelTotalCortes.textContent = resultado.inspectedPiece.cuts.length;
+
+                let bonusList = [];
+
+                resultado.inspectedPiece.cuts.forEach(data => {
+                    pieceFailures.filter(x => x.initMeter >= data.initMeter && x.initMeter <= data.finalMeter).forEach(data2 => {
+                        bonusList.push(data2);
+                    });
+                });
+
+                const bonusDiff = pieceFailures.reduce((total, s) => total + s.bonusQuantity, 0) - bonusList.reduce((total, s) => total + s.bonusQuantity, 0);
+
+                labelTotalMtsBon.textContent = `${bonusDiff.toFixed(1)} mts.`;
+                labelTotalMtsCortes.textContent = `${(resultado.inspectedPiece.cuts.reduce((total, s) => total + s.finalMeter, 0)
+                    - resultado.inspectedPiece.cuts.reduce((total, s) => total + s.initMeter, 0)).toFixed(1)} mts.`;
+                labelMtsNetos.textContent = `${(resultado.inspectedPiece.finalMeters
+                    - (resultado.inspectedPiece.cuts.reduce((total, s) => total + s.finalMeter, 0)
+                        - resultado.inspectedPiece.cuts.reduce((total, s) => total + s.initMeter, 0))
+                    - bonusDiff).toFixed(1)} mts.`;
+                labelRetazosA.textContent = resultado.inspectedPiece.pieceSummaries.filter(x => x.quality == 'A').length;
+                labelRetazosC.textContent = resultado.inspectedPiece.pieceSummaries.filter(x => x.quality == 'C').length;
+            }
+            else {
+                labelQuality.textContent = `Calidad: ???`;
+                labelQuality.value = null;
+                inputFinalWeight.value = 0;
+                inputFinalMeters.value = 0;
+                inputFinalWidth.value = 0;
+
+                for (let i = 0; i <= resultado.ecruMeters; i++) {
+                    htmlCard += `<tr>
+                                <td>${i}</td>
+                                <td></td>
+                                <td ></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                </tr>`;
+
+                    if (Math.floor(resultado.ecruMeters) == i) {
+                        htmlCard += `<tr>
+                                    <td>${resultado.ecruMeters}</td>
+                                    <td></td>
+                                    <td ></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    </tr>`;
+                    }
+                }
+
+                labelTotalFallas.textContent = '???';
+                labelFallasVerdes.textContent = '???';
+                labelFallasAmarillas.textContent = '???';
+                labelFallasBlancas.textContent = '???';
+                labelTotalCortes.textContent = '???';
+
+                labelTotalMtsBon.textContent = `??? mts.`;
+                labelTotalMtsCortes.textContent = `??? mts.`;
+                labelMtsNetos.textContent = `${resultado.ecruMeters} mts.`;
+                labelRetazosA.textContent = '???';
+                labelRetazosC.textContent = '???';
+            }
+
+            tdbodyCard.innerHTML = htmlCard;
+            tdbodyCuts.innerHTML = htmlCuts;
+            tdbodyFails.innerHTML = htmlFails;
+        }
+
+        function ClearCodigoInput() 
+        {
+            inputCodigo.value = '';
+        }
+
+        function ClearClienteInput() 
+        {
+            inputCliente.value = '';
+        }
+    </script>
+}

@@ -1,0 +1,24 @@
+{
+  "app": {
+    "name": "TCS"
+  },
+  "nav": {
+    "inicio": "Inicio",
+    "inicio_tablero": "Tablero",
+    "inicio_directorio": "Directorio",
+    "hilanderia": "Spinning",
+    "hilanderia_tablero": "Dashboard",
+    "hilanderia_turno_actual": "Current Shift",
+    "hilanderia_produccion_diaria": "Daily Production",
+    "hilanderia_produccion_turno": "Shift Production",
+    "hilanderia_sumario_de_produccion": "Production Summary",
+    "hilanderia_detalle_de_paros": "Stop Details"
+  },
+  "drpdwn": {
+    "reset_layout": "Reiniciar Diseño",
+    "settings": "Opciones",
+    "fullscreen": "Pantalla Completa",
+    "print": "Imprimir",
+    "page-logout": "Logout"
+  }  
+}

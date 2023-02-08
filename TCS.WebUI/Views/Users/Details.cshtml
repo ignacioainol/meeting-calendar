@@ -1,0 +1,86 @@
+﻿@model TCS.EF.Entidades.User
+
+@{
+    ViewData["Title"] = SharedLocalizer["users"].ToString();
+    ViewData["PageName"] = "users_index";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + SharedLocalizer["users"].ToString();
+}
+
+<div>
+    <dl class="row" style="font-size :20px">
+        <dt class="col-sm-2">
+            @SharedLocalizer[@Html.DisplayNameFor(model => model.UserName).ToLower()]
+        </dt>
+        <dd class = "col-sm-10">
+            <span style="padding-right : 15px">:</span>@Html.DisplayFor(model => model.UserName)
+        </dd>
+        <dt class="col-sm-2">
+            @SharedLocalizer[@Html.DisplayNameFor(model => model.FirstName).ToLower()]
+        </dt>
+        <dd class = "col-sm-10">
+            <span style="padding-right : 15px">:</span>@Html.DisplayFor(model => model.FirstName)
+        </dd>
+        <dt class="col-sm-2">
+            @SharedLocalizer[@Html.DisplayNameFor(model => model.LastName).ToLower()]
+        </dt>
+        <dd class = "col-sm-10">
+            <span style="padding-right : 15px">:</span>@Html.DisplayFor(model => model.LastName)
+        </dd>
+        <dt class="col-sm-2">
+            @SharedLocalizer[@Html.DisplayNameFor(model => model.Email).ToLower()]
+        </dt>
+        <dd class = "col-sm-10">
+            <span style="padding-right : 15px">:</span>@Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @SharedLocalizer[@Html.DisplayNameFor(model => model.PhoneLine).ToLower()]
+        </dt>
+        <dd class = "col-sm-10">
+            <span style="padding-right : 15px">:</span>@Html.DisplayFor(model => model.PhoneLine)
+        </dd>
+        <dt class="col-sm-2">
+            @SharedLocalizer[@Html.DisplayNameFor(model => model.Department).ToLower()]
+        </dt>
+        <dd class = "col-sm-10">
+            <span style="padding-right : 15px">:</span>@Html.DisplayFor(model => model.Department)
+        </dd>
+        <dt class="col-sm-2">
+            @SharedLocalizer[@Html.DisplayNameFor(model => model.LastLogin).ToLower()]
+        </dt>
+        <dd class = "col-sm-10">
+            <span style="padding-right : 15px">:</span>@Html.DisplayFor(model => model.LastLogin)
+        </dd>
+        <dt class="col-sm-2">
+            @SharedLocalizer[@Html.DisplayNameFor(model => model.Language).ToLower()]
+        </dt>
+        <dd class = "col-sm-10">
+            <span style="padding-right : 15px">:</span>@Html.DisplayFor(model => model.Language)
+        </dd>
+        <dt class="col-sm-2">
+            @SharedLocalizer[@Html.DisplayNameFor(model => model.Culture).ToLower()]
+        </dt>
+        <dd class = "col-sm-10">
+            <span style="padding-right : 15px">:</span>@Html.DisplayFor(model => model.Culture)
+        </dd>
+        <dt class="col-sm-2">
+            @SharedLocalizer[@Html.DisplayNameFor(model => model.Photo).ToLower()]
+        </dt>
+        <dd class = "col-sm-10">
+            <span style="padding-right : 15px">:</span>@Html.DisplayFor(model => model.Photo)
+        </dd>
+        <dt class="col-sm-2">
+            @SharedLocalizer[@Html.DisplayNameFor(model => model.WeavingSummary).ToLower()]
+        </dt>
+        <dd class = "col-sm-10">
+            <span style="padding-right : 15px">:</span>@Html.DisplayFor(model => model.WeavingSummary)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.UserId" class="btn btn-primary mb-3">
+        @SharedLocalizer["edit"]
+    </a> 
+    <a asp-action="Index" class="btn btn-primary mb-3">
+        @SharedLocalizer["goback"]
+    </a>
+</div>

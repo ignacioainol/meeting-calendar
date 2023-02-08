@@ -1,0 +1,53 @@
+﻿@model DEVTOOLS.EF.Entidades.EntityTemplate
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>EntityTemplate</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="EntityTemplateId" />
+            <div class="form-group">
+                <label asp-for="EntityId" class="control-label"></label>
+                <select asp-for="EntityId" class="form-control" asp-items="ViewBag.EntityId"></select>
+                <span asp-validation-for="EntityId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EntityTemplateName" class="control-label"></label>
+                <input asp-for="EntityTemplateName" class="form-control" />
+                <span asp-validation-for="EntityTemplateName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EntityTemplateObservations" class="control-label"></label>
+                <input asp-for="EntityTemplateObservations" class="form-control" />
+                <span asp-validation-for="EntityTemplateObservations" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EntityTemplateSourceCodeType" class="control-label"></label>
+                <select asp-for="EntityTemplateSourceCodeType" class="form-control" asp-items="ViewBag.EntityTemplateSourceCodeType"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="EntityTemplateContent" class="control-label"></label>
+                <input asp-for="EntityTemplateContent" class="form-control" />
+                <span asp-validation-for="EntityTemplateContent" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section ScriptsBlock {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,59 @@
+﻿@model IEnumerable<DEVTOOLS.EF.Entidades.ColumnTemplate>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ColumnTemplateSourceCodeType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ColumnTemplateName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ColumnTemplateObservations)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ColumnTemplateContent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Column)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ColumnTemplateSourceCodeType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ColumnTemplateName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ColumnTemplateObservations)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ColumnTemplateContent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Column.ColumnDescription)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ColumnTemplateId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ColumnTemplateId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ColumnTemplateId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

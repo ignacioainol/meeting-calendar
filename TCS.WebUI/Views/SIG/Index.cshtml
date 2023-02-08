@@ -1,0 +1,67 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    ViewData["PageName"] = "draft_index";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> SIG";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+    <link rel="stylesheet" href="~/css/notifications/sweetalert2/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+}
+
+<form asp-action="index">
+    <div class="panel">
+        <div class="panel-hdr">
+            <h2>
+                <i class="fal fa-search text-info"></i>&nbsp;Panel filtro
+            </h2>
+            <div class="panel-toolbar">
+                <button type="submit" class="btn btn-sm btn-outline-info">
+                    <i class="fal fa-search"></i> Filtrar
+                </button>
+                <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Colapsar"></button>
+            </div>
+        </div>
+        <div class="panel-container show">
+            <div class="panel-content p-0">
+                <div class="panel-content">
+                    <div id="container" role="main">
+                        <div id="jstree">
+                            <ul>
+                                <li>
+                                    Root node 1
+                                    <ul>
+                                        <li>Child node 1</li>
+                                        <li><a href="#">Child node 2</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section ScriptsBlock {
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/notifications/sweetalert2/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+    <script>
+        $.jstree.defaults.core.themes.variant = "large";
+        $('#jstree').jstree({
+            "core": {
+                "multiple": true,
+                "animation": 2,
+                "check_callback": true
+            },
+            "checkbox": {
+                "keep_selected_style": false
+            },
+            "plugins": ["wholerow", "checkbox","contextmenu"]
+        });
+    </script>
+}

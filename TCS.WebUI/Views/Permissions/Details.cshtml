@@ -1,0 +1,26 @@
+﻿@model TCS.EF.Entidades.Permission
+
+@{
+    ViewData["Title"] = SharedLocalizer["permissions"].ToString();
+    ViewData["PageName"] = "permissions_index";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + SharedLocalizer["permissions"].ToString();
+}
+
+<div>
+    <dl class="row" style="font-size :20px">
+        <dt class="col-sm-1">
+            @SharedLocalizer[@Html.DisplayNameFor(model => model.Description).ToLower()]
+        </dt>
+        <dd class = "col-sm-11">
+            <span style="padding-right : 15px">:</span>@Html.DisplayFor(model => model.Description)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.PermissionId" class="btn btn-primary mb-3">
+        @SharedLocalizer["edit"]
+    </a>
+    <a asp-action="Index" class="btn btn-primary mb-3">
+        @SharedLocalizer["goback"]
+    </a>
+</div>

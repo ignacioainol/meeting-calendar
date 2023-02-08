@@ -1,0 +1,30 @@
+﻿@model TCS.EF.Entidades.UserPermission
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>UserPermission</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="PermissionId" />
+            <input type="hidden" asp-for="ModuleId" />
+            <div class="form-group">
+                <button type="submit" value="Save" class="btn btn-primary mb-3">Guardar</button>
+                <a asp-action="Index" class="btn btn-primary mb-3">
+                    Volver Atras
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,213 @@
+﻿@model DEVTOOLS.EF.Entidades.Column
+
+@{
+    ViewData["Title"] = "Edit";
+
+    List<DEVTOOLS.EF.Entidades.ColumnTemplate> columnTemplateList =(Model.ColumnTemplates!= null)?
+    Model.ColumnTemplates.ToList(): 
+    new List<DEVTOOLS.EF.Entidades.ColumnTemplate>();
+}
+
+<h1>Edit</h1>
+
+<h4>Column</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ColumnId" />
+            <div class="form-group">
+                <label asp-for="ColumnIndex" class="control-label"></label>
+                <input asp-for="ColumnIndex" class="form-control" />
+                <span asp-validation-for="ColumnIndex" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EntityId" class="control-label"></label>
+                <select asp-for="EntityId" class="form-control" asp-items="ViewBag.EntityId"></select>
+                <span asp-validation-for="EntityId" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Active" /> @Html.DisplayNameFor(model => model.Active)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="ColumnPrimaryKey" /> @Html.DisplayNameFor(model => model.ColumnPrimaryKey)
+                </label>
+            </div>
+            <div style="border:1px solid black;border-radius: 0.3rem;padding:0.5rem">
+                <div class="form-group form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input" asp-for="ColumnForeignKey" id="input-is-fk" /> @Html.DisplayNameFor(model => model.ColumnForeignKey)
+                    </label>
+                </div>
+                <div class="form-group" id="div-parent-entity">
+                    <label class="control-label">Entidad Padre</label>
+                    <select class ="form-control" id="select-parent-entity"></select>
+                </div>
+                <div class="form-group" id="div-parent-column">
+                    <label asp-for="ColumnParentForeignKey" class="control-label">Columna Padre</label>
+                    <select asp-for="ColumnParentForeignKey" class ="form-control" id="select-parent-column"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="ColumnName" class="control-label"></label>
+                <input asp-for="ColumnName" class="form-control" />
+                <span asp-validation-for="ColumnName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ColumnDescription" class="control-label"></label>
+                <input asp-for="ColumnDescription" class="form-control" />
+                <span asp-validation-for="ColumnDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ColumnType" class="control-label"></label>
+                <select asp-for="ColumnType" class="form-control" asp-items="ViewBag.ColumnType"></select>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+@*<div class="form-group">
+    <button href="/RelationShips/Create?ColumnId=@Model.ColumnId" class="btn btn-primary">Crear Relación</button>
+</div>*@
+<p>
+    <a href="ColumnTemplates/Create?ColumnId=@Model.ColumnId">Create New Column Template</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                ColumnTemplateSourceCodeType
+            </th>
+            <th>
+                ColumnTemplateName
+            </th>
+            <th>
+                ColumnTemplateObservations
+            </th>
+            <th>
+                ColumnTemplateContent
+            </th>
+            <th>
+                Column
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in columnTemplateList) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ColumnTemplateSourceCodeType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ColumnTemplateName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ColumnTemplateObservations)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ColumnTemplateContent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Column.ColumnDescription)
+            </td>
+            <td>
+                <a href="ColumnTemplates/Edit?Id=@item.ColumnTemplateId">Edit</a> |
+                <a href="ColumnTemplates/Details?Id=@item.ColumnTemplateId">Details</a> |
+                <a href="ColumnTemplates/Delete?Id=@item.ColumnTemplateId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<div>
+    <a href="Entities/Edit?id=@Model.EntityId">Back to Entity</a>
+</div>
+
+@section ScriptsBlock {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script>
+    const inputIsFk = document.querySelector('#input-is-fk');
+    const selectParentEntity = document.querySelector('#select-parent-entity');
+    const selectParentColumn = document.querySelector('#select-parent-column');
+    const divParentEntity = document.querySelector('#div-parent-entity');
+    const divParentColumn = document.querySelector('#div-parent-column');
+
+    eventListeners();
+
+    function eventListeners()
+    {
+        inputIsFk.addEventListener('input', HiddenParent);
+        CargarEntidadesSelect();
+        HiddenParent();
+        selectParentEntity.addEventListener('click', CargarColumnasSelect);
+    }
+
+    async function HiddenParent()
+    {
+        if (inputIsFk.checked == true) {
+            divParentEntity.hidden = false;
+            divParentColumn.hidden = false;
+        }
+        else {
+            divParentEntity.hidden = true;
+            divParentColumn.hidden = true;
+        }
+    }
+    
+    async function CargarEntidadesSelect() 
+    {
+        let url = "Columns/GetEntities?EntityId=" + @ViewBag.EntityVal;
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+
+        let option;
+        selectParentEntity.innerHTML = "";
+        for (let i = 0; i < resultado.length; i++)
+        {
+            option = document.createElement('option');
+            option.text = resultado[i].entityName;
+            option.value = resultado[i].entityId;
+            selectParentEntity.add(option);
+        }
+
+        if (@ViewBag.EntityParent != 0) 
+        {
+            selectParentEntity.value = @ViewBag.EntityParent;
+        }
+
+        CargarColumnasSelect();
+
+
+
+        if (@ViewBag.ColumnParent != 0) 
+        {
+            selectParentColumn.value = @ViewBag.ColumnParent;
+        }
+    }
+
+    async function CargarColumnasSelect()
+    {
+        let url = "Columns/GetColumns?EntityId=" + selectParentEntity.value;
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+
+        let option;
+        selectParentColumn.innerHTML = "";
+        for (let i = 0; i < resultado.length; i++)
+        {
+            option = document.createElement('option');
+            option.text = resultado[i].columnName;
+            option.value = resultado[i].columnId;
+            selectParentColumn.add(option);
+        }
+    }
+</script>
+}

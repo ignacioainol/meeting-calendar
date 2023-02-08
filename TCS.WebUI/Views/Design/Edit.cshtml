@@ -1,0 +1,101 @@
+﻿@model TCS.EF.Entidades.Design
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Design</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="DesignId" />
+            <div class="form-group">
+                <label asp-for="QualityId" class="control-label"></label>
+                <input asp-for="QualityId" class="form-control" />
+                <span asp-validation-for="QualityId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DraftId" class="control-label"></label>
+                <input asp-for="DraftId" class="form-control" />
+                <span asp-validation-for="DraftId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PegPlanId" class="control-label"></label>
+                <input asp-for="PegPlanId" class="form-control" />
+                <span asp-validation-for="PegPlanId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Article" class="control-label"></label>
+                <input asp-for="Article" class="form-control" />
+                <span asp-validation-for="Article" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Healds" class="control-label"></label>
+                <input asp-for="Healds" class="form-control" />
+                <span asp-validation-for="Healds" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NoOfWarps" class="control-label"></label>
+                <input asp-for="NoOfWarps" class="form-control" />
+                <span asp-validation-for="NoOfWarps" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ShadesperWarp" class="control-label"></label>
+                <input asp-for="ShadesperWarp" class="form-control" />
+                <span asp-validation-for="ShadesperWarp" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EndsPerRepeat" class="control-label"></label>
+                <input asp-for="EndsPerRepeat" class="form-control" />
+                <span asp-validation-for="EndsPerRepeat" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Extras" class="control-label"></label>
+                <input asp-for="Extras" class="form-control" />
+                <span asp-validation-for="Extras" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Castouts" class="control-label"></label>
+                <input asp-for="Castouts" class="form-control" />
+                <span asp-validation-for="Castouts" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NoOfWefts" class="control-label"></label>
+                <input asp-for="NoOfWefts" class="form-control" />
+                <span asp-validation-for="NoOfWefts" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ShadesperWeft" class="control-label"></label>
+                <input asp-for="ShadesperWeft" class="form-control" />
+                <span asp-validation-for="ShadesperWeft" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PicksPerRepeat" class="control-label"></label>
+                <input asp-for="PicksPerRepeat" class="form-control" />
+                <span asp-validation-for="PicksPerRepeat" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WarpPlan" class="control-label"></label>
+                <input asp-for="WarpPlan" class="form-control" />
+                <span asp-validation-for="WarpPlan" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WeftPlan" class="control-label"></label>
+                <input asp-for="WeftPlan" class="form-control" />
+                <span asp-validation-for="WeftPlan" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

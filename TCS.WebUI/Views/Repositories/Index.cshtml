@@ -1,0 +1,213 @@
+﻿
+@model IEnumerable<REPOSITORY.EF.Entidades.Query>
+
+@{
+    ViewData["Title"] = "Index";
+    ViewData["PageName"] = "draft_index";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> Draft";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+    <link rel="stylesheet" href="~/css/notifications/sweetalert2/sweetalert2.min.css">
+}
+@*<form asp-action="index">
+        <div class="panel">
+            <div class="panel-hdr">
+                <h2>
+                    <i class="fal fa-search text-info"></i>&nbsp;Panel filtro
+                </h2>
+                <div class="panel-toolbar">
+                    <button type="submit" class="btn btn-sm btn-outline-info">
+                        <i class="fal fa-search"></i> Filtrar
+                    </button>
+                    <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Colapsar"></button>
+                </div>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content p-0">
+                    <div class="panel-content">
+                        <div class="form-row">
+                            <div class="col-md-4 mb-3">
+                                <label class="control-label">Shafts(s)</label>
+                                <input type="number" class="form-control" name="shaft" value="@ViewBag.shaft">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="control-label">Lenght</label>
+                                <input type="number" class="form-control" name="length" value="@ViewBag.length">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="control-label">End(s)</label>
+                                <input type="number" class="form-control" name="end" value="@ViewBag.end">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>*@
+<div id="panel-1" class="panel">
+    <div class="panel-hdr">
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            <div class="d-flex contenedor-special" style="width:100%">
+                <div class="mb-3 text-center">
+                    <a asp-action="Create" class="btn btn-primary">
+                        Nueva query
+                    </a>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="form-group mb-3 ml-sm-0 ml-md-2 ml-lg-2">
+                        <div class="input-group">
+                            <input type="search" id="search_textbox" class="form-control" placeholder="Buscar..." autocomplete="off" />
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="@(Settings.Theme.IconPrefix) fa-search"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="loadingSpinner" style="width:100%">
+                <div class="card-body">
+                    <div class="w-100 text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Cargando...</span>
+                        </div><br />
+                        <span class="text-big text-primary">Cargando <strong>@ViewBag.total</strong> draft.</span>
+                    </div>
+                </div>
+            </div>
+            <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100" style="display:none" data-page-length="25">
+                <thead class="thead-themed">
+                    <tr style="font-size: 16px;">
+                        <th class="text-nowrap">
+                            Nombre query
+                        </th>
+                        <th>
+                            Servidor
+                        </th>
+                        <th>
+                            Base de datos
+                        </th>
+                        <th class="all" width="1" data-orderable="false" data-searchable="false"></th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr style="font-size: 15px;">
+
+                            <td class="td-container">
+                                @Html.DisplayFor(modelItem => item.Name_Query)
+
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Server_Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Database_Name)
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-primary rounded-pill md-btn-flat" data-toggle="tooltip" data-placement="left" data-state="primary" title="Seleccionar"
+                                        onclick="location.href='@Url.Action("Create", "Causas", new {  })';">
+                                    <strong>Seleccionar</strong>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<style>
+    /*    .td-container {
+            position: relative;
+        }
+
+        .span-hover-tooltip {
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            z-index: 1;
+            bottom: -100px;
+            transform: translateX(-0%);
+        }
+
+        .td-container:hover .span-hover-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+    */
+    .span-tooltip {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        background-color: white;
+        transition: 1s;
+        min-width: 200px;
+        width: max-content;
+        max-width: 500px;
+        min-height: 25vh;
+        height: 25vh;
+        max-height: 25vh;
+        overflow: auto;
+        padding: 0.5em;
+        font-size: 0.7em;
+    }
+</style>
+@section ScriptsBlock {
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/notifications/sweetalert2/sweetalert2.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var table = $('#dt-basic-example').DataTable({
+                dom: "lrtip",
+                responsive: true,
+                blurable: false,
+                order: [],
+                lengthChange: false,
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
+                },
+                initComplete: function (settings, json) {
+                    $('#loadingSpinner').hide();
+                    $('#dt-basic-example').show();
+                }
+            });
+            $('#search_textbox').keyup(function () {
+                table.search($(this).val()).draw();
+            })
+            $('#search_textbox').change(function () {
+                table.search($(this).val()).draw();
+            })
+            $('#search_textbox').on("search", function () {
+                table.search($(this).val()).draw();
+            })
+        });
+        $(document).ready(function () {
+            $(window).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        });
+
+
+        $('#seleccionar').click(function () {
+            debugger
+            $("#index").click();
+        });
+
+
+
+    </script>
+}

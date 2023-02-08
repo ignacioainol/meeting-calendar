@@ -1,0 +1,48 @@
+﻿@model DEVTOOLS.EF.Entidades.ColumnTemplate
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>ColumnTemplate</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ColumnTemplateSourceCodeType)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ColumnTemplateSourceCodeType)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ColumnTemplateName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ColumnTemplateName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ColumnTemplateObservations)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ColumnTemplateObservations)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ColumnTemplateContent)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ColumnTemplateContent)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Column)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Column.ColumnDescription)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.ColumnTemplateId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

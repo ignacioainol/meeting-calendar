@@ -1,0 +1,164 @@
+﻿@model TCS.WebUI.Models.DesignDraw
+@using System.Globalization
+
+
+@{
+    int r = Model.Rows;
+    int? x = ViewBag.delete;
+   Matriz matriz = ViewBag.matriz;
+}
+<div class="div-container">
+    <table id="design-table">
+        <thead>
+            <tr>
+                @for (int i = 0; i < Model.Cols + 1; i++)
+                {
+                    @if (Model.Cols > 0)
+                    {
+                        if (i == 0)
+                        {
+                            <th class="cube-size"></th>
+                        }
+                        else
+                        {
+                            <th class="cube-size">@i</th>
+                        }
+                    }
+                }
+                @foreach (var item in Model.Repeats)
+                {
+                    @if (Model.Cols > 0)
+                    {
+                        <th class="reps-width">R</th>
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 1; i < Model.Rows + 1; i++)
+            {
+                <tr class="cube-size">
+                    @{
+                        <th>@r</th>
+                        r = r - 1;
+                    }
+                    @for (int j = 1; j < Model.Cols + 1; j++)
+                    {
+                        if (Model.Points.Where(p => p.row == i && p.col == j).FirstOrDefault() != null)
+                        {
+                            <td name="@i;@j" class="cube-size" style="background-color:#0000ff;" onClick="toggleColor(this);"></td>
+                        }
+                        else if (Model.Points2.Where(p => p.row == i && p.col == j).FirstOrDefault() != null)
+                        {
+                            <td name="@i;@j" class="cube-size" style="background-color:#ffd800;" onClick="toggleColor(this);"></td>
+                        }
+                        else
+                        {
+                            if (x > 0)
+                            {
+                                <td name="@i;@j" class="cube-size"></td>
+                            }
+                            else
+                            {
+                                <td name="@i;@j" class="cube-size" onClick="toggleColor(this);"></td>
+                            }
+                        }
+                    }
+                    @foreach (var item in Model.Repeats)
+                    {
+                        @if (item.inicio <= i && item.fin >= i)
+                        {
+                            <td class="reps-width">@item.cantidad</td>
+                        }
+                        else
+                        {
+                            <td class="cube-size"></td>
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<style>
+    .div-container {
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    table, th, td {
+        padding-right: 0.2em;
+        border: 0.05rem solid black;
+        border-collapse: collapse;
+    }
+
+    .cube-size {
+        height: 28px;
+        min-width: 28px;
+        font-size: 0.9rem;
+        text-align: end;
+    }
+
+    .reps-width {
+        background-color: #FF0000;
+        color: white;
+        padding: 0px;
+        font-size: 0.9rem;
+        text-align: center;
+    }
+</style>
+
+<script type="text/javascript">
+
+    @*const cubeHeight = document.querySelectorAll('.cube-height');
+    const cubeWidth = document.querySelectorAll('.cube-width');
+    const repsWidth = document.querySelectorAll('.reps-width');
+
+    changeClass();
+
+    function changeClass()
+    {
+        if ('@ViewBag.report' == "") {
+            for (var i = 0; i < cubeHeight.length; i++) {
+                cubeHeight[i].classList.remove('cube-height');
+                cubeHeight[i].classList.add('cube-height-noreport');
+            }
+            for (var i = 0; i < cubeWidth.length; i++) {
+                cubeWidth[i].classList.remove('cube-width');
+                cubeWidth[i].classList.add('cube-width-noreport');
+            }
+            for (var i = 0; i < repsWidth.length; i++) {
+                repsWidth[i].classList.remove('reps-width');
+                repsWidth[i].classList.add('reps-width-noreport');
+            }
+        }
+    }*@
+
+    function toggleColor(obj) {
+        var bgColor = obj.style.backgroundColor;
+        if (bgColor == "rgb(0, 0, 255)") {
+            obj.style.backgroundColor = "";
+        }
+        else {
+            obj.style.backgroundColor = "#0000ff";
+        }
+        $("#DraftPlan").val(getData())
+
+        console.log(getData());
+    };
+    function getData() {
+        var table = document.getElementById("design-table");
+        var data = '';
+        for (var i = 0, row; row = table.rows[i]; i++) {
+            for (var j = 0, col; col = row.cells[j]; j++) {
+                var bgColor = col.style.backgroundColor;
+                if (bgColor == "rgb(0, 0, 255)") {
+                    data = data + col.getAttribute("name") + "|";
+                }
+            }
+        }
+        console.log(data.slice(0, -1));
+
+        return data.slice(0, -1);
+    };
+</script>

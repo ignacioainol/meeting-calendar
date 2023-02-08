@@ -1,0 +1,49 @@
+﻿@model TCS.EF.Entidades.Worker
+
+@{
+    ViewData["Title"] = SharedLocalizer["worker"].ToString();
+    ViewData["PageName"] = "workers_index";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + SharedLocalizer["worker"].ToString();
+}
+<div>
+    <dl class="row" style="font-size :20px">
+        <dt class="col-sm-2">
+            @SharedLocalizer["workername"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.WorkerName)
+        </dd>
+        <dt class="col-sm-2">
+            @SharedLocalizer["workergroup"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.WorkerGroup.WorkerGroupName)
+        </dd>
+        <dt class="col-sm-2">
+            @SharedLocalizer["position"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.WorkerPosition.Spdescr)
+        </dd>
+        <dt class="col-sm-2">
+           @SharedLocalizer["status"]
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Ficha)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Ficha)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.WorkerId" class="btn btn-primary mb-3">
+        @SharedLocalizer["edit"]
+    </a>
+    <a asp-action="Index" class="btn btn-primary mb-3">
+        @SharedLocalizer["goback"]
+    </a>
+</div>

@@ -1,0 +1,272 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Puntajes por Depto";/*SharedLocalizer["workerevaluation"].ToString();*/
+    ViewData["PageName"] = "performanceevaluation_scoresdeptos";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-signal'></i> Puntajes por Departamento";
+}
+
+@section HeadBlock{
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body-white">
+            <div class="row">
+                <div class="col-12">
+                    <h4 class="font-weight-bold">@SharedLocalizer["department"]</h4>
+                    <hr />
+                    <select class="form-control select2" id="selectDepartamento" name="CodiCC" onchange="cargarPuntajesDeptos()">
+                        <option value="01-01">HILANDERIA LANA PEINADA</option>
+                        <option value="01-03">HILANDERIA LINO DECORACION</option>
+                        <option value="01-05">TEJIDO LANA</option>
+                        <option value="01-06">TEJIDO LINO</option>
+                        <option value="01-07">TEJIDO Y URDIDO MUESTRAS LANA</option>
+                        <option value="01-09">ZURCIDO LANA</option>
+                        <option value="01-11">TINTORERIA LANA</option>
+                        <option value="01-12">TINTORERIA LINO</option>
+                        <option value="01-13">APRESTO Y TERMINACION LANA</option>
+                        <option value="01-15">URDIDO LANA</option>
+                        <option value="01-17">ENLIZADO LANA</option>
+                        <option value="02-01">LABORATORIO FISICO</option>
+                        <option value="02-02">LABORATORIO QUIMICO</option>
+                        <option value="02-03">GERENCIA OPERACIONES</option>
+                        <option value="02-04">PLANIFICACION</option>
+                        <option value="02-05">PREV. DE RIESGOS Y MEDIOAMBIENTE</option>
+                        <option value="02-06">MANTENCION</option>
+                        <option value="02-07">BODEGA CENTRAL</option>
+                        <option value="02-08">BODEGA HILADOS LANA</option>
+                        <option value="02-10">BODEGA PRODUCTOS TERMINADOS</option>
+                        <option value="02-12">CONTROL DE CALIDAD</option>
+                        <option value="02-13">DISEÑO</option>
+                        <option value="02-14">GUARDIAS Y VIGILANTES</option>
+                        <option value="04-01">GERENCIA ADM. Y FINANZAS</option>
+                        <option value="04-02">CONTABILIDAD</option>
+                        <option value="04-03">PERSONAL</option>
+                        <option value="04-04">COMERCIO EXTERIOR</option>
+                        <option value="04-05">ADQUISICIONES</option>
+                        <option value="04-06">SECRETARIA Y RECEPCION</option>
+                        <option value="04-07">INFORMATICA</option>
+                        <option value="04-10">DESARROLLO INFORMATICO</option>
+                        <option value="05-01">VENTAS PLANTA</option>
+                        <option value="05-02">VENTAS SALON TOME</option>
+                        <option value="07-16">CALDERA</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-4 mb-2 mx-auto px-5" hidden>
+                <div class="mx-auto"><button disabled class="circulo-verde"></button><label class="ml-1">Rango alto</label></div>
+                <div class="mx-auto"><button disabled class="circulo-amarillo"></button><label class="ml-1">Rango medio</label></div>
+                <div class="mx-auto"><button disabled class="circulo-rojo"></button><label class="ml-1">Rango bajo</label></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-2">
+        <div class="card-body-white">
+            <div class="row">
+                <div class="col-12">
+                    <h4 class="font-weight-bold">Ponderación puntajes</h4>
+                    <hr />
+                </div>
+                @*<div class="col-12 col-md-3">
+                    <h4 class="font-weight-bold text-center">TOTAL DESEMPEÑO TAREA</h4>
+                    <div class="circulo">
+                        <h1 class="font-weight-bold text-center display-3" id="txtTotalDesempeñoTarea">??</h1>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <h4 class="font-weight-bold text-center">TOTAL ASISTENCIA</h4>
+                    <div class="circulo">
+                        <h1 class="font-weight-bold text-center display-3" id="txtTotalAsistencia">??</h1>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <h4 class="font-weight-bold text-center">TOTAL ACTITUDES</h4>
+                    <div class="circulo">
+                        <h1 class="font-weight-bold text-center display-3" id="txtTotalActitudes">??</h1>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <h4 class="font-weight-bold text-center">TOTAL HABILIDADES</h4>
+                    <div class="circulo">
+                        <h1 class="font-weight-bold text-center display-3" id="txtTotalHabilidades">??</h1>
+                    </div>
+                </div>*@
+                <div class="col-12 col-md-6">
+                    <div class="p-2 rounded overflow-hidden position-relative text-white" style="background:#2b4c81;" id="AlertPuntajeDesempeño">
+                        <label id="labelPuntajeDesempeño">@SharedLocalizer["performancetasks"]: @*Desempeño en la tarea:*@</label>
+                    </div>
+                    <div class="p-2 rounded overflow-hidden position-relative text-white mt-2" style="background:#2b4c81;" id="AlertPuntajeAsistencia">
+                        <label id="labelPuntajeAsistencia">@SharedLocalizer["attendance/absencecontrol"]: @*Asistencia:*@</label>
+                    </div>
+                    <div class="p-2 rounded overflow-hidden position-relative text-white mt-2" style="background:#2b4c81;" id="AlertPuntajeActitudes">
+                        <label id="labelPuntajeActitudes">@SharedLocalizer["attitudes"]: @*Actitudes:*@</label>
+                    </div>
+                    <div class="p-2 rounded overflow-hidden position-relative text-white mt-2" style="background:#2b4c81;" id="AlertPuntajeHabilidades">
+                        <label id="labelPuntajeHabilidades">@SharedLocalizer["skills"]: @*Habilidades:*@</label>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <h4 class="font-weight-bold text-center">TOTAL FINAL</h4>
+                    <div class="circulo">
+                        <h1 class="font-weight-bold text-center display-3" id="txtTotalFinal">??</h1>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .card-body-white{
+        -webkit-box-flex: 1;
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        padding: 1.25rem;
+        background: #fff;
+        border-radius: 10px !important;
+    }
+
+    .card{
+        border-radius: 10px !important;
+    }
+
+    hr{
+        border: none;
+        border-bottom: 1px solid #eee;
+    }
+
+    .circulo{
+    width: 150px;
+	height: 150px;
+    border: 10px solid #2b4c81;
+	border-radius: 50%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+    margin:0px auto;
+    padding:3%;
+    color: #2b4c81;
+    }
+
+    .circulo-verde{
+     width: 15px;
+     height: 15px;
+     -moz-border-radius: 50%;
+     -webkit-border-radius: 50%;
+     border-radius: 50%;
+     background: #28a745;
+    }
+
+    .circulo-amarillo{
+     width: 15px;
+     height: 15px;
+     -moz-border-radius: 50%;
+     -webkit-border-radius: 50%;
+     border-radius: 50%;
+     background: #ffc107;
+    }
+
+    .circulo-rojo{
+     width: 15px;
+     height: 15px;
+     -moz-border-radius: 50%;
+     -webkit-border-radius: 50%;
+     border-radius: 50%;
+     background: #dc3545;
+    }
+</style>
+
+@section ScriptsBlock {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+}
+
+<script>
+    function cargarPagina(){
+        $(document).ready(function () {
+            $(".select2").select2({
+                language: {
+                    noResults: function () {
+                        return "No hay resultados.";
+                    }
+                }
+            });
+        });
+    }
+
+    async function cargarPuntajesDeptos() {
+
+        var codiCC = document.getElementById("selectDepartamento").value;
+        let url = 'performanceevaluation/scorebydepto/' + codiCC;
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+        var numTotalDesempeñoTarea = 0;
+        var numTotalAsistencia = 0;
+        var numTotalActitudes = 0;
+        var numTotalHabilidades = 0;
+        var numTotal = 0;
+
+        //SUMA TOTALES DESEMPEÑO TAREA
+        for (var i = 0; i < resultado.length; i++) {
+            if (resultado[i].complete == true) {
+                numTotalDesempeñoTarea = numTotalDesempeñoTarea + resultado[i].totalPerformanceTask;
+            }
+        }
+
+        var labelPuntajeDesempeño = document.getElementById("labelPuntajeDesempeño");
+        labelPuntajeDesempeño.innerHTML = "Desempeño en la tarea: "+numTotalDesempeñoTarea;
+
+        //SUMA TOTALES ASISTENCIA
+        for (var i = 0; i < resultado.length; i++) {
+            if (resultado[i].complete == true) {
+                numTotalAsistencia = numTotalAsistencia + resultado[i].totalAttendance;
+            }
+        }
+
+        var labelPuntajeAsistencia = document.getElementById("labelPuntajeAsistencia");
+        labelPuntajeAsistencia.innerHTML = "Control de Asistencia/Ausencia: "+numTotalAsistencia;
+        
+        //SUMA TOTALES ACTITUDES
+        for (var i = 0; i < resultado.length; i++) {
+            if (resultado[i].complete == true) {
+                numTotalActitudes = numTotalActitudes + resultado[i].totalAttitudes;
+            }
+        }
+
+        var labelPuntajeActitudes = document.getElementById("labelPuntajeActitudes");
+        labelPuntajeActitudes.innerHTML = "Actitudes: "+numTotalActitudes;
+
+        //SUMA TOTALES HABILIDADES
+        for (var i = 0; i < resultado.length; i++) {
+            if (resultado[i].complete == true) {
+                numTotalHabilidades = numTotalHabilidades + resultado[i].totalSkills;
+            }
+        }
+
+        var labelPuntajeHabilidades = document.getElementById("labelPuntajeHabilidades");
+        labelPuntajeHabilidades.innerHTML = "Habilidades: "+numTotalHabilidades;
+
+        //SUMA TOTAL FINAL
+        for (var i = 0; i < resultado.length; i++) {
+            if (resultado[i].complete == true) {
+                numTotal = numTotal + resultado[i].totalFinal;
+            }
+        }
+
+        var txtTotalFinal = document.getElementById("txtTotalFinal");
+        txtTotalFinal.innerHTML = numTotal;
+    }
+
+    window.onload = cargarPagina;
+</script>

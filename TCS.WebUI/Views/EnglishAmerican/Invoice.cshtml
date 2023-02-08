@@ -1,0 +1,407 @@
+﻿@{
+    ViewData["Title"] = SharedLocalizer["invoice"].ToString();
+    ViewData["PageName"] = "englishamerican_invoice";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i>" + SharedLocalizer["invoice"].ToString();
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" href="~/css/notifications/sweetalert2/sweetalert2.min.css">
+}
+<div class="panel">
+    <div class="panel-hdr">
+        <div style="width : 97%; font-size : 0.9rem">
+            <strong>Enter invoice number</strong>
+        </div>
+    </div>
+    <div class="form-group row pt-3 pb-0 pl-3 align-items-center" style="height:65px; width:100%">
+        <input id="input-search-invoice" type="text" class="form-control mr-2 ml-2" style="width:50%;" placeholder="e.g. E04090">
+        <button id="button-search-invoice" type="button" class="btn btn-primary">@SharedLocalizer["search"]</button>
+        <button class="btn btn-primary ml-2" id="button-export-excel" hidden>
+            @SharedLocalizer["exporttoexcel"]
+        </button>
+    </div>
+</div>
+<div id="div-invoice-title" class="panel" style="padding:1rem; font-size:0.9rem;" hidden>
+    <div class="panel-container show" style="overflow-x: auto">
+        <table class="table table-bordered table-hover table-striped w-100" style="white-space: nowrap">
+            <thead class="bg-primary-500">
+                <tr class="text-center">
+                    <th>Invoice</th>
+                    <th>Customer Name</th>
+                    <th>Mode of Transport</th>
+                    <th>Payment Terms</th>
+                    <th>Delivery Terms</th>
+                </tr>
+            </thead>
+            <tbody id="tbody-invoice-title">
+            </tbody>
+        </table>
+    </div>
+</div>
+<div id="panel-info" class="panel border pt-1 rounded mb-0" hidden>
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#div-panel-page-1">
+                Invoice Info
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#div-panel-page-2">
+                Invoice Details
+            </a>
+        </li>
+    </ul>
+    <div class="tab-content border border-top-0 p-3">
+        <div id="div-panel-page-1" role="tabpanel" class="tab-pane fade show active p-0">
+            <div class="panel-container show" style="overflow-x: auto">
+                <table class="table table-bordered table-hover table-striped w-100" style="white-space: nowrap">
+                    <thead class="bg-primary-500">
+                        <tr class="text-center">
+                            <th>Folio No.</th>
+                            <th>Piece No.</th>
+                            <th>Customer Order</th>
+                            <th>Quality</th>
+                            <th>Your No.</th>
+                            <th>Width Cms</th>
+                            <th>Gross Mtrs</th>
+                            <th>Nett Mtrs</th>
+                            <th>Price Per Mtr USD</th>
+                            <th>Total Cost USD</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-invoice-content">
+                    </tbody>
+                    <tfoot id="tfoot-invoice-content">
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div id="div-panel-page-2" role="tabpanel" class="tab-pane fade p-0">
+            <div class="panel-container show" style="overflow-x: auto">
+                <table class="table table-bordered table-hover table-striped w-100" style="white-space: nowrap">
+                    <thead class="bg-primary-500">
+                        <tr class="text-center">
+                            <th>Quality</th>
+                            <th>Article</th>
+                            <th>Tariff Code</th>
+                            <th>Gms/Mtr</th>
+                            <th>Gms/Sq Mtr</th>
+                            <th>Gross Mtrs</th>
+                            <th>Gross Yards</th>
+                            <th>Nett Mtrs</th>
+                            <th>Nett Yards</th>
+                            <th>Composition</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-invoice-content-2">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    th {
+        vertical-align: middle;
+    }
+
+    .p-invoice-data {
+        padding: 0;
+        margin: 0;
+    }
+
+    .p-invoice-data-span {
+        font-weight: 700
+    }
+</style>
+
+@section ScriptsBlock
+{
+    <script src="~/js/notifications/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/js/dependency/moment/moment.js"></script>
+    <script>
+        const inputSearchInvoice = document.querySelector('#input-search-invoice');
+        const buttonSearchInvoice = document.querySelector('#button-search-invoice');
+        const buttonExportExcel = document.querySelector('#button-export-excel');
+        const divInvoiceTitle = document.querySelector('#div-invoice-title');
+        /*            const divInvoiceFooter = document.querySelector('#div-invoice-footer');*/
+        const tfootInvoiceContent = document.querySelector('#tfoot-invoice-content');
+
+        let jsonToSend = '';
+        buttonSearchInvoice.addEventListener('click', () => {
+            buttonExportExcel.hidden = true;
+            Search();
+        });
+
+        buttonExportExcel.addEventListener('click', async () => {
+            //let url = `EnglishAmerican/InvoiceToExcel?JsonPrint=${jsonToSend}`;
+            //window.location.href = url;
+
+            //let url = 'tcs/EnglishAmerican/InvoiceToExcel'
+            //$.ajax(url, {
+            //    method: 'POST',
+            //    data: { JsonPrint: jsonToSend },
+            //    success: function (response) {
+            //        if (response == "Ok") {
+            //            let down = `EnglishAmerican/Download`;
+            //            window.location.href = down;
+            //        }
+
+            //    }
+            //});
+
+            var url = 'EnglishAmerican/InvoiceToExcel';
+            /*var url = '../EnglishAmerican/InvoiceToExcel';*/
+            const respuesta = await fetch(url, {
+                method: 'POST', // or 'PUT'
+                body: JSON.stringify(jsonToSend),
+                headers: {
+                    'Accept': 'application/json; charset=utf-8',
+                    'Content-Type': 'application/json;charset=UTF-8'
+                }
+            });
+
+            await respuesta.json().then(() => {
+                let down = `EnglishAmerican/Download`;
+                /*let down = `../EnglishAmerican/Download`;*/
+                window.location.href = down;
+            }).catch(error => console.error('Error:', error));
+        });
+
+        inputSearchInvoice.addEventListener('keyup', () => {
+            if (event.keyCode === 13) {
+                Search();
+            }
+        });
+
+        function Search() {
+            const invoiceNo = inputSearchInvoice.value.toUpperCase();
+
+            document.querySelector("#panel-info").hidden = true;
+            divInvoiceTitle.hidden = true;
+
+            if (invoiceNo.length > 0) {
+                Load(invoiceNo);
+            }
+            else {
+                Swal.fire({
+                    title: "Invoice number cannot be empty.",
+                    confirmButtonText: "Close",
+                });
+            }
+        }
+
+        async function Load(invoiceNo) {
+            const url = "https://services.crossvillefabric.com/service/tms.asmx/GetInvoiceDetails?invoice_no=" + invoiceNo;
+            LoadSpinner();
+            try {
+                const respuesta = await fetch(url);
+                const resultado = await respuesta.json();
+                resultado.sort(function (x, y) {
+                    return x.Piece_No - y.Piece_No;
+                })
+                console.log(resultado);
+                if (resultado.length > 0) {
+                    const tbodyInvoiceTitle = document.querySelector('#tbody-invoice-title');
+                    const contenido = document.querySelector('#tbody-invoice-content');
+                    const contenido2 = document.querySelector('#tbody-invoice-content-2');
+                    let html = '';
+                    let html2 = '';
+                    tbodyInvoiceTitle.innerHTML = ``;
+                    tbodyInvoiceTitle.innerHTML += `<tr>
+                                                <td>${invoiceNo}</td>
+                                                <td>${resultado[0].Customer_Name}</td>
+                                                <td>${resultado[0].Mode_Of_Transport}</td>
+                                                <td>${resultado[0].Payment_Terms}</td>
+                                                <td>${resultado[0].Delivery_Terms}</td>
+                                              </tr>`;
+
+                    let invoiceArray = [];
+                    resultado.forEach(data => {
+                        html += `<tr>
+                                                        <td>${data.Order_No}</td>
+                                                        <td>${data.Piece_No}</td>
+                                                        <td>${data.Customer_Order_No}</td>
+                                                        <td>${data.Quality} ${data.Design}/ ${data.Warp_Shade.trim()}${data.Weft_Shade}</td>
+                                                        <td>${data.Customer_No}</td>
+                                                        <td class="text-right">${data.Finish_Width}</td>
+                                                        <td class="text-right">${data.Greasy_Length}</td>
+                                                        <td class="text-right">${data.Finish_Length}</td>
+                                                        <td class="text-right">${data.Price}</td>
+                                                        <td class="text-right">${(data.Finish_Length * data.Price).toFixed(2)}</td>
+                                                        </tr>`;
+
+                        html2 += `<tr>
+                                                        <td>${data.Quality}</td>
+                                                        <td>${data.Design}</td>
+                                                        <td class="text-right">${data.TariffCode}</td>
+                                                        <td class="text-right">${data.GmsMtr}</td>
+                                                        <td class="text-right">${data.GmsSqMtr}</td>
+                                                        <td class="text-right">${data.Greasy_Length}</td>
+                                                        <td class="text-right">${data.Greasy_Length_Yards.toFixed(2)}</td>
+                                                        <td class="text-right">${data.Finish_Length}</td>
+                                                        <td class="text-right">${data.Finish_Length_Yards.toFixed(2)}</td>
+                                                        <td>${data.Composition}</td>
+                                                        </tr>`;
+                        const invoiceObject = {
+                            Customer_No: data.Customer_No,
+                            Quality: data.Quality,
+                            Design: `${data.Design}/${data.Warp_Shade}${data.Weft_Shade}`,
+                            Composition: data.Composition,
+                            Piece_No: data.Piece_No,
+                            Status: data.Status,
+                            Invoice_No: data.Invoice_No,
+                            Customer_Order_No: data.Customer_Order_No,
+                            Order_No: data.Order_No,
+                            TariffCode: parseFloat(data.TariffCode).toFixed(2),
+                            Finish_Width: data.Finish_Width,
+                            GmsMtr: data.GmsMtr.toFixed(2),
+                            OzsYds: data.OzsYds.toFixed(2),
+                            GmsSqMtr: data.GmsSqMtr,
+                            OzsSqYds: data.OzsSqYds.toFixed(2),
+                            Greasy_Length: data.Greasy_Length,
+                            Greasy_Length_Yards: data.Greasy_Length_Yards.toFixed(2),
+                            Finish_Length: data.Finish_Length,
+                            Finish_Length_Yards: data.Finish_Length_Yards.toFixed(2),
+                            Price: data.Price,
+                            Price_Yards: data.Price_Yards,
+                            Date_Ordered: moment(data.Date_Ordered, 'DD-MM-YYYY').format('DD/MM/yyyy'),
+                            Date_Invoiced: moment(data.Date_Invoiced, 'DD-MM-YYYY').format('DD/MM/yyyy'),
+                            Invoice_No2: data.Invoice_No,
+                            Mode_Of_Transport: data.Mode_Of_Transport,
+                            Payment_Terms: data.Payment_Terms,
+                            Delivery_Terms: data.Delivery_terms,
+                            Customer_Name: data.Customer_Name,
+                            Customer_ID: data.Customer_ID,
+                        }
+                        /*CheckProperties(invoiceObject);*/
+                        invoiceArray.push(invoiceObject);
+                        buttonExportExcel.hidden = false;
+                    });
+                    contenido.innerHTML = html;
+                    contenido2.innerHTML = html2;
+                    jsonToSend = JSON.stringify(invoiceArray);
+
+                    console.log(resultado);
+                    document.querySelector("#panel-info").hidden = false;
+                    divInvoiceTitle.hidden = false;
+
+                    tfootInvoiceContent.innerHTML = `<tr>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td class="text-right">${resultado.reduce((accum, item) => accum + item.Finish_Width, 0)}</td>
+                                                        <td class="text-right">${resultado.reduce((accum, item) => accum + item.Greasy_Length, 0).toFixed(2)}</td>
+                                                        <td class="text-right">${resultado.reduce((accum, item) => accum + item.Finish_Length, 0).toFixed(2)}</td>
+                                                        <td class="text-right">${resultado.reduce((accum, item) => accum + item.Price, 0).toFixed(2)}</td>
+                                                        <td class="text-right">${resultado.reduce((accum, item) => accum + (item.Finish_Length * item.Price), 0).toFixed(2)}</td>
+                                                        </tr>`;
+                    Swal.close();
+                }
+                else {
+                    Swal.fire({
+                        title: "Invoice not found.",
+                        confirmButtonText: "Close",
+                    });
+                    document.querySelector("#panel-info").hidden = true;
+                }
+            }
+            catch
+            {
+                Swal.fire({
+                    title: "Invoice not found.",
+                    confirmButtonText: "Close",
+                });
+                document.querySelector("#panel-info").hidden = true;
+                Swal.close();
+            }
+        }
+
+        function LoadSpinner() {
+            let timerInterval;
+
+            Swal.fire({
+                title: 'Loading',
+                didOpen: () => {
+                    Swal.showLoading()
+                    timerInterval = setInterval(() => {
+                        const content = Swal.getContent()
+                        if (content) {
+                            const b = content.querySelector('b')
+                            if (b) {
+                                b.textContent = Swal.getTimerLeft()
+                            }
+                        }
+                    }, 100)
+                },
+                allowOutsideClick: () => !swal.isLoading(),
+                willClose: () => {
+                    clearInterval(timerInterval)
+                }
+            })
+        }
+
+                                        //html += `<tr>
+                                        //                <td>${data.Customer_No}</td>
+                                        //                <td>${data.Quality}</td>
+                                        //                <td>${data.Design}/ ${data.Warp_Shade.trim()}${data.Weft_Shade}</td>
+                                        //                <td>${data.Composition}</td>
+                                        //                <td>${data.Piece_No}</td>
+                                        //                <td>${data.Status}</td>
+                                        //                <td>Invoice: ${data.Invoice_No}</td>
+                                        //                <td>${data.Customer_Order_No}</td>
+                                        //                <td>${data.Order_No}</td>
+                                        //                <td>${data.TariffCode}</td>
+                                        //                <td>${data.Finish_Width}</td>
+                                        //                <td>${data.GmsMtr}</td>
+                                        //                <td>${data.OzsYds}</td>
+                                        //                <td>${data.GmsSqMtr}</td>
+                                        //                <td>${data.OzsSqYds}</td>
+                                        //                <td>${data.Greasy_Length}</td>
+                                        //                <td>${data.Greasy_Length_Yards}</td>
+                                        //                <td>${data.Finish_Length}</td>
+                                        //                <td>${data.Finish_Length_Yards}</td>
+                                        //                <td>${data.Price}</td>
+                                        //                <td>${data.Price_Yards}</td>
+                                        //                <td>${moment(data.Date_Ordered, 'DD-MM-YYYY').format('DD/MM/yyyy')}</td>
+                                        //                <td>${moment(data.Date_Invoiced, 'DD-MM-YYYY').format('DD/MM/yyyy')}</td>
+                                        //                <td>${data.Invoice_No}</td>
+                                        //                <td>${data.Mode_Of_Transport}</td>
+                                        //                <td>${data.Payment_Terms}</td>
+                                        //                <td>${data.Customer_Name}</td>
+                                        //                <td>${data.Customer_ID}</td>
+                                        //                </tr>`;
+
+
+                                                        //        <th>Customers No</th>
+                                                        //<th>Quality</th>
+                                                        //<th>Design/Shade</th>
+                                                        //<th>Composition</th>
+                                                        //<th>Piece No</th>
+                                                        //<th>Status</th>
+                                                        //<th>Information</th>
+                                                        //<th>Customers Order</th>
+                                                        //<th>XV Order</th>
+                                                        //<th>Tariff Code</th>
+                                                        //<th>Width Cms</th>
+                                                        //<th>Gms/Mtr</th>
+                                                        //<th>Ozs/Yd</th>
+                                                        //<th>Gms/Sq Mtr</th>
+                                                        //<th>Ozs/Sq Yd</th>
+                                                        //<th>Gross Mtrs</th>
+                                                        //<th>Gross Yds</th>
+                                                        //<th>Nett Mtrs</th>
+                                                        //<th>Nett Yds</th>
+                                                        //<th>Price USD/Mtrs</th>
+                                                        //<th>Price USD/Yds</th>
+                                                        //<th>Date Ordered</th>
+                                                        //<th>Date Invoiced</th>
+                                                        //<th>Invoice</th>
+                                                        //<th>Mode Of Transport</th>
+                                                        //<th>Terms</th>
+                                                        //<th>Customer Name</th>
+                                                        //<th>Customer ID</th>
+    </script>
+}

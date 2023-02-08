@@ -1,0 +1,68 @@
+﻿@model TCS.EF.Entidades.Design
+@using System.Globalization
+
+
+@{
+    int? val = ViewBag.noWarps;
+}
+<form id="form">
+    <div class="modal fade" id="shadesWarp" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModal2Label">Warp Shades</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+
+                        @for (int i = 0; i < val; i++)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <label class="control-label">Count</label>
+                                <input asp-for="NoOfWarps" class="form-control" />
+                                <span asp-validation-for="NoOfWarps" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="control-label">Shade</label>
+                                <input asp-for="ShadesperWarp" class="form-control" />
+                                <span asp-validation-for="ShadesperWarp" class="text-danger"></span>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cerrar" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button"  id="SubmitBtn2" class="btn btn-primary">s</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@section ScriptsBlock {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $('#SubmitBtn2').on('click', function () {
+            debugger
+            var formContainer = $('#form');
+            $.ajax({
+                type: 'GET',
+                //data: { nombre: _nombre },
+                data: formContainer.serialize(),
+                url: '@Url.Action("CrearWapping", "Design")',
+                success: function () {
+                    debugger
+                    $("#cerrar").click();
+                            
+                }
+            })
+        
+        })
+
+    </script>
+}

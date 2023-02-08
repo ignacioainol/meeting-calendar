@@ -1,0 +1,109 @@
+﻿@model IEnumerable<INVENTORY.EF.Entidades.Inventory>
+@{
+    ViewData["Title"] = SharedLocalizer["inventories"].ToString();
+    ViewData["PageName"] = "inventory_inventories";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + SharedLocalizer["inventories"].ToString();
+}
+@section HeadBlock 
+{
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+}
+<head>
+</head>
+
+<div id="panel-1" class="panel">
+    <div class="panel-hdr">
+        <div style="width : 97%">
+        </div>
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100">
+                <thead class="bg-primary-500">
+                    <tr class="text-center">
+                        <th style="vertical-align:middle">@SharedLocalizer["inventory"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["startdate"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["enddate"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["duration"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["startedby"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["closedby"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["finished"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.InventoryId</td>
+                            <td>@item.StartDate</td>
+                            <td>@item.EndDate</td>
+                            <td>@item.Duration</td>
+                            <td>@item.CloseOwnerName</td>
+                            <td>@item.CloseOwnerName</td>
+                            <td class="text-right">@item.Finished%</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<style>
+    .badge-danger {
+        background-color: red
+    }
+
+    .badge-success {
+        background-color: forestgreen
+    }
+</style>
+@section ScriptsBlock
+{
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    @{ if (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "es")
+        {
+            <script src="~/js/datagrid/datatables/datatables.bundle.es.js"></script>
+        }
+    }
+    <script>
+        $(document).ready(function () {
+            // initialize datatable
+            $('#dt-basic-example').dataTable({
+                responsive: true,
+                lengthChange: false,
+                fixedHeader: true,
+                ordering: false,
+                pageLength: 60,
+                dom:
+                    "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                buttons: [
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF',
+                        titleAttr: 'Generate PDF',
+                        className: 'btn-outline-danger btn-sm mr-1'
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        titleAttr: 'Generate Excel',
+                        className: 'btn-outline-success btn-sm mr-1'
+                    },
+                    {
+                        extend: 'print',
+                        text: 'Print',
+                        titleAttr: 'Print Table',
+                        className: 'btn-outline-primary btn-sm'
+                    }
+                ]
+            });
+        });
+    </script>
+}

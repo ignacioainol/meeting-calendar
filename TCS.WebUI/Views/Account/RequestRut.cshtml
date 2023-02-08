@@ -1,0 +1,151 @@
+﻿@{
+    ViewData["PageName"] = "requestrut";
+    Layout = null;
+}
+<!DOCTYPE html>
+<partial name="_CopyrightHeader" />
+<html lang="es-CL">
+<head>
+    <partial name="_Head" />
+    <link rel="stylesheet" media="screen, print" href="~/css/fa-brands.css">
+    <link rel="stylesheet" href="~/css/notifications/sweetalert2/sweetalert2.min.css">
+</head>
+<body>
+    <partial name="_CookieConsentPartial" />
+    <div class="page-wrapper">
+        <div class="page-inner bg-brand-gradient" style="background-image: url('img/card-backgrounds/telas-azules fullhd.jpg'); background-size: cover; ">
+            <div class="page-content-wrapper bg-transparent">
+                <div class="container-fluid col-lg-3 col-md-5 col-sm-6 col-7">
+                    <div class="row d-flex justify-content-center">
+                        <div>
+                            <h2 class="fs-xxl fw-500 text-white">
+                                No tiene rut asociado
+                            </h2>
+                            <h1 class="text-white fw-300 mb-3 ">
+                                Ingrese su Rut sin puntos y con guión
+                            </h1>
+                            <div class="card p-4 rounded-plus bg-faded">
+                                <div class="form-group">
+                                    <label class="form-label">Rut</label>
+                                    <input id="input-rut" type="text" class="form-control" placeholder="Rut" />
+                                </div>
+                                <div class="row no-gutters">
+                                    <div class="col-lg-12 pl-lg-1 my-2">
+                                        <button id="btn-rut" type="button" class="btn btn-primary btn-block btn-lg">Guardar Rut</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<partial name="_ValidationScriptsPartial" />
+
+<script>
+    const btnRut = document.querySelector('#btn-rut');
+    const inputRut = document.querySelector('#input-rut');
+
+    eventListeners();
+
+    function eventListeners()
+    {
+        btnRut.addEventListener('click', () => {
+            if(checkRut(inputRut))
+            {
+                let url = `Account/UpdateRut?rut=${inputRut.value}`;
+                const respuesta = fetch(url)
+                .then((res)=>
+                {
+                    if (res.ok)
+                    {
+                        window.location.href = 'home/index';
+                    }
+                });
+            }
+            else
+            {
+                alert("RUT Inválido");
+            }
+        });
+
+        inputRut.addEventListener("keypress", function (event) {
+            // If the user presses the "Enter" key on the keyboard
+            if (event.key === "Enter") 
+            {
+                // Cancel the default action, if needed
+                if(checkRut(inputRut))
+                {
+                    let url = `Account/UpdateRut?rut=${inputRut.value}`;
+                    const respuesta = fetch(url)
+                    .then((res)=>
+                    {
+                        if (res.ok)
+                        {
+                            window.location.href = 'home/index';
+                        }
+                    });
+                }
+                else
+                {
+                    alert("RUT Inválido");
+                }
+            }
+        });
+    }
+
+    function checkRut(rut) {
+        // Despejar Puntos
+        var valor = rut.value.replace('.', '');
+        // Despejar Guión
+        valor = valor.replace('-', '');
+
+        // Aislar Cuerpo y Dígito Verificador
+        cuerpo = valor.slice(0, -1);
+        dv = valor.slice(-1).toUpperCase();
+
+        // Formatear RUN
+        rut.value = cuerpo + '-' + dv
+
+        // Si no cumple con el mínimo ej. (n.nnn.nnn)
+        if (cuerpo.length < 7) { alert("RUT Incompleto"); return false; }
+
+        // Calcular Dígito Verificador
+        suma = 0;
+        multiplo = 2;
+
+        // Para cada dígito del Cuerpo
+        for (i = 1; i <= cuerpo.length; i++) {
+
+            // Obtener su Producto con el Múltiplo Correspondiente
+            index = multiplo * valor.charAt(cuerpo.length - i);
+
+            // Sumar al Contador General
+            suma = suma + index;
+
+            // Consolidar Múltiplo dentro del rango [2,7]
+            if (multiplo < 7) { multiplo = multiplo + 1; } else { multiplo = 2; }
+
+        }
+
+        // Calcular Dígito Verificador en base al Módulo 11
+        dvEsperado = 11 - (suma % 11);
+
+        // Casos Especiales (0 y K)
+        dv = (dv == 'K') ? 10 : dv;
+        dv = (dv == 0) ? 11 : dv;
+
+        // Validar que el Cuerpo coincide con su Dígito Verificador
+        if (dvEsperado != dv)
+        {  
+            return false;
+        }
+
+        // Si todo sale bien, eliminar errores (decretar que es válido)
+        return true;
+    }
+</script>

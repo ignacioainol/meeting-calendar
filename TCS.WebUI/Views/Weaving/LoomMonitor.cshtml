@@ -1,0 +1,394 @@
+﻿@model TCS.EF.Entidades.CurrentProd
+@{
+    ViewData["Title"] = SharedLocalizer["loom"].ToString();
+    ViewData["PageName"] = "weaving_loomlist";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i>" + SharedLocalizer["loom"].ToString() + " " + Model.Loom.LoomNumber;
+    List<TCS.EF.Entidades.ProductionHistory> ProdHist = ViewBag.ProdHist;
+}
+
+<div class="div-grid-container-monitor font-weight-bold">
+    <div class="div-grid-element-telar card">
+        <div id="card-header-telar" class="card-header bg-success text-white">
+            @Model.Loom.LoomNumber @Model.Loom.LoomType.Description   <div class="float-right">@SharedLocalizer["stoppedtime"] : @TimeSpan.FromSeconds((double)Model.CurrentStopTime).ToString("mm':'ss")</div>
+        </div>
+        <div class="card-body">
+            <div class="pb-1 h2">
+                @Model.ActualEff%
+            </div>
+            <div class="pb-1">
+                @SharedLocalizer["runningefficiency"]
+            </div>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="@Convert.ToInt32(Model.ActualEff)" aria-valuemin="0" aria-valuemax="100" style="width:@Convert.ToInt32(Model.ActualEff)%; background-color:#3FAA00 !important;"></div>
+            </div>
+        </div>
+        <div class="card-footer">
+            @SharedLocalizer["date"]: @DateTime.Now.ToLongDateString()
+        </div>
+    </div>
+    <div class="div-grid-element-tejedor card">
+        <div class="card-header bg-success text-white">
+            @SharedLocalizer["weaver"]: @Model.WeaverName  <div class="float-right">@SharedLocalizer["designA"] : @Model.Article</div>
+        </div>
+        <div class="card-body">
+            <div class="pb-1 h2">
+                @Model.StdEff%
+            </div>
+            <div class="pb-1 font-weight-bold">
+                @SharedLocalizer["standardefficiency"]
+            </div>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="@Convert.ToInt32(Model.StdEff)" aria-valuemin="0" aria-valuemax="100" style="width:@Convert.ToInt32(Model.StdEff)%; background-color:#3FAA00 !important;"></div>
+            </div>
+        </div>
+        <div class="card-footer">
+            @SharedLocalizer["date"]: @DateTime.Now.ToLongDateString()
+        </div>
+    </div>
+    <div class="div-grid-element-turnos card">
+        <div class="card-header bg-primary text-white text-center pt-3 pb-1">
+            <div class="h3">@SharedLocalizer["lastshifts"]</div>
+        </div>
+        <div class="card-body p-0"  style="overflow-x: auto;">
+            <table class="table table-bordered table-hover table-striped w-100">
+                <thead class="bg-primary-500">
+                    <tr class="text-center" style="font-size: 16px;">
+                        <th style="vertical-align:middle">@SharedLocalizer["shift"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["date"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["designA"]</th>
+                        <th style="vertical-align:middle">PPC</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["efficency"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["meters"]</th>
+                        <th style="vertical-align:middle">Picks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ProdHist)
+                    {
+                        <tr class="text-center" style="font-size: 15px;">
+                            <td style="vertical-align:middle">
+                                @switch (item.Shift)
+                                {
+                                    case "A":
+                                        @SharedLocalizer["night"]
+                                        break;
+                                    case "B":
+                                        @SharedLocalizer["morning"]
+                                        break;
+                                    case "C":
+                                        @SharedLocalizer["afternoon"]
+                                        break;
+                                }
+                            </td>
+                            <td style="vertical-align:middle">@item.Date</td>
+                            <td style="vertical-align:middle">@item.Article</td>
+                            <td style="vertical-align:middle">@item.Ppc</td>
+                            <td style="vertical-align:middle">@item.ActualEff%</td>
+                            <td style="vertical-align:middle">@(item.Lenght/100)</td>
+                            <td style="vertical-align:middle">@item.Picks</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="div-grid-element-horas card">
+        <div class="card-header bg-primary text-white pt-3 pb-1">
+            <div class="h3">@SharedLocalizer["efficiency"]: @SharedLocalizer["last24hours"]</div>
+        </div>
+        <div class="card-body">
+            <canvas id="chart-24-hours" width="400" height="150" style="background-color:white"></canvas>
+        </div>
+        <div class="card-footer">
+        </div>
+    </div>
+    <div class="div-grid-element-dias card">
+        <div class="card-header bg-primary text-white pt-3 pb-1">
+            <div class="h3">@SharedLocalizer["efficiency"]: @SharedLocalizer["last30days"]</div>
+        </div>
+        <div class="card-body">
+            <canvas id="chart-30-days" width="400" height="150" style="background-color:white"></canvas>
+        </div>
+        <div class="card-footer">
+        </div>
+    </div>
+</div>
+
+<style>
+    .div-grid-container-monitor {
+        height: 70vh;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        grid-template-areas:
+            "telar   telar   tejedor tejedor turnos turnos turnos turnos"
+            "horas   horas   horas   horas   dias   dias   dias   dias";
+        padding: 6px;
+        grid-gap: 6px
+    }
+
+    .div-grid-element-telar {
+        grid-area: telar;
+        height: 30vh;
+    }
+
+    .div-grid-element-tejedor {
+        grid-area: tejedor;
+        height: 30vh;
+    }
+
+    .div-grid-element-turnos {
+        grid-area: turnos;
+        height: 30vh;
+    }
+
+    .div-grid-element-horas {
+        grid-area: horas;
+        height: 40vh;
+    }
+
+    .div-grid-element-dias {
+        grid-area: dias;
+        height: 40vh;
+    }
+
+    @@media screen and (max-width:1140px) {
+        .div-grid-container-monitor {
+            height: 142vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr 1fr;
+            grid-template-areas:
+                "telar   tejedor"
+                "turnos  turnos "
+                "horas   horas  "
+                "dias    dias   ";
+            padding: 6px;
+            grid-gap: 6px
+        }
+    }
+
+    @@media screen and (max-width:640px) {
+        .div-grid-container-monitor {
+            height: 180vh;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+            grid-template-areas:
+                "telar  "
+                "tejedor"
+                "turnos "
+                "horas  "
+                "dias   ";
+            padding: 6px;
+            grid-gap: 6px
+        }
+        .div-grid-element-turnos {
+            grid-area: turnos;
+            height: 38vh;
+        }
+    }
+</style>
+@section ScriptsBlock
+{
+    <script src="~/js/statistics/chartjs/chart.js"></script>
+    <script>
+        const cardHeaderTelar = document.querySelector('#card-header-telar');
+        const chart24Hours = document.getElementById('chart-24-hours');
+        const chart30Days = document.getElementById('chart-30-days');
+        const getLast24ActualEffJson = JSON.parse('@Html.Raw(ViewBag.GetLast24ActualEffJson)');
+        const getLast24StdEffJson = JSON.parse('@Html.Raw(ViewBag.GetLast24StdEffJson)');
+        const getLast30ActualEffJson = JSON.parse('@Html.Raw(ViewBag.GetLast30ActualEffJson)');
+        const getLast30StdEffJson = JSON.parse('@Html.Raw(ViewBag.GetLast30StdEffJson)');
+
+        document.addEventListener("DOMContentLoaded", ChangeBackground);
+
+        function ChangeBackground()
+        {
+            CreateChart24();
+            CreateChart30();
+           /* new Chart(chart30Days, config);*/
+            if (@Html.Raw(Json.Serialize(Model.Status)) === 'Stopped')
+            {
+                cardHeaderTelar.classList.remove('bg-success');
+                cardHeaderTelar.classList.add('bg-danger');
+            }
+
+            if (@Html.Raw(Json.Serialize(Model.Status)) === 'Offline')
+            {
+                cardHeaderTelar.classList.remove('bg-success');
+                cardHeaderTelar.classList.add('bg-warning');
+            }
+        }
+
+        function CreateChart24()
+        {
+            let getLast24ActualEff;
+            let getLast24StdEff;
+
+            getLast24ActualEffJson.forEach(element => {
+                const HoraFixed = `${element.Hora}h`;
+                const ActualEffFixed = `${element.ActualEff}`;
+                const pair = { [HoraFixed]: ActualEffFixed }
+                getLast24ActualEff = { ...getLast24ActualEff, ...pair };
+            });
+
+            getLast24StdEffJson.forEach(element => {
+                const HoraFixed = `${element.Hora}h`;
+                const StdEffFixed = `${element.StdEff}`;
+                const pair = { [HoraFixed]: StdEffFixed }
+                getLast24StdEff = { ...getLast24StdEff, ...pair };
+            });
+
+            const data = {
+                datasets: [
+                    {
+                        label: 'Eficiencia Corriendo',
+                        data: getLast24ActualEff,
+                        backgroundColor: '#3C9F02',
+                        yAxisID: 'y',
+                    },
+                    {
+                        label: 'Eficiencia Estandard',
+                        data: getLast24StdEff,
+                        backgroundColor: '#4336f7',
+                        yAxisID: 'y1',
+                    }
+                ]
+            };
+
+            const config =
+            {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio :false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    stacked: false,
+                    plugins: {
+                        title: {
+                            display: false,
+                            text: 'Chart.js Line Chart - Multi Axis'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                callback: function (value, index, values) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                callback: function (value, index, values) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                    }
+                },
+            };
+            new Chart(chart24Hours, config);
+        }
+        function CreateChart30()
+        {
+            let getLast30ActualEff;
+            let getLast30StdEff;
+
+            getLast30ActualEffJson.forEach(element => {
+                const DateFixed = `${element.Date}`;
+                const ActualEffFixed = `${element.ActualEff}`;
+                const pair = { [DateFixed]: ActualEffFixed }
+                getLast30ActualEff = { ...getLast30ActualEff, ...pair };
+            });
+
+            getLast30StdEffJson.forEach(element => {
+                const DateFixed = `${element.Date}`;
+                const StdEffFixed = `${element.StdEff}`;
+                const pair = { [DateFixed]: StdEffFixed }
+                getLast30StdEff = { ...getLast30StdEff, ...pair };
+            });
+
+            const data = {
+                datasets: [
+                    {
+                        label: 'Eficiencia Corriendo',
+                        data: getLast30ActualEff,
+                        backgroundColor: '#3C9F02',
+                        yAxisID: 'y',
+                    },
+                    {
+                        label: 'Eficiencia Estandard',
+                        data: getLast30StdEff,
+                        backgroundColor: '#4336f7',
+                        yAxisID: 'y1',
+                    }
+                ]
+            };
+
+            const config =
+            {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    stacked: false,
+                    plugins: {
+                        title: {
+                            display: false,
+                            text: 'Chart.js Line Chart - Multi Axis'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                callback: function (value, index, values) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                callback: function (value, index, values) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                    }
+                },
+            };
+            new Chart(chart30Days, config);
+        }
+
+    </script>
+}

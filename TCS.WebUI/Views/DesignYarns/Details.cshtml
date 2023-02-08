@@ -1,0 +1,42 @@
+﻿@model TCS.EF.Entidades.DesignYarn
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>DesignYarn</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Tipo)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Tipo)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Linea)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Linea)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Yarn)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Yarn.YarnId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Design)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Design.DesignId)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.DesignYarnId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

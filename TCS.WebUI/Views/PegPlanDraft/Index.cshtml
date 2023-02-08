@@ -1,0 +1,177 @@
+﻿@model IEnumerable<TCS.EF.Entidades.PegPlanDraft>
+
+@{
+    ViewData["Title"] = "Index";
+    ViewData["PageName"] = "pegplandraft_index";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> PegPlan-Draft";
+  
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+}
+
+<div id="panel-1" class="panel">
+    <div class="panel-hdr">
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            <div class="d-flex contenedor-special" style="width:100%">
+                @*<div class="mb-3 text-center">
+                    <a asp-action="Create" class="btn btn-primary">
+                        Nuevo draft
+                    </a>
+                </div>*@
+                <div class="flex-grow-1">
+                    <div class="form-group mb-3 ml-sm-0 ml-md-2 ml-lg-2">
+                        <div class="input-group">
+                            <input type="search" id="search_textbox" class="form-control" placeholder="Buscar..." autocomplete="off" />
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="@(Settings.Theme.IconPrefix) fa-search"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="loadingSpinner" style="width:100%">
+                <div class="card-body">
+                    <div class="w-100 text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Cargando...</span>
+                        </div><br />
+                        <span class="text-big text-primary">Cargando <strong>@ViewBag.total</strong> drafts.</span>
+                    </div>
+                </div>
+            </div>
+            <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100" style="display:none" data-page-length="25">
+                <thead class="thead-themed">
+                    <tr style="font-size: 16px;">
+                        <th>
+                            @Html.DisplayNameFor(model => model.PegPlan)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Draft)
+                        </th>
+                        <th class="all" width="1" data-orderable="false" data-searchable="false"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr style="font-size: 15px;">
+                           <td>
+                                @Html.DisplayFor(modelItem => item.PegPlan.Code)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Draft.Code)
+                            </td>
+                            <td class="text-center">
+                                <div class="dropdown dropleft">
+                                    <a href="#" class='btn btn-sm btn-icon btn-outline-primary rounded-circle shadow-0' data-toggle='dropdown' aria-expanded='true' title='Mas opciones'>
+                                        <i class="@(Settings.Theme.IconPrefix) fa-ellipsis-v"></i>
+                                    </a>
+                                    <div class='dropdown-menu'>
+                                        @{ string desde = "index";}
+                                        <button type="button" class="dropdown-item" formtarget="_blank" onclick="window.open('@Url.Action("ImagePrint2", "Draft", new { id = item.PegPlanId, draftId = item.DraftId ,desde})', '_blank');">
+                                            <span><i class="@(Settings.Theme.IconPrefix) fa-file-alt"></i> Imprimir dibujo</span>
+                                        </button>
+
+                                        <button type="button" class="dropdown-item" formtarget="_blank" onclick="window.open('@Url.Action("ImagePrintExcelDibujo","PegPlan", new { id = item.PegPlan.DraftPlan, pegPlanId = item.PegPlanId , draftId = item.DraftId , desde})');">
+                                            <span><i class="@(Settings.Theme.IconPrefix) fa-file-alt"></i> Crear Excel Dibujo</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@*<style>
+    .td-container {
+        position: relative;
+    }
+
+    .span-hover-tooltip {
+        position: absolute;
+        visibility: hidden;
+        opacity: 0;
+        z-index: 1;
+        bottom: -100px;
+        transform: translateX(-0%);
+    }
+
+    .td-container:hover .span-hover-tooltip {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .span-tooltip {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        background-color: white;
+        transition: 1s;
+        width: max-content;
+        min-height: 30vh;
+        height: max-content;
+        max-height: 60vh;
+        overflow: scroll;
+        transform: scale(0.7);
+        padding: 1em;
+    }
+</style>*@
+@section ScriptsBlock {
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    @*<script src="~/js/html2pdf/html2pdf.bundle.min.js"></script>*@
+    <script>
+        //const buttonPrintDraft = document.querySelector('#button-print-draft');
+        //buttonPrintDraft.addEventListener('click', () => {
+        //   Print1()
+        //});
+
+        //function Print1() {
+        //}
+    </script>
+    <script>
+        $(document).ready(function () {
+            var table = $('#dt-basic-example').DataTable({
+                dom: "lrtip",
+                responsive: true,
+                blurable: false,
+                order: [],
+                lengthChange: false,
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
+                },
+                initComplete: function (settings, json) {
+                    $('#loadingSpinner').hide();
+                    $('#dt-basic-example').show();
+                }
+            });
+            $('#search_textbox').keyup(function () {
+                table.search($(this).val()).draw();
+            })
+            $('#search_textbox').change(function () {
+                table.search($(this).val()).draw();
+            })
+            $('#search_textbox').on("search", function () {
+                table.search($(this).val()).draw();
+            })
+        });
+        $(document).ready(function () {
+            $(window).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        });
+    </script>
+}

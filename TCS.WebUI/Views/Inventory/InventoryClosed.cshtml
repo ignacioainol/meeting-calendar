@@ -1,0 +1,128 @@
+﻿@{
+    ViewData["Title"] = SharedLocalizer["inventories"].ToString();
+    ViewData["PageName"] = "inventory_inventoryclosed";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + SharedLocalizer["inventories"].ToString();
+}
+@section HeadBlock {
+    <link rel="stylesheet" href="~/css/notifications/sweetalert2/sweetalert2.min.css">
+}
+
+<div class="flex-container">
+    <div class="flex-item">
+        <div class="card-body_custom--first">
+            <i class="fal fa-alarm-exclamation fa-5x p-2"></i>
+            <h3>@SharedLocalizer["noinventory"]</h3>
+        </div>
+        <div class="card-footer_custom">
+            @*<form asp-action="CreateNewInventory">*@
+            <p><strong>@SharedLocalizer["startinventorymessage"]</strong></p>
+            <button id="startInventory" type="button" class="btn btn-primary">
+                <strong class="h5">@SharedLocalizer["startinventory"]</strong>
+            </button>
+            @*<button id="startInventory" type="submit" value="CreateNewInventory" class="btn btn-primary">
+                    <strong class="h5">@SharedLocalizer["startinventory"]</strong>
+                </button>*@
+            @*</form>*@
+        </div>
+    </div>
+</div>
+<style>
+    .card-body_custom--first {
+        text-align: center;
+        font-size: 1.4em;
+        padding: 10px;
+        border-radius: 5px 5px 0px 0px;
+        background: #038387;
+        color: white;
+    }
+
+    .card-body_custom h3 {
+        font-size: 1.7em;
+        padding-top: 10px;
+    }
+
+    .card-footer_custom {
+        text-align: center;
+        font-size: 1.3em;
+        color: white;
+        background: #2864a0;
+        padding-bottom: 10px;
+        padding-top: 10px;
+        border-radius: 0px 0px 5px 5px;
+    }
+
+    .flex-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .flex-item {
+        min-width: 300px;
+        max-width: 513px;
+        width: 410px;
+        margin: 5px;
+        flex-grow: 1;
+    }
+</style>
+<script src="~/js/notifications/sweetalert2/sweetalert2.min.js"></script>
+<script>
+
+    startInventory.addEventListener('click', () => {
+        Swal.fire({
+            title: 'Desea iniciar el Inventario?',
+            text: "",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: 'forestgreen',
+            cancelButtonColor: '#D72C1B',
+            confirmButtonText: 'Iniciar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let url = "Inventory/CreateNewInventory";
+                window.location.href = url;
+
+                let timerInterval
+                Swal.fire({
+                    title: 'Alerta, Inicio de Inventario!',
+                    html: '',
+                    didOpen: () => {
+                        Swal.showLoading()
+                        timerInterval = setInterval(() => {
+                            const content = Swal.getContent()
+                            if (content) {
+                                const b = content.querySelector('b')
+                                if (b) {
+                                    b.textContent = Swal.getTimerLeft()
+                                }
+                            }
+                        }, 100)
+                    },
+                    allowOutsideClick: () => !swal.isLoading(),
+                    willClose: () => {
+                        clearInterval(timerInterval)
+                    }
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                    }
+                })
+            }
+            else {
+                Swal.fire(
+                    'Cancelado!',
+                    '',
+                    'success'
+                )
+            }
+        })
+    });
+
+    function ShowSpinner() {
+        const contenido = document.getElementById('startInventory');
+        let html = '';
+        html += `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  <strong class="h5">@SharedLocalizer["startinventory"]</strong>`;
+
+        contenido.innerHTML = html;
+    }
+</script>

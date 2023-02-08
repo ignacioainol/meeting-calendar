@@ -1,0 +1,50 @@
+﻿@model TCS.EF.Entidades.Folders
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Folders</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Root" /> @Html.DisplayNameFor(model => model.Root)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FolderIndex" class="control-label"></label>
+                <input asp-for="FolderIndex" class="form-control" />
+                <span asp-validation-for="FolderIndex" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Parent" class="control-label"></label>
+                <input asp-for="Parent" class="form-control" />
+                <span asp-validation-for="Parent" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DepthLevel" class="control-label"></label>
+                <input asp-for="DepthLevel" class="form-control" />
+                <span asp-validation-for="DepthLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

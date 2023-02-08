@@ -1,0 +1,20 @@
+﻿@model IEnumerable<TCS.EF.Entidades.CurrentShiftStop>
+@{
+    ViewData["PageName"] = "account_accessdenied";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-exclamation-circle'></i> Acceso Denegado";
+}
+<head>
+
+</head>
+
+<div>
+    <h1>
+        ¿Desea volver a la página anterior?
+    </h1>
+    <a href='javascript:history.go(-1)' class="btn btn-primary">
+        Volver a la pagina anterior
+    </a>
+    <button onclick="location.href='@Url.Action("Index","Home")'" class="btn btn-primary">
+        Volver al Inicio
+    </button>
+</div>

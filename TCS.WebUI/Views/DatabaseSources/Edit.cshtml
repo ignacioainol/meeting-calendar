@@ -1,0 +1,48 @@
+﻿@model DEVTOOLS.EF.Entidades.DatabaseSource
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>DatabaseSource</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="DatabaseSourceId" />
+            <div class="form-group">
+                <label asp-for="ProjectId" class="control-label"></label>
+                <select asp-for="ProjectId" class="form-control" asp-items="ViewBag.ProjectId"></select>
+                <span asp-validation-for="ProjectId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DatabaseSourceName" class="control-label"></label>
+                <input asp-for="DatabaseSourceName" class="form-control" />
+                <span asp-validation-for="DatabaseSourceName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DatabaseSourceType" class="control-label"></label>
+                <select asp-for="DatabaseSourceType" class="form-control" asp-items="ViewBag.DatabaseSourceType"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="DatabaseSourceDNS" class="control-label"></label>
+                <input asp-for="DatabaseSourceDNS" class="form-control" />
+                <span asp-validation-for="DatabaseSourceDNS" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a href="Projects/Edit?id=@Model.ProjectId">Back to Proy</a>
+</div>
+
+@section ScriptsBlock {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

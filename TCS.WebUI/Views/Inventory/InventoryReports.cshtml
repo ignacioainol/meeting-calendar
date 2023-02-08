@@ -1,0 +1,510 @@
+﻿@{
+    ViewData["Title"] = ViewBag.Department;
+    ViewData["PageName"] = "inventory_index";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + ViewBag.Department;
+    IEnumerable<INVENTORY.EF.Entidades.TmsPiece> Pieces= ViewBag.Pieces;
+    int? DepartmentId = (Pieces.Select(x=>x.DepartmentId).Distinct().Count() >1)? 0: Pieces.FirstOrDefault().DepartmentId;
+}
+@section HeadBlock
+{
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+}
+<head>
+</head>
+
+<div class="panel">
+    <div class="grid-container-header">
+        <div>
+        </div>
+        <div>
+            <button class="btn btn-primary p-2" id="button-export-excel">
+                @SharedLocalizer["exporttoexcel"]
+            </button>
+        </div>
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="tabs">
+            <div class="tab">
+                <input type="radio" name="css-tabs" id="tab-1" checked class="tab-switch">
+                <label for="tab-1" class="tab-label">No Encontradas</label>
+                <div class="tab-content">
+                    <div class="flex-grow-1">
+                        <div class="form-group mb-3 ml-sm-0 ml-md-2 ml-lg-2">
+                            <div class="input-group">
+                                <input type="search" id="search_textbox" class="form-control" placeholder="@SharedLocalizer["search"]..." autocomplete="off" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="@(Settings.Theme.IconPrefix) fa-search"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="loadingSpinner" style="width:100%">
+                        <div class="card-body">
+                            <div class="w-100 text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="sr-only">@SharedLocalizer["loading"]...</span>
+                                </div><br />
+                            </div>
+                        </div>
+                    </div>
+                    <table class="display table table-bordered table-hover table-striped w-100">
+                        <thead class="bg-primary-500">
+                            <tr class="text-center tr-head">
+                                <th>@SharedLocalizer["piecenumber"]</th>
+                                <th>@SharedLocalizer["department"]</th>
+                                <th>@SharedLocalizer["shade"]</th>
+                                <th>@SharedLocalizer["quality"]</th>
+                                <th>@SharedLocalizer["design"]</th>
+                                <th>@SharedLocalizer["location"]</th>
+                                <th>RackNo</th>
+                                <th>@SharedLocalizer["loom"]</th>
+                                <th>@SharedLocalizer["notes"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Pieces.Where(x => x.StatusId == 0 || x.StatusId == 2 || x.StatusId == null))
+                            {
+                                <tr class="tr-body">
+                                    <td data-toggle="true">
+                                        @Html.DisplayFor(modelItem => item.PieceNo)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Department.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Shade)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Quality)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Design)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Location)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.RackNo)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.LoomNo)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Notes)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab">
+                <input type="radio" name="css-tabs" id="tab-2" class="tab-switch">
+                <label for="tab-2" class="tab-label">Encontradas</label>
+                <div class="tab-content">
+                    <div class="flex-grow-1">
+                        <div class="form-group mb-3 ml-sm-0 ml-md-2 ml-lg-2">
+                            <div class="input-group">
+                                <input type="search" id="search_textbox" class="form-control" placeholder="@SharedLocalizer["search"]..." autocomplete="off" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="@(Settings.Theme.IconPrefix) fa-search"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="loadingSpinner" style="width:100%">
+                        <div class="card-body">
+                            <div class="w-100 text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="sr-only">@SharedLocalizer["loading"]...</span>
+                                </div><br />
+                            </div>
+                        </div>
+                    </div>
+                    <table class="display table table-bordered table-hover table-striped w-100">
+                        <thead class="bg-primary-500">
+                            <tr class="text-center tr-head">
+                                <th>@SharedLocalizer["piecenumber"]</th>
+                                <th>@SharedLocalizer["department"]</th>
+                                <th>@SharedLocalizer["shade"]</th>
+                                <th>@SharedLocalizer["quality"]</th>
+                                <th>@SharedLocalizer["design"]</th>
+                                <th>@SharedLocalizer["location"]</th>
+                                <th>RackNo</th>
+                                <th>@SharedLocalizer["loom"]</th>
+                                <th>@SharedLocalizer["notes"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Pieces.Where(x => x.StatusId == 1))
+                            {
+                                <tr class="tr-body">
+                                    <td data-toggle="true">
+                                        @Html.DisplayFor(modelItem => item.PieceNo)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Department.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Shade)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Quality)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Design)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Location)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.RackNo)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.LoomNo)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Notes)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab">
+                <input type="radio" name="css-tabs" id="tab-3" class="tab-switch">
+                <label for="tab-3" class="tab-label">Encontradas en otro punto</label>
+                <div class="tab-content">
+                    <div class="flex-grow-1">
+                        <div class="form-group mb-3 ml-sm-0 ml-md-2 ml-lg-2">
+                            <div class="input-group">
+                                <input type="search" id="search_textbox" class="form-control" placeholder="@SharedLocalizer["search"]..." autocomplete="off" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="@(Settings.Theme.IconPrefix) fa-search"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="loadingSpinner" style="width:100%">
+                        <div class="card-body">
+                            <div class="w-100 text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="sr-only">@SharedLocalizer["loading"]...</span>
+                                </div><br />
+                            </div>
+                        </div>
+                    </div>
+                    <table class="display table table-bordered table-hover table-striped w-100">
+                        <thead class="bg-primary-500">
+                            <tr class="text-center tr-head">
+                                <th>@SharedLocalizer["piecenumber"]</th>
+                                <th>@SharedLocalizer["department"]</th>
+                                <th>@SharedLocalizer["shade"]</th>
+                                <th>@SharedLocalizer["quality"]</th>
+                                <th>@SharedLocalizer["design"]</th>
+                                <th>@SharedLocalizer["location"]</th>
+                                <th>RackNo</th>
+                                <th>@SharedLocalizer["loom"]</th>
+                                <th>@SharedLocalizer["notes"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Pieces.Where(x => x.StatusId == 3))
+                            {
+                                <tr class="tr-body">
+                                    <td data-toggle="true">
+                                        @Html.DisplayFor(modelItem => item.PieceNo)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Department.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Shade)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Quality)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Design)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Location)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.RackNo)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.LoomNo)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Notes)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab">
+                <input type="radio" name="css-tabs" id="tab-4" class="tab-switch">
+                <label for="tab-4" class="tab-label">Físicamente pero no en TMS</label>
+                <div class="tab-content">
+                    <div class="flex-grow-1">
+                        <div class="form-group mb-3 ml-sm-0 ml-md-2 ml-lg-2">
+                            <div class="input-group">
+                                <input type="search" id="search_textbox" class="form-control" placeholder="@SharedLocalizer["search"]..." autocomplete="off" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="@(Settings.Theme.IconPrefix) fa-search"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="loadingSpinner" style="width:100vw">
+                        <div class="card-body">
+                            <div class="w-100 text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="sr-only">@SharedLocalizer["loading"]...</span>
+                                </div><br />
+                            </div>
+                        </div>
+                    </div>
+                    <table class="display table table-bordered table-hover table-striped w-100">
+                        <thead class="bg-primary-500">
+                            <tr class="text-center tr-head">
+                                <th>@SharedLocalizer["piecenumber"]</th>
+                                <th>@SharedLocalizer["department"]</th>
+                                <th>@SharedLocalizer["shade"]</th>
+                                <th>@SharedLocalizer["quality"]</th>
+                                <th>@SharedLocalizer["design"]</th>
+                                <th>@SharedLocalizer["location"]</th>
+                                <th>RackNo</th>
+                                <th>@SharedLocalizer["loom"]</th>
+                                <th>@SharedLocalizer["notes"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Pieces.Where(x => x.StatusId == 4))
+                            {
+                                <tr class="tr-body">
+                                    <td data-toggle="true">
+                                        @Html.DisplayFor(modelItem => item.PieceNo)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Department.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Shade)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Quality)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Design)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Location)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.RackNo)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.LoomNo)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Notes)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .grid-container-header {
+        display: grid;
+        grid-template-columns: 1fr 7.8rem 2.8rem;
+        padding: 0.7rem 1.1rem 0.7rem 1.1rem;
+        border-bottom: 0.1em solid lightgray;
+        grid-gap: 6px;
+    }
+
+    .badge-danger {
+        background-color: red
+    }
+
+    .badge-success {
+        background-color: forestgreen
+    }
+    .tr-head
+    {
+        font-size : 1.35em;
+    }
+    .tr-body {
+        font-size: 1.15em;
+    }
+    .tabs {
+        position: relative;
+        background: #4679cc;
+        height: 55em;
+        /*  overflow: auto;*/
+    }
+
+        .tabs::before,
+        .tabs::after {
+            content: "";
+            display: table;
+        }
+
+        .tabs::after {
+            clear: both;
+        }
+
+    .tab {
+        float: left;
+    }
+
+    .tab-switch {
+        display: none;
+    }
+
+    .tab-label {
+        position: relative;
+        display: block;
+        line-height: 3.2em;
+        height: 4em;
+        background: #4679cc;
+        color: #fff;
+        cursor: pointer;
+        top: 0;
+        left: 0.9em;
+        margin-top: 0.9em;
+        padding-left: 10px;
+        padding-right: 10px;
+        border-right: 0.125rem solid #fff;
+        /*transition: all 0.2s;*/
+    }
+
+        .tab-label:hover {
+            top: -0.6rem;
+            transition: top 0.2s;
+        }
+
+    .tab-content {
+        height: 49.9em;
+        width: 98.5%;
+        position: absolute;
+        z-index: 1;
+        top: 4em;
+        left: 0.9em;
+        padding: 1.1em;
+        background: #fff;
+        /*color: #2c3e50;*/
+        opacity: 0;
+        /*transition: all 0.2s;*/
+
+        overflow: auto;
+    }
+
+    .tab-switch:checked + .tab-label {
+        background: #fff;
+        color: #2c3e50;
+        /*border-right: 0.125rem solid #fff;*/
+        z-index: 1;
+        top: -0.0625rem;
+        /*transition: all 0.1s;*/
+    }
+
+    .tab-switch:checked + label + .tab-content {
+        z-index: 2;
+        opacity: 1;
+        /*transition: all 0.2s;*/
+    }
+</style>
+@section ScriptsBlock
+{
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    @{ if (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "es")
+        {
+            <script src="~/js/datagrid/datatables/datatables.bundle.es.js"></script>
+        }
+    }
+<script>
+    eventListeners();
+
+    function eventListeners()
+    {
+        document.querySelector('#button-export-excel').addEventListener('click', ExportarExcel);
+    }
+
+    function ExportarExcel() {
+        let url = `Inventory/ReportToExcel?departmentId=${@DepartmentId}`;
+        window.location.href = url;
+    }
+
+    $(document).ready(function () {
+        // initialize datatable
+        $('table.display').dataTable({
+            responsive: true,
+            lengthChange: false,
+            fixedHeader: true,
+            ordering: false,
+            pageLength: 200,
+            dom: "lrtip",
+            buttons: [
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF',
+                    titleAttr: 'Generate PDF',
+                    className: 'btn-outline-danger btn-sm mr-1'
+                },
+                {
+                    extend: 'excelHtml5',
+                    text: 'Excel',
+                    titleAttr: 'Generate Excel',
+                    className: 'btn-outline-success btn-sm mr-1'
+                },
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    titleAttr: 'Print Table',
+                    className: 'btn-outline-primary btn-sm'
+                }
+            ],
+            initComplete: function (settings, json) {
+                $('.loadingSpinner').hide();
+                $('#dt-basic-example').show();
+            }
+        });
+
+        $('#search_textbox').keyup(function () {
+            table.search($(this).val()).draw();
+        })
+        $('#search_textbox').change(function () {
+            table.search($(this).val()).draw();
+        })
+        $('#search_textbox').on("search", function () {
+            table.search($(this).val()).draw();
+        })
+    });
+
+
+        $('#js_change_tab_direction input').on('change', function() {
+        var newclass = $('input[name=radioNameTabDirection]:checked', '#js_change_tab_direction').val();
+        $('#js_change_tab_direction').parent('.panel-tag').next('.nav.nav-tabs').removeClass().addClass(newclass);
+    });
+    $('#js_change_pill_direction input').on('change', function() {
+        var newclass = $('input[name=radioNamePillDirection]:checked', '#js_change_pill_direction').val();
+        $('#js_change_pill_direction').parent('.panel-tag').next('.nav.nav-pills').removeClass().addClass(newclass);
+    });
+    </script>
+}
+

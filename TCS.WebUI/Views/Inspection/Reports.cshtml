@@ -1,0 +1,280 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["reports"].ToString();
+    ViewData["PageName"] = "inspection_reports";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i>" + SharedLocalizer["reports"].ToString();
+    string culture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+    <link rel="stylesheet" href="~/css/flatpickr/flatpickr.min.css">
+}
+<head>
+</head>
+
+<div class="flex-container">
+    <div class="flex-item">
+        <label style="font-size: 20px;" class="control-label">@SharedLocalizer["startdate"] :</label>
+        <input id="input-date-since" type="date" class="form-control" name="date" value="@ViewBag.Since">
+    </div>
+    <div class="flex-item">
+        <label style="font-size: 20px;" class="control-label">@SharedLocalizer["enddate"] :</label>
+        <input id="input-date-until" type="date" class="form-control" name="date" value="@ViewBag.Until">
+    </div>
+    <div class="flex-item">
+        <label style="font-size: 20px;" class="control-label">Tipo de Reporte :</label>
+        <select id="select-report" class="form-control select-custom-filter" asp-items="ViewBag.ReportsTypes"></select>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="grid-container-header">
+        <div>
+        </div>
+        <div>
+            <button class="btn btn-primary p-2" id="button-export-excel">
+                @SharedLocalizer["exporttoexcel"]
+            </button>
+        </div>
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+        </div>
+    </div>
+    <div class="panel-container show" style="overflow-x: scroll">
+        <div class="panel-content">
+            <table class="table table-bordered table-hover table-striped w-100">
+                <thead class="bg-primary-500">
+                    <tr id="tr-header-reports" class="text-center" style="font-size: 16px;">
+                        <template id="template-detailed-report">
+                            <th style="vertical-align:middle">Fecha de Inspección</th>
+                            <th style="vertical-align:middle">Pieza</th>
+                            <th style="vertical-align:middle">Retazos</th>
+                            <th style="vertical-align:middle">Color</th>
+                            <th style="vertical-align:middle">Articulo</th>
+                            <th style="vertical-align:middle">Calidad</th>
+                            <th style="vertical-align:middle">Categoria</th>
+                            <th style="vertical-align:middle">Inspeccionado por</th>
+                            <th style="vertical-align:middle">Despachada</th>
+                            <th style="vertical-align:middle">Ancho Final</th>
+                            <th style="vertical-align:middle">Peso Final</th>
+                            <th style="vertical-align:middle">Metros Finales</th>
+                            <th style="vertical-align:middle">Fallas Amarillas</th>
+                            <th style="vertical-align:middle">Fallas Verdes</th>
+                            <th style="vertical-align:middle">Fallas Blancas</th>
+                            <th style="vertical-align:middle">Bonificación</th>
+                            <th style="vertical-align:middle">Metros Netos</th>
+                        </template>
+                        <template id="template-report">
+                            <th style="vertical-align:middle">Fecha de Inspección</th>
+                            <th style="vertical-align:middle">Pieza-?</th>
+                            <th style="vertical-align:middle">Categoría</th>
+                            <th style="vertical-align:middle">Articulo</th>
+                            <th style="vertical-align:middle">Color</th>
+                            <th style="vertical-align:middle">Cliente</th>
+                            <th style="vertical-align:middle">Calidad</th>
+                            <th style="vertical-align:middle">Metros</th>
+                            <th style="vertical-align:middle">Fallas Amarillas</th>
+                            <th style="vertical-align:middle">Fallas Verdes</th>
+                            <th style="vertical-align:middle">Fallas Blancas</th>
+                            <th style="vertical-align:middle">Bonificación</th>
+                            <th style="vertical-align:middle">Metros Netos</th>
+                            <th style="vertical-align:middle">Motivo C</th>
+                            <th style="vertical-align:middle">Falla</th>
+                            <th style="vertical-align:middle">Departamento</th>
+                        </template>
+                        <template id="template-failure-a">
+                            <th style="vertical-align:middle">Fecha de Inspección</th>
+                            <th style="vertical-align:middle">Pieza-?</th>
+                            <th style="vertical-align:middle">Calidad</th>
+                            <th style="vertical-align:middle">Largo</th>
+                            <th style="vertical-align:middle">Metro</th>
+                            <th style="vertical-align:middle">Código Falla</th>
+                            <th style="vertical-align:middle">Falla</th>
+                            <th style="vertical-align:middle">Departamento</th>
+                            <th style="vertical-align:middle">Color</th>
+                            <th style="vertical-align:middle">Mapeo</th>
+                            <th style="vertical-align:middle">Bonificación</th>
+                            <th style="vertical-align:middle">Categoría</th>
+                        </template>
+                        <template id="template-failure-c">
+                            <th style="vertical-align:middle">Fecha de Inspección</th>
+                            <th style="vertical-align:middle">Pieza-?</th>
+                            <th style="vertical-align:middle">Calidad</th>
+                            <th style="vertical-align:middle">Metro</th>
+                            <th style="vertical-align:middle">Código Falla</th>
+                            <th style="vertical-align:middle">Falla</th>
+                            <th style="vertical-align:middle">Departamento</th>
+                            <th style="vertical-align:middle">Color</th>
+                            <th style="vertical-align:middle">Mapeo</th>
+                            <th style="vertical-align:middle">Bonificación</th>
+                            <th style="vertical-align:middle">Categoría</th>
+                        </template>
+                    </tr>
+                </thead>
+                <tbody id="tbody-report">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<style>
+    .grid-container-header {
+        display: grid;
+        grid-template-columns: 1fr 7.8rem 1.4rem;
+        padding: 0.7rem 1.1rem 0.7rem 1.1rem;
+        border-bottom: 0.1em solid lightgray;
+        gap: 6px;
+    }
+
+    .badge-danger {
+        background-color: red
+    }
+
+    .badge-success {
+        background-color: forestgreen
+    }
+
+    #tbody-general-production {
+        font-size: 1.1em;
+    }
+
+    .flex-item {
+        margin: 0.5em;
+        /*flex:1 0 auto;*/
+        min-width: 320px;
+    }
+
+    .flex-container {
+        background: white;
+        margin-bottom: 2em;
+        padding: 0.5em;
+    }
+
+    @@media screen and (min-width:480px) {
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
+        .flex-item {
+            flex: 0 1 calc(50% - 1rem);
+        }
+    }
+
+    @@media screen and (min-width:768px) {
+        .flex-item {
+            flex: 0 1 calc(33% - 1rem);
+        }
+    }
+
+    @@media screen and (min-width:1024px) {
+        .flex-item {
+            flex: 0 1 calc(33% - 1rem);
+        }
+    }
+</style>
+@section ScriptsBlock
+{
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.es.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/flatpickr/flatpickr.min.js"></script>
+
+    @{ if (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "es")
+        {
+            <script src="~/js/datagrid/datatables/datatables.bundle.es.js"></script>
+            <script src="~/js/flatpickr/languaje/es.js"></script>
+        }
+    }
+
+<script>
+    const selectReport = document.querySelector('#select-report');
+    const inputDateSince = document.querySelector('#input-date-since');
+    const inputDateUntil = document.querySelector('#input-date-until');
+
+    const trHeaderReports= document.querySelector('#tr-header-reports');
+    const templateDetailedReport = document.querySelector('#template-detailed-report');
+    const templateReport = document.querySelector('#template-report');
+    const templateFailureA = document.querySelector('#template-failure-a');
+    const templateFailureC = document.querySelector('#template-failure-c');
+    const fragment = document.createDocumentFragment();
+
+    eventListeners();
+
+    flatpickr(inputDateSince, {
+        locale: "es",
+        altFormat: "d-m-Y",
+        altInput: true,
+        altInputClass: "flatpickr-custom form-control",
+    });
+
+    flatpickr(inputDateUntil, {
+        locale: "es",
+        altFormat: "d-m-Y",
+        altInput: true,
+        altInputClass: "flatpickr-custom form-control",
+    });
+
+    function eventListeners()
+    {
+        inputDateSince.valueAsDate = new Date();
+        inputDateUntil.valueAsDate = new Date();
+        selectReport.value = 1;
+        selectReport.addEventListener('input', cargarTabla);
+        inputDateSince.addEventListener('input', cargarTabla);
+        inputDateUntil.addEventListener('input', cargarTabla);
+        document.querySelector('#button-export-excel').addEventListener('click', ExportarExcel);
+    }
+
+    function ExportarExcel() {
+        let url = `Weaving/GeneralProductionToExcel?`;
+        window.location.href = url;
+    }
+
+    async function cargarTabla() 
+    {
+        switch (selectReport.value) 
+        {
+          case '1':
+            trHeaderReports.innerHTML = '';
+
+            const clone = templateDetailedReport.content.cloneNode(true);
+            fragment.appendChild(clone);
+            trHeaderReports.appendChild(fragment);
+
+            break;
+          case '4':
+            trHeaderReports.innerHTML = '';
+
+            const clone4 = templateReport.content.cloneNode(true);
+            fragment.appendChild(clone4);
+            trHeaderReports.appendChild(fragment);
+
+            break;
+          case '6':
+            trHeaderReports.innerHTML = '';
+
+            const clone6 = templateFailureA.content.cloneNode(true);
+            fragment.appendChild(clone6);
+            trHeaderReports.appendChild(fragment);
+
+            break;
+          case '7':
+            trHeaderReports.innerHTML = '';
+
+            const clone7 = templateFailureC.content.cloneNode(true);
+            fragment.appendChild(clone7);
+            trHeaderReports.appendChild(fragment);
+
+            break;
+          default:
+            console.log('test');
+        }
+    }
+</script>
+}

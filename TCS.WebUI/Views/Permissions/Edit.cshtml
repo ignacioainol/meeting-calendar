@@ -1,0 +1,31 @@
+﻿@model TCS.EF.Entidades.Permission
+
+@{
+    ViewData["Title"] = SharedLocalizer["permissions"].ToString();
+    ViewData["PageName"] = "permissions_index";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + SharedLocalizer["permissions"].ToString();
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="PermissionId" />
+            <div class="form-group">
+                <label asp-for="Description" class="control-label">@SharedLocalizer["description"]</label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <button type="submit" value="Save" class="btn btn-primary mb-3">@SharedLocalizer["save"]</button>
+                <a asp-action="Index" class="btn btn-primary mb-3">
+                    @SharedLocalizer["goback"]
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

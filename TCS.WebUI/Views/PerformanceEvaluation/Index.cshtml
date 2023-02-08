@@ -1,0 +1,2633 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@{
+    ViewData["Title"] = SharedLocalizer["workerevaluation"].ToString();
+    ViewData["PageName"] = "performanceevaluation_index";
+    //ViewData["Category1"] = @SharedLocalizer["evaluation"].ToString();
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-edit'></i> "+ SharedLocalizer["workerevaluation"].ToString();
+    TCS.EF.Entidades.User usuarioInfo = ViewBag.Usuario;
+    
+}
+
+@section HeadBlock{
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+}
+<label id="departamentoUsuario" hidden>@usuarioInfo.Department</label>
+<div class="container-fluid">
+    <form id="formEvaluacion">
+        <div class="card">
+            <div class="card-body-white">
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <h4 class="font-weight-bold">@SharedLocalizer["worker"]@*Trabajador*@</h4>
+                        <hr />
+                        <label class="font-weight-bold">@SharedLocalizer["department"]:@*Departamento*@</label>
+                        <select class="form-control select2" id="selectDepartamento" name="CodiCC" onchange="cargarSelectTrabajadores()">
+                            <!--<option value="@usuarioInfo.Department">@usuarioInfo.Department</option>-->
+                            <option value="01-01">HILANDERIA LANA PEINADA</option>
+                            <option value="01-03">HILANDERIA LINO DECORACION</option>
+                            <option value="01-05">TEJIDO LANA</option>
+                            <option value="01-06">TEJIDO LINO</option>
+                            <option value="01-07">TEJIDO Y URDIDO MUESTRAS LANA</option>
+                            <option value="01-09">ZURCIDO LANA</option>
+                            <option value="01-11">TINTORERIA LANA</option>
+                            <option value="01-12">TINTORERIA LINO</option>
+                            <option value="01-13">APRESTO Y TERMINACION LANA</option>
+                            <option value="01-15">URDIDO LANA</option>
+                            <option value="01-17">ENLIZADO LANA</option>
+                            <option value="02-01">LABORATORIO FISICO</option>
+                            <option value="02-02">LABORATORIO QUIMICO</option>
+                            <option value="02-03">GERENCIA OPERACIONES</option>
+                            <option value="02-04">PLANIFICACION</option>
+                            <option value="02-05">PREV. DE RIESGOS Y MEDIOAMBIENTE</option>
+                            <option value="02-06">MANTENCION</option>
+                            <option value="02-07">BODEGA CENTRAL</option>
+                            <option value="02-08">BODEGA HILADOS LANA</option>
+                            <option value="02-10">BODEGA PRODUCTOS TERMINADOS</option>
+                            <option value="02-12">CONTROL DE CALIDAD</option>
+                            <option value="02-13">DISEÑO</option>
+                            <option value="02-14">GUARDIAS Y VIGILANTES</option>
+                            <option value="04-01">GERENCIA ADM. Y FINANZAS</option>
+                            <option value="04-02">CONTABILIDAD</option>
+                            <option value="04-03">PERSONAL</option>
+                            <option value="04-04">COMERCIO EXTERIOR</option>
+                            <option value="04-05">ADQUISICIONES</option>
+                            <option value="04-06">SECRETARIA Y RECEPCION</option>
+                            <option value="04-07">INFORMATICA</option>
+                            <option value="04-10">DESARROLLO INFORMATICO</option>
+                            <option value="05-01">VENTAS PLANTA</option>
+                            <option value="05-02">VENTAS SALON TOME</option>
+                            <option value="07-16">CALDERA</option>
+                        </select>
+         
+                        <label class="font-weight-bold mt-2">@SharedLocalizer["workername"]:@*Nombre trabajador*@</label>
+                        <select class="form-control mt-2 select2" id="selectTrabajadores" onchange="cargarInfoTrabajador()">
+                            <option>@SharedLocalizer["select"] @SharedLocalizer["worker"]@*Seleccione trabajador*@</option>
+                        </select>
+                        <div class="row mt-4 mx-auto">
+                            <div class="mx-auto"><button disabled class="circulo-verde"></button><label class="ml-1">Rango alto</label></div>
+                            <div class="mx-auto"><button disabled class="circulo-amarillo"></button><label class="ml-1">Rango medio</label></div>
+                            <div class="mx-auto"><button disabled class="circulo-rojo"></button><label class="ml-1">Rango bajo</label></div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <h4 class="font-weight-bold">@SharedLocalizer["lastevaluationscores"]@*Puntajes última evaluación*@</h4>
+                        <hr />
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="p-2 bg-primary-300 rounded overflow-hidden position-relative text-white" id="AlertPuntajeDesempeño">
+                                    <label id="labelPuntajeDesempeño">@SharedLocalizer["performancetasks"]: @*Desempeño en la tarea:*@</label>
+                                </div>
+                                <div class="p-2 bg-primary-300 rounded overflow-hidden position-relative text-white mt-2" id="AlertPuntajeAsistencia">
+                                    <label id="labelPuntajeAsistencia">@SharedLocalizer["attendance/absencecontrol"]: @*Asistencia:*@</label>
+                                </div>
+                                <div class="p-2 bg-primary-300 rounded overflow-hidden position-relative text-white mt-2" id="AlertPuntajeActitudes">
+                                    <label id="labelPuntajeActitudes">@SharedLocalizer["attitudes"]: @*Actitudes:*@</label>
+                                </div>
+                                <div class="p-2 bg-primary-300 rounded overflow-hidden position-relative text-white mt-2" id="AlertPuntajeHabilidades">
+                                    <label id="labelPuntajeHabilidades">@SharedLocalizer["skills"]: @*Habilidades:*@</label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <h1 class="font-weight-bold text-center">TOTAL:</h1>
+                                <div class="circulo" id="circulo">
+                                    <h1 class="font-weight-bold text-center display-3" id="numTotalUltimaEvaluacion">??</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-2">
+            <div class="card-body-white">
+                <div class="row">
+                    <div class="col-12">
+                        <h4 class="font-weight-bold">@SharedLocalizer["workerinformation"]@*Info. Trabajador*@</h4>
+                        <hr />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-2">
+                        <label class="font-weight-bold">@SharedLocalizer["firstname"]:@*Nombre:*@</label>
+                        <p id="nombreTrabajador"></p>
+                        <input class="form-control" name="Name" id="inputNombre" hidden/>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <label class="font-weight-bold">@SharedLocalizer["lastname"]:@*Apellido:*@</label>
+                        <p id="apellidoTrabajador"></p>
+                        <input class="form-control" name="LastName" id="inputApellido" hidden/>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <label class="font-weight-bold">R.U.T:</label>
+                        <p id="rutTrabajador"></p>
+                        <input class="form-control" name="Rut" id="inputRut" hidden/>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <label class="font-weight-bold">@SharedLocalizer["department"]:@*Depto:*@</label>
+                        <p id="deptoTrabajador"></p>
+                        <input class="form-control" id="inputDepto" hidden/>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <label class="font-weight-bold">@SharedLocalizer["dateenter"]:@*Fecha ingreso:*@</label>
+                        <p id="fechaIngresoTrabajador"></p>
+                        <input class="form-control" name="EvaluationDate" id="inputFecha" hidden/>
+                        <input class="form-control" name="Complete" id="inputComplete" value="false" hidden/>
+                        <input class="form-control" name="PerformanceEvaluationId" id="inputID" disabled hidden/>
+                        <input class="form-control" name="AddUsr" value="@usuarioInfo.UserName" id="inputAddUsr" hidden/>
+                        <input class="form-control" name="AddDte" id="inputFechaAdd" hidden/>
+                        <input class="form-control" name="ChgUsr" value="@usuarioInfo.UserName" id="inputChgUsr" disabled hidden/>
+                        <input class="form-control" name="ChgDte" id="inputFechaChg" disabled hidden/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="alert alert-danger mt-3 text-center font-weight-bold" id="alertIncompleto" role="alert" hidden><i class="fal fa-exclamation-circle mr-2 font-weight-bold" aria-hidden="true"></i>Evaluación incompleta. Debe finalizar la Evaluación actual.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-2">
+            <div class="card-body-white">
+                <div class="row">
+                    <div class="col-12">
+                        <h4 class="font-weight-bold">Escala de puntaje</h4>
+                        <hr />
+                        <div class="alert alert-info" role="alert">
+                            <label>Nuestra escala de puntajes va de 1 al 5. En donde 1 es el puntaje más bajo y 5 el más alto.<br />
+                            Por ejemplo, si una persona tiene un 100% de asistencia, su puntaje en ese criterio sería de un 5,
+                            por el contrario, si esa persona tiene un 0% de asistencia, obtendria 1 de puntaje.
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-2">
+            <div class="card-body-white">
+                <div class="row">
+                    <div class="col-12">
+                        <h4 class="font-weight-bold">1 - @SharedLocalizer["performancetasks"]@*Desempeño en la tarea*@</h4>
+                        <hr />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">CALIDAD Y EXACTITUD EN EL TRABAJO</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioCYE1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioCYE2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioCYE3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioCYE4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioCYE5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Coherencia entre el trabajo solicitado y el
+                           efectivamente realizado. Grado de profesionalismo que demuestra en el trabajo. El
+                           trabajo realizado cumple con lo requerido y además es de buena calidad.
+                        </label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input radio" type="radio" onchange="totalPuntajeDesempeñoTarea()" name="ScoreCYE" id="criterioCYE1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input radio" type="radio" onchange="totalPuntajeDesempeñoTarea()" name="ScoreCYE" id="criterioCYE2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input radio" type="radio" onchange="totalPuntajeDesempeñoTarea()" name="ScoreCYE" id="criterioCYE3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input radio" type="radio" onchange="totalPuntajeDesempeñoTarea()" name="ScoreCYE" id="criterioCYE4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input radio" type="radio" onchange="totalPuntajeDesempeñoTarea()" name="ScoreCYE" id="criterioCYE5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">NIVEL DE FALLAS EN LOS PROCESOS</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioNFP1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioNFP2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioNFP3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioNFP4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioNFP5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Cantidad de Fallado según registros Control de Calidad</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeDesempeñoTarea()" name="ScoreNFP" id="criterioNFP1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeDesempeñoTarea()" name="ScoreNFP" id="criterioNFP2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeDesempeñoTarea()" name="ScoreNFP" id="criterioNFP3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeDesempeñoTarea()" name="ScoreNFP" id="criterioNFP4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeDesempeñoTarea()" name="ScoreNFP" id="criterioNFP5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">PRODUCTIVIDAD</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioPRO1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioPRO2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioPRO3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioPRO4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioPRO5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Rendimiento individual de acuerdo a las tareas y tiempos asignadas. Estándar de producción esperada</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeDesempeñoTarea()" name="ScorePRO" id="criterioPRO1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeDesempeñoTarea()" name="ScorePRO" id="criterioPRO2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeDesempeñoTarea()" name="ScorePRO" id="criterioPRO3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeDesempeñoTarea()" name="ScorePRO" id="criterioPRO4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeDesempeñoTarea()" name="ScorePRO" id="criterioPRO5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-6">
+                        <h5 class="font-weight-bold text-right">Total @SharedLocalizer["performancetasks"]@*Desempeño en la tarea*@</h5>
+                    </div>
+                    <div class="col-6">
+                        <h5 class="text-right" id="numTotalDesempeñoTarea">??</h5>
+                        <input class="form-control" id="inputTotalDesempeñoTarea" name="TotalPerformanceTask" value="0" hidden/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-2">
+            <div class="card-body-white">
+                <div class="row">
+                    <div class="col-12">
+                        <h4 class="font-weight-bold">2 - @SharedLocalizer["attendance/absencecontrol"]@*@SharedLocalizer["attendance"]Control de Asistencias/Ausencias*@</h4>
+                        <hr />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">REGISTRO 100% ASISTENCIA</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioRA1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioRA2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioRA3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioRA4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioRA5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Registro de asistencia según jornada y turnos asignados</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreRA" id="criterioRA1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreRA" id="criterioRA2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreRA" id="criterioRA3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreRA" id="criterioRA4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreRA" id="criterioRA5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">REGISTRO LICENCIAS MÉDICAS</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioRLM1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioRLM2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioRLM3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioRLM4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioRLM5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Registro de licencias médicas año @DateTime.Now.Year</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreRLM" id="criterioRLM1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreRLM" id="criterioRLM2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreRLM" id="criterioRLM3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreRLM" id="criterioRLM4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreRLM" id="criterioRLM5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">AUSENCIAS</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioAUS1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioAUS2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioAUS3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioAUS4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioAUS5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Ausencias del periodo @DateTime.Now.Year</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreAUS" id="criterioAUS1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreAUS" id="criterioAUS2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreAUS" id="criterioAUS3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreAUS" id="criterioAUS4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreAUS" id="criterioAUS5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <!--<div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">ATRASOS</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioATR1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioATR2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioATR3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioATR4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioATR5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Atrasos del periodo @DateTime.Now.Year</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreATR" id="criterioATR1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreATR" id="criterioATR2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreATR" id="criterioATR3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreATR" id="criterioATR4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreATR" id="criterioATR5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />-->
+
+                <!--<div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">AMONESTACIONES</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioAMO1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioAMO2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioAMO3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioAMO4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioAMO5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Amonestaciones del periodo 2021 - 2022</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreAMO" id="criterioAMO1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreAMO" id="criterioAMO2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreAMO" id="criterioAMO3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreAMO" id="criterioAMO4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreAMO" id="criterioAMO5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />-->
+
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">ACCIDENTES LABORALES</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioAL1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioAL2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioAL3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioAL4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioAL5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Accidentes laborales con días perdidos del periodo @DateTime.Now.Year</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreAL" id="criterioAL1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreAL" id="criterioAL2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreAL" id="criterioAL3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreAL" id="criterioAL4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeAsistencia()" name="ScoreAL" id="criterioAL5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-6">
+                        <h5 class="font-weight-bold text-right">Total @SharedLocalizer["attendance/absencecontrol"]@*SharedLocalizer["attendance"]Asistencia*@</h5>
+                    </div>
+                    <div class="col-6">
+                        <h5 class="text-right" id="numTotalAsistencia">??</h5>
+                        <input class="form-control" id="inputTotalAsistencia" name="TotalAttendance" value="0" hidden/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-2">
+            <div class="card-body-white">
+                <div class="row">
+                    <div class="col-12">
+                        <h4 class="font-weight-bold">3 - @SharedLocalizer["attitudes"]@*Actitudes (Factores Humanos)*@</h4>
+                        <hr />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">RESPONSABILIDAD</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioRES1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioRES2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioRES3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioRES4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioRES5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Grado de compromiso que asume para el cumplimiento de las metas y procedimientos existentes. Grado de tranquilidad que le genera a su superior.
+                            Grado de cumplimiento de las normas, procedimientos y politicas existentes
+                        </label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreRES" id="criterioRES1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreRES" id="criterioRES2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreRES" id="criterioRES3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreRES" id="criterioRES4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreRES" id="criterioRES5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+            
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">SEGURIDAD Y AUTOCUIDADO</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioSA1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioSA2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioSA3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioSA4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioSA5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Cumplimiento de las normativas de seguridad y medio ambiente de la empresa, uso de EPP y actitud de autocuidado</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreSA" id="criterioSA1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreSA" id="criterioSA2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreSA" id="criterioSA3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreSA" id="criterioSA4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreSA" id="criterioSA5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <!--<div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">ACTITUD HACIA LA EMPRESA</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioAHE1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioAHE2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioAHE3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioAHE4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioAHE5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Capacidad de defender los intereses de la Empresa y adherirse a sus lineamientos. Lealtad para con la Empresa. Disponibilidad para
+                                extender el horario de trabajo para una necesidad puntual
+                        </label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAHE" id="criterioAHE1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAHE" id="criterioAHE2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAHE" id="criterioAHE3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAHE" id="criterioAHE4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAHE" id="criterioAHE5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />-->
+
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">ACTITUD HACIA LOS SUPERIORES</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioAHS1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioAHS2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioAHS3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioAHS4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioAHS5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Capacidad de defender los intereses de la Empresa y adherirse a sus lineamientos. Lealtad para con la Empresa. Disponibilidad para
+                                extender el horario de trabajo para una necesidad puntual
+                        </label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAHS" id="criterioAHS1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAHS" id="criterioAHS2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAHS" id="criterioAHS3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAHS" id="criterioAHS4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAHS" id="criterioAHS5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">ACTITUD HACIA LOS COMPAÑEROS</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioAHC1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioAHC2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioAHC3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioAHC4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioAHC5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Forma en la que se maneja con sus compañeros inmediatos</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAHC" id="criterioAHC1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAHC" id="criterioAHC2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAHC" id="criterioAHC3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAHC" id="criterioAHC4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAHC" id="criterioAHC5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">AMONESTACIONES</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioAMO1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioAMO2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioAMO3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioAMO4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioAMO5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Amonestaciones del periodo @DateTime.Now.Year</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAMO" id="criterioAMO1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAMO" id="criterioAMO2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAMO" id="criterioAMO3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAMO" id="criterioAMO4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeActitudes()" name="ScoreAMO" id="criterioAMO5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-6">
+                        <h5 class="font-weight-bold text-right">Total @SharedLocalizer["attitudes"]@*Actitudes*@</h5>
+                    </div>
+                    <div class="col-6">
+                        <h5 class="text-right" id="numTotalActitudes">??</h5>
+                        <input class="form-control" id="inputTotalActitudes" name="TotalAttitudes" value="0" hidden/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-2">
+            <div class="card-body-white">
+                <div class="row">
+                    <div class="col-12">
+                        <h4 class="font-weight-bold">4 - @SharedLocalizer["skills"]@*Habilidades*@</h4>
+                        <hr />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">INICIATIVA Y CREATIVIDAD</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioIC1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioIC2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioIC3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioIC4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioIC5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Inquietud por avanzar y mejorar. Facilidad para ofrecerse como ejecutor de sus propuestas. 
+                                Tiene empuje. Ofrece alternativas innovadoras para solucionar problemas
+                        </label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeHabilidades()" name="ScoreIC" id="criterioIC1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeHabilidades()" name="ScoreIC" id="criterioIC2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeHabilidades()" name="ScoreIC" id="criterioIC3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeHabilidades()" name="ScoreIC" id="criterioIC4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeHabilidades()" name="ScoreIC" id="criterioIC5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">CAPACIDAD DE MANEJAR MÚLTIPLES TAREAS</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioCMT1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioCMT2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioCMT3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioCMT4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioCMT5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Mantiene en orden sus tareas incluso cuando maneja múltiples temas. Tiempo que le insume la conmutación entre un tema y el otro. 
+                               Capacidad de realización en estos casos
+                        </label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeHabilidades()" name="ScoreCMT" id="criterioCMT1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeHabilidades()" name="ScoreCMT" id="criterioCMT2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeHabilidades()" name="ScoreCMT" id="criterioCMT3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeHabilidades()" name="ScoreCMT" id="criterioCMT4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeHabilidades()" name="ScoreCMT" id="criterioCMT5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label class="font-weight-bold">CAPACIDAD DE APRENDIZAJE</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioCDA1">@SharedLocalizer["level1outrange"]@*1 - Fuera de rango*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioCDA2">@SharedLocalizer["level2low"]@*2 - Nivel bajo*@</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <label class="form-check-label" for="criterioCDA3">@SharedLocalizer["level3medium"]@*3 - Nivel medio*@</label>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <label class="form-check-label" for="criterioCDA4">@SharedLocalizer["level4high"]@*4 - Nivel alto*@</label>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <label class="form-check-label" for="criterioCDA5">@SharedLocalizer["level5featured"]@*5 - Nivel destacado*@</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-md-7">
+                        <label>Tiene perfil funcional. Inquietud y capacidad para conocer las distintas herramientas necesarias para el trabajo</label>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeHabilidades()" name="ScoreCDA" id="criterioCDA1" value="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeHabilidades()" name="ScoreCDA" id="criterioCDA2" value="2">
+                        </div>
+                    </div>
+                    <div class="col-sm-2 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeHabilidades()" name="ScoreCDA" id="criterioCDA3" value="3">
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeHabilidades()" name="ScoreCDA" id="criterioCDA4" value="4">
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-1">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" onchange="totalPuntajeHabilidades();" name="ScoreCDA" id="criterioCDA5" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-6">
+                        <h5 class="font-weight-bold text-right">Total @SharedLocalizer["skills"]@*Habilidades*@</h5>
+                    </div>
+                    <div class="col-6">
+                        <h5 class="text-right" id="numTotalHabilidades">??</h5>
+                        <input class="form-control" id="inputTotalHabilidades" name="TotalSkills" value="0" hidden/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-2">
+            <div class="card-body-white">
+                <div class="row">
+                    <div class="col-12">
+                        <label class="font-weight-bold">@SharedLocalizer["observations"]@*Observaciones*@</label>
+                        <textarea class="form-control" id="observations" name="Observations" rows="4"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-2">
+            <div class="card-body-white">
+                <div class="row">
+                    <div class="col-4 text-left">
+                        <hr />
+                        <button class="btn btn-primary" id="btnCalcular" onclick="calcularPuntajeTotal()" disabled>@SharedLocalizer["calculate"]@*Calcular*@</button>
+                        <button class="btn btn-secondary" id="btnGuardar" onclick="Guardar()" disabled>Guardar</button>
+                        <button class="btn btn-secondary" id="btnActualizar" onclick="Actualizar()" hidden disabled>Actualizar</button>
+                    </div>
+                    <div class="col-4">
+                        <hr />
+                        <h4 class="font-weight-bold text-right">Total</h4>
+                    </div>
+                    <div class="col-4">
+                        <hr />
+                        <h4 class="text-right" id="numTotal">??</h4>
+                        <input class="form-control" value="0" id="inputTotal" name="TotalFinal" hidden/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+    .card-body-white{
+        -webkit-box-flex: 1;
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        padding: 1.25rem;
+        background: #fff;
+        border-radius: 10px !important;
+    }
+
+    .card{
+        border-radius: 10px !important;
+    }
+
+    hr{
+        border: none;
+        border-bottom: 1px solid #eee;
+    }
+
+    .circulo{
+    width: 150px;
+	height: 150px;
+    border: 10px solid #666666;
+	border-radius: 50%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+    margin:0px auto;
+    padding:3%
+    }
+
+    .circulo-verde{
+     width: 15px;
+     height: 15px;
+     -moz-border-radius: 50%;
+     -webkit-border-radius: 50%;
+     border-radius: 50%;
+     background: #28a745;
+    }
+
+    .circulo-amarillo{
+     width: 15px;
+     height: 15px;
+     -moz-border-radius: 50%;
+     -webkit-border-radius: 50%;
+     border-radius: 50%;
+     background: #ffc107;
+    }
+
+    .circulo-rojo{
+     width: 15px;
+     height: 15px;
+     -moz-border-radius: 50%;
+     -webkit-border-radius: 50%;
+     border-radius: 50%;
+     background: #dc3545;
+    }
+
+    .alert{
+        margin: 0px;
+    }
+
+    .alert-danger{
+        padding: 10px;
+    }
+
+    .alert-info{
+        padding: 8px;
+    }
+
+    .text-danger{
+        color:#dc3545 !important;
+    }
+
+    input[type=radio]{
+        width: 18px;
+        height: 18px;
+    }
+
+    .text-success{
+        color: #28A745 !important;
+    }
+</style>
+
+@section ScriptsBlock {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+}
+<script>
+
+    //FUNCIONES PARA OBTENER PUNTAJE TOTAL DESEMPEÑO EN LA TAREA
+
+    function obtenerPuntajeCYE(){
+        var optionsCYE = document.getElementsByName('ScoreCYE');
+        //console.log(optionsCYE);
+        for (var optionCYE of optionsCYE) {
+            if (optionCYE.checked) { 
+                var puntajeCYE = optionCYE.value;
+            }
+        }
+        puntajeCYE = parseInt(puntajeCYE);
+        //console.log(puntajeCYE);
+        return puntajeCYE;
+    }
+
+    function obtenerPuntajeNFP(){
+        var optionsNFP = document.getElementsByName('ScoreNFP');
+        //console.log(optionsNFP);
+        for (var optionNFP of optionsNFP) {
+            if (optionNFP.checked) { 
+                var puntajeNFP = optionNFP.value;
+            }
+        }
+        puntajeNFP = parseInt(puntajeNFP);
+        //console.log(puntajeNFP);
+        return puntajeNFP;
+    }
+
+    function obtenerPuntajePRO(){
+        var optionsPRO = document.getElementsByName('ScorePRO');
+        //console.log(optionsPRO);
+        for (var optionPRO of optionsPRO) {
+            if (optionPRO.checked) { 
+                var puntajePRO = optionPRO.value;
+            }
+        }
+        puntajePRO = parseInt(puntajePRO);
+        //console.log(puntajePRO);
+        return puntajePRO;
+    }
+
+    function totalPuntajeDesempeñoTarea(){
+        var puntajeCYE = obtenerPuntajeCYE();
+        var puntajeNFP = obtenerPuntajeNFP();
+        var puntajePRO = obtenerPuntajePRO();
+
+        if(isNaN(puntajeCYE)){
+            puntajeCYE = 0;
+        }
+
+        if(isNaN(puntajeNFP)){
+            puntajeNFP = 0;
+        }
+
+        if(isNaN(puntajePRO)){
+            puntajePRO = 0;
+        }
+
+        var puntajeTotal = puntajeCYE + puntajeNFP + puntajePRO;
+
+        var numTotalDesempeñoTarea = document.getElementById('numTotalDesempeñoTarea');
+        numTotalDesempeñoTarea.innerHTML = puntajeTotal;
+        var inputTotalDesempeñoTarea = document.getElementById("inputTotalDesempeñoTarea");
+        inputTotalDesempeñoTarea.value = puntajeTotal;
+    }
+
+    //FUNCIONES PARA OBTENER PUNTAJE TOTAL ASISTENCIA
+
+    function obtenerPuntajeRA(){
+        var optionsRA = document.getElementsByName('ScoreRA');
+        //console.log(optionsRA);
+        for (var optionRA of optionsRA) {
+            if (optionRA.checked) { 
+                var puntajeRA = optionRA.value;
+            }
+        }
+        puntajeRA = parseInt(puntajeRA);
+        //console.log(puntajeRA);
+        return puntajeRA;
+    }
+
+    function obtenerPuntajeRLM(){
+        var optionsRLM = document.getElementsByName('ScoreRLM');
+        //console.log(optionsRLM);
+        for (var optionRLM of optionsRLM) {
+            if (optionRLM.checked) { 
+                var puntajeRLM = optionRLM.value;
+            }
+        }
+        puntajeRLM = parseInt(puntajeRLM);
+        //console.log(puntajeRLM);
+        return puntajeRLM;
+    }
+
+    function obtenerPuntajeAUS(){
+        var optionsAUS = document.getElementsByName('ScoreAUS');
+        //console.log(optionsAUS);
+        for (var optionAUS of optionsAUS) {
+            if (optionAUS.checked) { 
+                var puntajeAUS = optionAUS.value;
+            }
+        }
+        puntajeAUS = parseInt(puntajeAUS);
+        //console.log(puntajeAUS);
+        return puntajeAUS;
+    }
+
+    function obtenerPuntajeATR(){
+        var optionsATR = document.getElementsByName('ScoreATR');
+        //console.log(optionsATR);
+        for (var optionATR of optionsATR) {
+            if (optionATR.checked) { 
+                var puntajeATR = optionATR.value;
+            }
+        }
+        puntajeATR = parseInt(puntajeATR);
+        //console.log(puntajeATR);
+        return puntajeATR;
+    }
+
+    function obtenerPuntajeAMO(){
+        var optionsAMO = document.getElementsByName('ScoreAMO');
+        //console.log(optionsAMO);
+        for (var optionAMO of optionsAMO) {
+            if (optionAMO.checked) { 
+                var puntajeAMO = optionAMO.value;
+            }
+        }
+        puntajeAMO = parseInt(puntajeAMO);
+        //console.log(puntajeAMO);
+        return puntajeAMO;
+    }
+
+    function obtenerPuntajeAL(){
+        var optionsAL = document.getElementsByName('ScoreAL');
+        //console.log(optionsAL);
+        for (var optionAL of optionsAL) {
+            if (optionAL.checked) { 
+                var puntajeAL = optionAL.value;
+            }
+        }
+        puntajeAL = parseInt(puntajeAL);
+        //console.log(puntajeAL);
+        return puntajeAL;
+    }
+
+    function totalPuntajeAsistencia(){
+        var puntajeRA = obtenerPuntajeRA();
+        var puntajeRLM = obtenerPuntajeRLM();
+        var puntajeAUS = obtenerPuntajeAUS();
+        //var puntajeATR = obtenerPuntajeATR();
+        //var puntajeAMO = obtenerPuntajeAMO();
+        var puntajeAL = obtenerPuntajeAL();
+
+        if(isNaN(puntajeRA)){
+            puntajeRA = 0;
+        }
+
+        if(isNaN(puntajeRLM)){
+            puntajeRLM = 0;
+        }
+
+        if(isNaN(puntajeAUS)){
+            puntajeAUS = 0;
+        }
+
+        //if(isNaN(puntajeATR)){
+        //    puntajeATR = 0;
+        //}
+
+        //if(isNaN(puntajeAMO)){
+        //    puntajeAMO = 0;
+        //}
+
+        if(isNaN(puntajeAL)){
+            puntajeAL = 0;
+        }
+
+        var puntajeTotal = puntajeRA + puntajeRLM + puntajeAUS + puntajeAL;
+        //puntajeTotal = parseInt(puntajeTotal);
+        var numTotalAsistencia = document.getElementById('numTotalAsistencia');
+        numTotalAsistencia.innerHTML = puntajeTotal;
+        var inputTotalAsistencia = document.getElementById("inputTotalAsistencia");
+        inputTotalAsistencia.value = puntajeTotal;
+    }
+
+    //FUNCIONES PARA OBTENER PUNTAJE TOTAL DE ACTITUDES
+
+    function obtenerPuntajeRES(){
+        var optionsRES = document.getElementsByName('ScoreRES');
+        //console.log(optionsRES);
+        for (var optionRES of optionsRES) {
+            if (optionRES.checked) { 
+                var puntajeRES = optionRES.value;
+            }
+        }
+        puntajeRES = parseInt(puntajeRES);
+        //console.log(puntajeRES);
+        return puntajeRES;
+    }
+
+    function obtenerPuntajeSA(){
+        var optionsSA = document.getElementsByName('ScoreSA');
+        //console.log(optionsSA);
+        for (var optionSA of optionsSA) {
+            if (optionSA.checked) { 
+                var puntajeSA = optionSA.value;
+            }
+        }
+        puntajeSA = parseInt(puntajeSA);
+        //console.log(puntajeSA);
+        return puntajeSA;
+    }
+
+    function obtenerPuntajeAHE(){
+        var optionsAHE = document.getElementsByName('ScoreAHE');
+        //console.log(optionsAHE);
+        for (var optionAHE of optionsAHE) {
+            if (optionAHE.checked) { 
+                var puntajeAHE = optionAHE.value;
+            }
+        }
+        puntajeAHE = parseInt(puntajeAHE);
+        //console.log(puntajeAHE);
+        return puntajeAHE;
+    }
+
+    function obtenerPuntajeAHS(){
+        var optionsAHS = document.getElementsByName('ScoreAHS');
+        //console.log(optionsAHS);
+        for (var optionAHS of optionsAHS) {
+            if (optionAHS.checked) { 
+                var puntajeAHS = optionAHS.value;
+            }
+        }
+        puntajeAHS = parseInt(puntajeAHS);
+        //console.log(puntajeAHS);
+        return puntajeAHS;
+    }
+
+    function obtenerPuntajeAHC(){
+        var optionsAHC = document.getElementsByName('ScoreAHC');
+        //console.log(optionsAHC);
+        for (var optionAHC of optionsAHC) {
+            if (optionAHC.checked) { 
+                var puntajeAHC = optionAHC.value;
+            }
+        }
+        puntajeAHC = parseInt(puntajeAHC);
+        //console.log(puntajeAHC);
+        return puntajeAHC;
+    }
+
+    function totalPuntajeActitudes(){
+        var puntajeRES = obtenerPuntajeRES();
+        var puntajeSA = obtenerPuntajeSA();
+        //var puntajeAHE = obtenerPuntajeAHE();
+        var puntajeAHS = obtenerPuntajeAHS();
+        var puntajeAHC = obtenerPuntajeAHC();
+        var puntajeAMO = obtenerPuntajeAMO();
+
+        if(isNaN(puntajeRES)){
+            puntajeRES = 0;
+        }
+
+        if(isNaN(puntajeSA)){
+            puntajeSA = 0;
+        }
+
+        //if(isNaN(puntajeAHE)){
+        //    puntajeAHE = 0;
+        //}
+
+        if(isNaN(puntajeAHS)){
+            puntajeAHS = 0;
+        }
+
+        if(isNaN(puntajeAHC)){
+            puntajeAHC = 0;
+        }
+
+        if(isNaN(puntajeAMO)){
+            puntajeAMO = 0;
+        }
+
+        var puntajeTotal = puntajeRES + puntajeSA + puntajeAMO + puntajeAHS + puntajeAHC;
+
+        var numTotalActitudes = document.getElementById('numTotalActitudes');
+        numTotalActitudes.innerHTML = puntajeTotal;
+        var inputTotalActitudes = document.getElementById("inputTotalActitudes");
+        inputTotalActitudes.value = puntajeTotal;
+    }
+
+    //FUNCIONES PARA OBTENER PUNTAJE TOTAL DE HABILIDADES
+
+    function obtenerPuntajeIC(){
+        var optionsIC = document.getElementsByName('ScoreIC');
+        //console.log(optionsIC);
+        for (var optionIC of optionsIC) {
+            if (optionIC.checked) { 
+                var puntajeIC = optionIC.value;
+            }
+        }
+        puntajeIC = parseInt(puntajeIC);
+        //console.log(puntajeIC);
+        return puntajeIC;
+    }
+
+    function obtenerPuntajeCMT(){
+        var optionsCMT = document.getElementsByName('ScoreCMT');
+        //console.log(optionsCMT);
+        for (var optionCMT of optionsCMT) {
+            if (optionCMT.checked) { 
+                var puntajeCMT = optionCMT.value;
+            }
+        }
+        puntajeCMT = parseInt(puntajeCMT);
+        //console.log(puntajeCMT);
+        return puntajeCMT;
+    }
+
+    function obtenerPuntajeCDA(){
+
+        var optionsCDA = document.getElementsByName('ScoreCDA');
+        //console.log(optionsCDA);
+        for (var optionCDA of optionsCDA) {
+            if (optionCDA.checked) {
+                var puntajeCDA = optionCDA.value;
+            }
+        }
+        puntajeCDA = parseInt(puntajeCDA);
+        //console.log(puntajeCDA);
+        return puntajeCDA;
+    }
+
+    function totalPuntajeHabilidades(){
+        var puntajeIC = obtenerPuntajeIC();
+        var puntajeCMT = obtenerPuntajeCMT();
+        var puntajeCDA = obtenerPuntajeCDA();
+
+        if(isNaN(puntajeIC)){
+            puntajeIC = 0;
+        }
+
+        if(isNaN(puntajeCMT)){
+            puntajeCMT = 0;
+        }
+
+        if(isNaN(puntajeCDA)){
+            puntajeCDA = 0;
+        }
+
+        var puntajeTotal = puntajeIC + puntajeCMT + puntajeCDA;
+
+        var numTotalHabilidades = document.getElementById('numTotalHabilidades');
+        numTotalHabilidades.innerHTML = puntajeTotal;
+        var inputTotalHabilidades = document.getElementById("inputTotalHabilidades");
+        inputTotalHabilidades.value = puntajeTotal;
+    }
+
+    //FUNCIONES PARA OBTENER PUNTAJE TOTAL
+    function obtenerPuntajeDesempeñoTarea(){
+
+        var numTotalDesempeñoTarea = document.getElementById('numTotalDesempeñoTarea');
+        var puntajeDesempeñoTarea = numTotalDesempeñoTarea.innerHTML;
+        //console.log(puntajeDesempeñoTarea);
+        puntajeDesempeñoTarea = parseInt(puntajeDesempeñoTarea);
+        //console.log(puntajeDesempeñoTarea);
+        
+        return puntajeDesempeñoTarea;
+    }
+
+    function obtenerPuntajeAsistencia(){
+
+        var numTotalAsistencia = document.getElementById('numTotalAsistencia');
+        var puntajeAsistencia = numTotalAsistencia.innerHTML;
+        //console.log(puntajeAsistencia);
+        puntajeAsistencia = parseInt(puntajeAsistencia);
+        //console.log(puntajeAsistencia);
+        return puntajeAsistencia;
+    }
+
+    function obtenerPuntajeActitudes(){
+
+        var numTotalActitudes = document.getElementById('numTotalActitudes');
+        var puntajeActitudes = numTotalActitudes.innerHTML;
+        //console.log(puntajeActitudes);
+        puntajeActitudes = parseInt(puntajeActitudes);
+        //console.log(puntajeActitudes);
+        return puntajeActitudes;
+    }
+
+    function obtenerPuntajeHabilidades(){
+
+        var numTotalHabilidades = document.getElementById('numTotalHabilidades');
+        var puntajeHabilidades = numTotalHabilidades.innerHTML;
+        //console.log(puntajeHabilidades);
+        puntajeHabilidades = parseInt(puntajeHabilidades);
+        //console.log(puntajeHabilidades);
+        return puntajeHabilidades;
+    }
+
+    function calcularPuntajeTotal(){
+        event.preventDefault();
+        var puntajeDesempeñoTarea = obtenerPuntajeDesempeñoTarea();
+        var puntajeAsistencia = obtenerPuntajeAsistencia();
+        var puntajeActitudes = obtenerPuntajeActitudes();
+        var puntajeHabilidades = obtenerPuntajeHabilidades();
+
+        if(isNaN(puntajeDesempeñoTarea)){
+            puntajeDesempeñoTarea = 0;
+        }
+
+        if(isNaN(puntajeAsistencia)){
+            puntajeAsistencia = 0;
+        }
+
+        if(isNaN(puntajeActitudes)){
+            puntajeActitudes = 0;
+        }
+
+        if(isNaN(puntajeHabilidades)){
+            puntajeHabilidades = 0;
+        }
+
+        var puntajeTotal = puntajeDesempeñoTarea + puntajeAsistencia + puntajeActitudes + puntajeHabilidades;
+
+        var numTotal = document.getElementById('numTotal');
+        numTotal.innerHTML = puntajeTotal;
+        var inputTotal = document.getElementById("inputTotal");
+        inputTotal.value = puntajeTotal;
+        
+        if(puntajeTotal > 67){
+            numTotal.classList = "text-right text-success font-weight-bold"
+            Swal.fire(
+              'El puntaje obtenido es <label class="text-success">'+puntajeTotal+'</label>',
+              '',
+              'success'
+            )
+        }else if(puntajeTotal < 68 && puntajeTotal > 51){
+            numTotal.classList = "text-right text-warning font-weight-bold";
+            Swal.fire(
+              'El puntaje obtenido es <label class="text-warning">'+puntajeTotal+'</label>',
+              '',
+              'warning'
+            )
+        }else{
+            numTotal.classList = "text-right text-danger font-weight-bold";
+            Swal.fire(
+              'El puntaje obtenido es <label class="text-danger">'+puntajeTotal+'</label>',
+              '',
+              'error'
+            )
+        }
+        var btnGuardar = document.getElementById("btnGuardar");
+        var btnActualizar = document.getElementById("btnActualizar");
+        btnGuardar.disabled = false;
+        btnActualizar.disabled = false;
+        btnGuardar.classList = "btn btn-success"
+        btnActualizar.classList = "btn btn-success"
+
+    }
+
+    //FUNCION PARA CARGAR SELECT DE TRABAJADORES
+    async function cargarSelectTrabajadores(){
+
+        let url = `api/persona/listado`;
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+        var departamento = document.getElementById("selectDepartamento").value //nuevo para filtro
+        const resultadoFiltrado = resultado.data.filter((trabajador) => trabajador.codiCC == departamento);
+        var tamañoJson = Object.keys(resultadoFiltrado).length;
+
+        var selectTrabajadores = document.getElementById("selectTrabajadores");
+        var optionsTrabajadores = document.querySelectorAll('#selectTrabajadores option');
+        optionsTrabajadores.forEach(o => o.remove());
+        
+        var optionSeleccione = document.createElement("option");
+        optionSeleccione.innerHTML = "Seleccione Trabajador";
+        optionSeleccione.value = "Seleccione Trabajador"
+        selectTrabajadores.add(optionSeleccione);
+
+        for(var i = 0; i < tamañoJson; i++){
+            var option = document.createElement("option");
+            option.innerHTML = resultadoFiltrado[i].nombre + " " + resultadoFiltrado[i].appaterno + " " + resultadoFiltrado[i].apmaterno;
+            option.value = resultadoFiltrado[i].rut;
+            selectTrabajadores.add(option);
+        }
+    }
+
+//window.onload = OptionSeleccionada;
+//window.onload = cargarSelectTrabajadores;
+
+    async function cargarInfoTrabajador(){
+        limpiarFormulario();
+        var btnCalcular = document.getElementById("btnCalcular");
+        var selectTrabajadores = document.getElementById("selectTrabajadores").value;
+        if (selectTrabajadores != 'Seleccione Trabajador') {
+            btnCalcular.disabled = false;
+        }else{
+            btnCalcular.disabled = true;
+        }
+        
+        var nombreTrabajador = document.getElementById("nombreTrabajador");
+        var inputNombre = document.getElementById("inputNombre");
+        var apellidoTrabajador = document.getElementById("apellidoTrabajador");
+        var inputApellido = document.getElementById("inputApellido");
+        var rutTrabajador = document.getElementById("rutTrabajador");
+        var inputRut = document.getElementById("inputRut");
+        var deptoTrabajador = document.getElementById("deptoTrabajador");
+        var inputDepto = document.getElementById("inputDepto");
+        var inputFecha = document.getElementById("inputFecha");
+        var inputComplete = document.getElementById("inputComplete");
+        var fechaIngresoTrabajador = document.getElementById("fechaIngresoTrabajador");
+        var inputFechaAdd = document.getElementById("inputFechaAdd");
+        var inputFechaChg = document.getElementById("inputFechaChg");
+
+        var rut = document.getElementById("selectTrabajadores").value;
+        let url = 'api/persona/' + rut;
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+
+        if(rut != "Seleccione Trabajador"){
+            nombreTrabajador.innerHTML = resultado.data.nombre;
+            inputNombre.value = resultado.data.nombre;
+            apellidoTrabajador.innerHTML = resultado.data.appaterno + " " + resultado.data.apmaterno;
+            inputApellido.value = resultado.data.appaterno + " " + resultado.data.apmaterno;
+            rutTrabajador.innerHTML = resultado.data.rut;
+            inputRut.value = resultado.data.rut;
+            deptoTrabajador.innerHTML = resultado.data.descCC;
+            inputDepto.value = resultado.data.descCC;
+            var fecha = new Date().toLocaleDateString();
+            fecha = fecha.split("-").reverse().join("-");
+            inputFecha.value = fecha;
+            inputFechaAdd.value = fecha;
+            inputFechaChg.value = fecha;
+            var fechaEntrada = resultado.data.fechaPrimerCon;
+            fechaEntrada = new Date(fechaEntrada).toLocaleDateString();
+            fechaIngresoTrabajador.innerHTML = fechaEntrada;
+        }else{
+            nombreTrabajador.innerHTML = "";
+            inputNombre.value = "";
+            apellidoTrabajador.innerHTML = "";
+            inputApellido.value = "";
+            rutTrabajador.innerHTML = "";
+            inputRut.value = "";
+            deptoTrabajador.innerHTML = "";
+            inputDepto.value = "";
+            inputFecha.value = "";
+            fechaIngresoTrabajador.innerHTML = "";
+        }
+        
+        let url_ultimaevaluacion = 'api/performanceevaluation/buscar/' + rut;
+        const respuesta_ultimaevaluacion = await fetch(url_ultimaevaluacion);
+        const resultado_ultimaevaluacion = await respuesta_ultimaevaluacion.json();
+        var AlertPuntajeDesempeño = document.getElementById("AlertPuntajeDesempeño");
+        var labelPuntajeDesempeño = document.getElementById("labelPuntajeDesempeño");
+        var AlertPuntajeAsistencia = document.getElementById("AlertPuntajeAsistencia");
+        var labelPuntajeAsistencia = document.getElementById("labelPuntajeAsistencia");
+        var AlertPuntajeActitudes = document.getElementById("AlertPuntajeActitudes");
+        var labelPuntajeActitudes = document.getElementById("labelPuntajeActitudes");
+        var AlertPuntajeHabilidades = document.getElementById("AlertPuntajeHabilidades");
+        var labelPuntajeHabilidades = document.getElementById("labelPuntajeHabilidades");
+        var numTotalUltimaEvaluacion = document.getElementById("numTotalUltimaEvaluacion");
+        var circulo = document.getElementById("circulo");
+
+        //CAMBIAR COLOR DE ALERT DESEMPEÑO EN LA TAREA
+        if (resultado_ultimaevaluacion.totalPerformanceTask > 12) {
+            AlertPuntajeDesempeño.classList = "p-2 rounded overflow-hidden position-relative text-white";
+            AlertPuntajeDesempeño.style.background = "#28a745";
+        } else if (resultado_ultimaevaluacion.totalPerformanceTask < 13 && resultado_ultimaevaluacion.totalPerformanceTask > 9) {
+            AlertPuntajeDesempeño.classList = "p-2 rounded overflow-hidden position-relative text-white";
+            AlertPuntajeDesempeño.style.background = "#ffc107";
+        } else {
+            AlertPuntajeDesempeño.classList = "p-2 rounded overflow-hidden position-relative text-white";
+            AlertPuntajeDesempeño.style.background = "#dc3545";
+        }
+
+        //CAMBIAR COLOR DE ALERT ASISTENCIA
+        if (resultado_ultimaevaluacion.totalAttendance > 17) {
+            AlertPuntajeAsistencia.classList = "p-2 rounded overflow-hidden position-relative text-white mt-2";
+            AlertPuntajeAsistencia.style.background = "#28a745";
+        } else if (resultado_ultimaevaluacion.totalAttendance < 18 && resultado_ultimaevaluacion.totalAttendance > 13) {
+            AlertPuntajeAsistencia.classList = "p-2 rounded overflow-hidden position-relative text-white mt-2";
+            AlertPuntajeAsistencia.style.background = "#ffc107";
+        } else {
+            AlertPuntajeAsistencia.classList = "p-2 rounded overflow-hidden position-relative text-white mt-2";
+            AlertPuntajeAsistencia.style.background = "#dc3545";
+        }
+
+        //CAMBIAR COLOR DE ALERT ACTITUDES
+        if (resultado_ultimaevaluacion.totalAttitudes > 21) {
+            AlertPuntajeActitudes.classList = "p-2 rounded overflow-hidden position-relative text-white mt-2";
+            AlertPuntajeActitudes.style.background = "#28a745";
+        } else if (resultado_ultimaevaluacion.totalAttitudes < 22 && resultado_ultimaevaluacion.totalAttitudes > 16) {
+            AlertPuntajeActitudes.classList = "p-2 rounded overflow-hidden position-relative text-white mt-2";
+            AlertPuntajeActitudes.style.background = "#ffc107";
+        } else {
+            AlertPuntajeActitudes.classList = "p-2 rounded overflow-hidden position-relative text-white mt-2";
+            AlertPuntajeActitudes.style.background = "#dc3545";
+        }
+
+        //CAMBIAR COLOR DE ALERT HABILIDADES
+        if (resultado_ultimaevaluacion.totalSkills > 12) {
+            AlertPuntajeHabilidades.classList = "p-2 rounded overflow-hidden position-relative text-white mt-2";
+            AlertPuntajeHabilidades.style.background = "#28a745";
+        } else if (resultado_ultimaevaluacion.totalSkills < 13 && resultado_ultimaevaluacion.totalSkills > 9) {
+            AlertPuntajeHabilidades.classList = "p-2 rounded overflow-hidden position-relative text-white mt-2";
+            AlertPuntajeHabilidades.style.background = "#ffc107";
+        } else {
+            AlertPuntajeHabilidades.classList = "p-2 rounded overflow-hidden position-relative text-white mt-2";
+            AlertPuntajeHabilidades.style.background = "#dc3545";
+        }
+
+        labelPuntajeDesempeño.innerHTML = "Desempeño en la tarea: " + resultado_ultimaevaluacion.totalPerformanceTask;
+        labelPuntajeAsistencia.innerHTML = "Control de Asistencia/Ausencia: " + resultado_ultimaevaluacion.totalAttendance;
+        labelPuntajeActitudes.innerHTML = "Actitudes: " + resultado_ultimaevaluacion.totalAttitudes;
+        labelPuntajeHabilidades.innerHTML = "Habilidades: " + resultado_ultimaevaluacion.totalSkills;
+        numTotalUltimaEvaluacion.innerHTML = resultado_ultimaevaluacion.totalFinal;
+
+        if(resultado_ultimaevaluacion.totalFinal > 66){
+            numTotalUltimaEvaluacion.classList = "font-weight-bold text-center text-success display-3";
+            circulo.style.border = "10px solid #28A745";
+        }else if (resultado_ultimaevaluacion.totalFinal < 67 && resultado_ultimaevaluacion.totalFinal > 51){
+            numTotalUltimaEvaluacion.classList = "font-weight-bold text-center text-warning display-3";
+            circulo.style.border = "10px solid #FFC107";
+        }else{
+            numTotalUltimaEvaluacion.classList = "font-weight-bold text-center text-danger display-3";
+            circulo.style.border = "10px solid #DC3545";
+        }
+
+        if (resultado_ultimaevaluacion.complete == false) {
+
+            var btnGuardar = document.getElementById("btnGuardar");
+            var btnActualizar = document.getElementById("btnActualizar");
+            btnGuardar.hidden = true;
+            btnActualizar.hidden = false;
+
+            var numTotalDesempeñoTarea = document.getElementById("numTotalDesempeñoTarea");
+            var numTotalAsistencia = document.getElementById("numTotalAsistencia");
+            var numTotalActitudes = document.getElementById("numTotalActitudes");
+            var numTotalHabilidades = document.getElementById("numTotalHabilidades");
+            var numTotal = document.getElementById("numTotal");
+            var alertIncompleto = document.getElementById("alertIncompleto");
+            var inputID = document.getElementById("inputID");
+            inputID.value = resultado_ultimaevaluacion.performanceEvaluationId;
+            var inputTotalDesempeñoTarea = document.getElementById("inputTotalDesempeñoTarea");
+            var inputTotalAsistencia = document.getElementById("inputTotalAsistencia");
+            var inputTotalActitudes = document.getElementById("inputTotalActitudes");
+            var inputTotalHabilidades = document.getElementById("inputTotalHabilidades");
+            var inputTotal = document.getElementById("inputTotal");
+            var observations = document.getElementById("observations");
+            var inputFecha = document.getElementById("inputFecha");
+            var inputAddUsr = document.getElementById("inputAddUsr");
+            var inputFechaAdd = document.getElementById("inputFechaAdd");
+            
+            alertIncompleto.hidden = false;
+
+            numTotalDesempeñoTarea.innerHTML = resultado_ultimaevaluacion.totalPerformanceTask;
+            numTotalAsistencia.innerHTML = resultado_ultimaevaluacion.totalAttendance;
+            numTotalActitudes.innerHTML = resultado_ultimaevaluacion.totalAttitudes;
+            numTotalHabilidades.innerHTML = resultado_ultimaevaluacion.totalSkills;
+            inputTotalDesempeñoTarea.value = resultado_ultimaevaluacion.totalPerformanceTask;
+            inputTotalAsistencia.value = resultado_ultimaevaluacion.totalAttendance;
+            inputTotalActitudes.value = resultado_ultimaevaluacion.totalAttitudes;
+            inputTotalHabilidades.value = resultado_ultimaevaluacion.totalSkills;
+            inputTotal.value = resultado_ultimaevaluacion.totalFinal;
+            observations.innerHTML = resultado_ultimaevaluacion.observations;
+            inputFecha.value = resultado_ultimaevaluacion.evaluationDate;
+            inputAddUsr.value = resultado_ultimaevaluacion.addUsr;
+            inputFechaAdd.value = resultado_ultimaevaluacion.addDte;
+
+            //MARCAR RADIOBUTTONS CUANDO EVALUACION INCOMPLETA
+            var optionsCYE = document.getElementsByName('ScoreCYE');
+            for (var optionCYE of optionsCYE) {
+                if (optionCYE.value == resultado_ultimaevaluacion.scoreCYE) {
+                    optionCYE.checked = true;
+                }
+            }
+
+            var optionsNFP = document.getElementsByName('ScoreNFP');
+            for (var optionNFP of optionsNFP) {
+                if (optionNFP.value == resultado_ultimaevaluacion.scoreNFP) {
+                    optionNFP.checked = true;
+                }
+            }
+
+            var optionsPRO = document.getElementsByName('ScorePRO');
+            for (var optionPRO of optionsPRO) {
+                if (optionPRO.value == resultado_ultimaevaluacion.scorePRO) {
+                    optionPRO.checked = true;
+                }
+            }
+
+            var optionsRA = document.getElementsByName('ScoreRA');
+            for (var optionRA of optionsRA) {
+                if (optionRA.value == resultado_ultimaevaluacion.scoreRA) {
+                    optionRA.checked = true;
+                }
+            }
+
+            var optionsRLM = document.getElementsByName('ScoreRLM');
+            for (var optionRLM of optionsRLM) {
+                if (optionRLM.value == resultado_ultimaevaluacion.scoreRLM) {
+                    optionRLM.checked = true;
+                }
+            }
+
+            var optionsAUS = document.getElementsByName('ScoreAUS');
+            for (var optionAUS of optionsAUS) {
+                if (optionAUS.value == resultado_ultimaevaluacion.scoreAUS) {
+                    optionAUS.checked = true;
+                }
+            }
+
+            var optionsATR = document.getElementsByName('ScoreATR');
+            for (var optionATR of optionsATR) {
+                if (optionATR.value == resultado_ultimaevaluacion.scoreATR) {
+                    optionATR.checked = true;
+                }
+            }
+
+            var optionsAL = document.getElementsByName('ScoreAL');
+            for (var optionAL of optionsAL) {
+                if (optionAL.value == resultado_ultimaevaluacion.scoreAL) {
+                    optionAL.checked = true;
+                }
+            }
+
+            var optionsRES = document.getElementsByName('ScoreRES');
+            for (var optionRES of optionsRES) {
+                if (optionRES.value == resultado_ultimaevaluacion.scoreRES) {
+                    optionRES.checked = true;
+                }
+            }
+
+            var optionsSA = document.getElementsByName('ScoreSA');
+            for (var optionSA of optionsSA) {
+                if (optionSA.value == resultado_ultimaevaluacion.scoreSA) {
+                    optionSA.checked = true;
+                }
+            }
+
+            var optionsAHS = document.getElementsByName('ScoreAHS');
+            for (var optionAHS of optionsAHS) {
+                if (optionAHS.value == resultado_ultimaevaluacion.scoreAHS) {
+                    optionAHS.checked = true;
+                }
+            }
+
+            var optionsAHC = document.getElementsByName('ScoreAHC');
+            for (var optionAHC of optionsAHC) {
+                if (optionAHC.value == resultado_ultimaevaluacion.scoreAHC) {
+                    optionAHC.checked = true;
+                }
+            }
+
+            var optionsAMO = document.getElementsByName('ScoreAMO');
+            for (var optionAMO of optionsAMO) {
+                if (optionAMO.value == resultado_ultimaevaluacion.scoreAMO) {
+                    optionAMO.checked = true;
+                }
+            }
+
+            var optionsIC = document.getElementsByName('ScoreIC');
+            for (var optionIC of optionsIC) {
+                if (optionIC.value == resultado_ultimaevaluacion.scoreIC) {
+                    optionIC.checked = true;
+                }
+            }
+
+            var optionsCMT = document.getElementsByName('ScoreCMT');
+            for (var optionCMT of optionsCMT) {
+                if (optionCMT.value == resultado_ultimaevaluacion.scoreCMT) {
+                    optionCMT.checked = true;
+                }
+            }
+
+            var optionsCDA = document.getElementsByName('ScoreCDA');
+            for (var optionCDA of optionsCDA) {
+                if (optionCDA.value == resultado_ultimaevaluacion.scoreCDA) {
+                    optionCDA.checked = true;
+                }
+            }
+        }
+    }
+
+    const formEl = document.querySelector('#formEvaluacion');
+
+    async function Guardar(){
+
+        var flag = 0;
+        var inputComplete = document.getElementById('inputComplete');
+
+        var optionsCYE = document.getElementsByName('ScoreCYE');
+        for (var optionCYE of optionsCYE) {
+            if(optionCYE.checked){
+                flag++;
+            }
+        }
+
+        var optionsNFP = document.getElementsByName('ScoreNFP');
+        for (var optionNFP of optionsNFP) {
+            if(optionNFP.checked){
+                flag++;
+            }
+        }
+
+        var optionsPRO = document.getElementsByName('ScorePRO');
+        for (var optionPRO of optionsPRO) {
+            if(optionPRO.checked){
+                flag++;
+            }
+        }
+
+        var optionsRA = document.getElementsByName('ScoreRA');
+        for (var optionRA of optionsRA) {
+            if(optionRA.checked){
+                flag++;
+            }
+        }
+
+        var optionsRLM = document.getElementsByName('ScoreRLM');
+        for (var optionRLM of optionsRLM){
+            if(optionRLM.checked){
+                flag++;
+            }
+        }
+
+        var optionsAUS = document.getElementsByName('ScoreAUS');
+        for (var optionAUS of optionsAUS){
+            if(optionAUS.checked){
+                flag++;
+            }
+        }
+
+        //var optionsATR = document.getElementsByName('ScoreATR');
+        //for (var optionATR of optionsATR){
+        //    if(optionATR.checked){
+        //        flag++;
+        //    }
+        //}
+
+        var optionsAL = document.getElementsByName('ScoreAL');
+        for (var optionAL of optionsAL){
+            if(optionAL.checked){
+                flag++;
+            }
+        }
+
+        var optionsRES = document.getElementsByName('ScoreRES');
+        for (var optionRES of optionsRES){
+            if(optionRES.checked){
+                flag++;
+            }
+        }
+
+        var optionsSA = document.getElementsByName('ScoreSA');
+        for (var optionSA of optionsSA){
+            if(optionSA.checked){
+                flag++;
+            }
+        }
+
+        var optionsAHS = document.getElementsByName('ScoreAHS');
+        for (var optionAHS of optionsAHS){
+            if(optionAHS.checked){
+                flag++;
+            }
+        }
+
+        var optionsAHC = document.getElementsByName('ScoreAHC');
+        for (var optionAHC of optionsAHC){
+            if(optionAHC.checked){
+                flag++;
+            }
+        }
+
+        var optionsAMO = document.getElementsByName('ScoreAMO');
+        for (var optionAMO of optionsAMO){
+            if(optionAMO.checked){
+                flag++;
+            }
+        }
+
+        var optionsIC = document.getElementsByName('ScoreIC');
+        for (var optionIC of optionsIC){
+            if(optionIC.checked){
+                flag++;
+            }
+        }
+
+        var optionsCMT = document.getElementsByName('ScoreCMT');
+        for (var optionCMT of optionsCMT){
+            if(optionCMT.checked){
+                flag++;
+            }
+        }
+
+        var optionsCDA = document.getElementsByName('ScoreCDA');
+        for (var optionCDA of optionsCDA){
+            if(optionCDA.checked){
+                flag++;
+            }
+        }
+
+        console.log(flag)
+
+        if(flag == 15){
+            inputComplete.value = true;
+        }
+
+        formEl.addEventListener('submit', event => {
+            event.preventDefault();
+            
+            let url = 'performanceevaluation/create';
+            var parametros = {}
+
+            const formData = new FormData(formEl);
+            const data = new URLSearchParams(formData);
+            
+
+            formData.forEach(function(value, key){
+                parametros[key] = value;
+            })
+
+            var json = JSON.stringify(parametros);
+            console.log(json)
+    
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: json,
+            }).then(res => Swal.fire('Evaluacion agregada', '', 'success').then(() => { reloadToTop(); }))
+              .catch(err => console.log(err));
+        });
+    }
+
+    var departamentoUsuario = document.getElementById("departamentoUsuario").innerHTML;
+
+    function OptionSeleccionada(){
+
+        for (var option of document.getElementById("selectDepartamento").options){
+            if(departamentoUsuario == option.innerHTML){
+                option.selected = "selected";
+            }
+        }
+        $(document).ready(function () {
+            $(".select2").select2({
+                language: {
+                    noResults: function () {
+                        return "No hay resultados.";
+                    }
+                }
+            });
+        });
+    }
+
+    function cargarPagina(){
+        OptionSeleccionada();
+        cargarSelectTrabajadores();
+        //$(document).ready(function(){
+        //    $(this).scrollTop(0);
+        //});
+    }
+
+    function limpiarFormulario(){
+
+        var inputID = document.getElementById("inputID");
+        var alertIncompleto = document.getElementById("alertIncompleto");
+        alertIncompleto.hidden = true;
+        var btnGuardar = document.getElementById("btnGuardar");
+        var btnActualizar = document.getElementById("btnActualizar");
+        btnGuardar.disabled = true;
+        btnGuardar.classList = "btn btn-secondary waves-effect waves-themed";
+        btnGuardar.hidden = false;
+        btnActualizar.disabled = true;
+        btnActualizar.hidden = true;
+        btnActualizar.classList = "btn btn-secondary waves-effect waves-themed";
+        var inputTotalDesempeñoTarea = document.getElementById("inputTotalDesempeñoTarea");
+        var inputTotalAsistencia = document.getElementById("inputTotalAsistencia");
+        var inputTotalActitudes = document.getElementById("inputTotalActitudes");
+        var inputTotalHabilidades = document.getElementById("inputTotalHabilidades");
+        var inputTotal = document.getElementById("inputTotal");
+
+        inputTotalDesempeñoTarea.value = 0;
+        inputTotalAsistencia.value = 0;
+        inputTotalActitudes.value = 0;
+        inputTotalHabilidades.value = 0;
+        inputTotal.value = 0;
+
+
+        var optionsCYE = document.getElementsByName('ScoreCYE');
+        for (var optionCYE of optionsCYE) {
+            optionCYE.checked = false;
+        }
+
+        var optionsNFP = document.getElementsByName('ScoreNFP');
+        for (var optionNFP of optionsNFP) {
+            optionNFP.checked = false;
+        }
+
+        var optionsPRO = document.getElementsByName('ScorePRO');
+        for (var optionPRO of optionsPRO) {
+            optionPRO.checked = false;
+        }
+
+        var optionsRA = document.getElementsByName('ScoreRA');
+        for (var optionRA of optionsRA) {
+            optionRA.checked = false;
+        }
+
+        var optionsRLM = document.getElementsByName('ScoreRLM');
+        for (var optionRLM of optionsRLM) {
+            optionRLM.checked = false;
+        }
+
+        var optionsAUS = document.getElementsByName('ScoreAUS');
+        for (var optionAUS of optionsAUS) {
+            optionAUS.checked = false;
+        }
+
+        var optionsATR = document.getElementsByName('ScoreATR');
+        for (var optionATR of optionsATR) {
+            optionATR.checked = false;
+        }
+
+        var optionsAL = document.getElementsByName('ScoreAL');
+        for (var optionAL of optionsAL) {
+            optionAL.checked = false;
+        }
+
+        var optionsRES = document.getElementsByName('ScoreRES');
+        for (var optionRES of optionsRES) {
+            optionRES.checked = false;
+        }
+
+        var optionsSA = document.getElementsByName('ScoreSA');
+        for (var optionSA of optionsSA) {
+            optionSA.checked = false;
+        }
+
+        var optionsAHS = document.getElementsByName('ScoreAHS');
+        for (var optionAHS of optionsAHS) {
+            optionAHS.checked = false;
+        }
+
+        var optionsAHC = document.getElementsByName('ScoreAHC');
+        for (var optionAHC of optionsAHC) {
+            optionAHC.checked = false;
+        }
+
+        var optionsAMO = document.getElementsByName('ScoreAMO');
+        for (var optionAMO of optionsAMO) {
+            optionAMO.checked = false;
+        }
+
+        var optionsIC = document.getElementsByName('ScoreIC');
+        for (var optionIC of optionsIC) {
+            optionIC.checked = false;
+        }
+
+        var optionsCMT = document.getElementsByName('ScoreCMT');
+        for (var optionCMT of optionsCMT) {
+            optionCMT.checked = false;
+        }
+
+        var optionsCDA = document.getElementsByName('ScoreCDA');
+        for (var optionCDA of optionsCDA) {
+            optionCDA.checked = false;
+        }
+
+        var AlertPuntajeDesempeño = document.getElementById("AlertPuntajeDesempeño");
+        var labelPuntajeDesempeño = document.getElementById("labelPuntajeDesempeño");
+        var AlertPuntajeAsistencia = document.getElementById("AlertPuntajeAsistencia");
+        var labelPuntajeAsistencia = document.getElementById("labelPuntajeAsistencia");
+        var AlertPuntajeActitudes = document.getElementById("AlertPuntajeActitudes");
+        var labelPuntajeActitudes = document.getElementById("labelPuntajeActitudes");
+        var AlertPuntajeHabilidades = document.getElementById("AlertPuntajeHabilidades");
+        var labelPuntajeHabilidades = document.getElementById("labelPuntajeHabilidades");
+        var numTotalUltimaEvaluacion = document.getElementById("numTotalUltimaEvaluacion");
+        var numTotalDesempeñoTarea = document.getElementById("numTotalDesempeñoTarea");
+        var numTotalAsistencia = document.getElementById("numTotalAsistencia");
+        var numTotalActitudes = document.getElementById("numTotalActitudes");
+        var numTotalHabilidades = document.getElementById("numTotalHabilidades");
+        var circulo = document.getElementById("circulo");
+        var numTotal = document.getElementById("numTotal");
+        var observations = document.getElementById("observations");
+        circulo.style.border = "10px solid #666666";
+        numTotalUltimaEvaluacion.classList = "font-weight-bold text-center display-3";
+        numTotal.classList = "text-right";
+
+        AlertPuntajeDesempeño.style.removeProperty("background");
+        AlertPuntajeDesempeño.classList = "p-2 bg-primary-300 rounded overflow-hidden position-relative text-white";
+        AlertPuntajeAsistencia.style.removeProperty("background");
+        AlertPuntajeAsistencia.classList = "p-2 bg-primary-300 rounded overflow-hidden position-relative text-white mt-2";
+        AlertPuntajeActitudes.style.removeProperty("background");
+        AlertPuntajeActitudes.classList = "p-2 bg-primary-300 rounded overflow-hidden position-relative text-white mt-2";
+        AlertPuntajeHabilidades.style.removeProperty("background");
+        AlertPuntajeHabilidades.classList = "p-2 bg-primary-300 rounded overflow-hidden position-relative text-white mt-2";
+
+        labelPuntajeDesempeño.innerHTML = "Desempeño en la tarea: ";
+        labelPuntajeAsistencia.innerHTML = "Control de Asistencia/Ausencia: ";
+        labelPuntajeActitudes.innerHTML = "Actitudes: ";
+        labelPuntajeHabilidades.innerHTML = "Habilidades: ";
+        numTotalUltimaEvaluacion.innerHTML = "??";
+        numTotalDesempeñoTarea.innerHTML = "??";
+        numTotalAsistencia.innerHTML = "??";
+        numTotalActitudes.innerHTML = "??";
+        numTotalHabilidades.innerHTML = "??";
+        numTotal.innerHTML = "??";
+        observations.innerHTML = "";
+    }
+
+    window.onload = cargarPagina;
+
+    async function Actualizar(){
+        var inputID = document.getElementById("inputID");
+        //var inputFechaAdd = document.getElementById("inputFechaAdd");
+        //var inputAddUsr = document.getElementById("inputAddUsr");
+        var inputFechaChg = document.getElementById("inputFechaChg");
+        var inputChgUsr = document.getElementById("inputChgUsr");
+        //inputFechaAdd.disabled = true;
+        //inputAddUsr.disabled = true;
+        inputFechaChg.disabled = false;
+        inputChgUsr.disabled = false;
+
+        inputID.disabled = false;
+
+        var flag = 0;
+        var inputComplete = document.getElementById('inputComplete');
+
+        var optionsCYE = document.getElementsByName('ScoreCYE');
+        for (var optionCYE of optionsCYE) {
+            if(optionCYE.checked){
+                flag++;
+            }
+        }
+
+        var optionsNFP = document.getElementsByName('ScoreNFP');
+        for (var optionNFP of optionsNFP) {
+            if(optionNFP.checked){
+                flag++;
+            }
+        }
+
+        var optionsPRO = document.getElementsByName('ScorePRO');
+        for (var optionPRO of optionsPRO) {
+            if(optionPRO.checked){
+                flag++;
+            }
+        }
+
+        var optionsRA = document.getElementsByName('ScoreRA');
+        for (var optionRA of optionsRA) {
+            if(optionRA.checked){
+                flag++;
+            }
+        }
+
+        var optionsRLM = document.getElementsByName('ScoreRLM');
+        for (var optionRLM of optionsRLM){
+            if(optionRLM.checked){
+                flag++;
+            }
+        }
+
+        var optionsAUS = document.getElementsByName('ScoreAUS');
+        for (var optionAUS of optionsAUS){
+            if(optionAUS.checked){
+                flag++;
+            }
+        }
+
+        //var optionsATR = document.getElementsByName('ScoreATR');
+        //for (var optionATR of optionsATR){
+        //    if(optionATR.checked){
+        //        flag++;
+        //    }
+        //}
+
+        var optionsAL = document.getElementsByName('ScoreAL');
+        for (var optionAL of optionsAL){
+            if(optionAL.checked){
+                flag++;
+            }
+        }
+
+        var optionsRES = document.getElementsByName('ScoreRES');
+        for (var optionRES of optionsRES){
+            if(optionRES.checked){
+                flag++;
+            }
+        }
+
+        var optionsSA = document.getElementsByName('ScoreSA');
+        for (var optionSA of optionsSA){
+            if(optionSA.checked){
+                flag++;
+            }
+        }
+
+        var optionsAHS = document.getElementsByName('ScoreAHS');
+        for (var optionAHS of optionsAHS){
+            if(optionAHS.checked){
+                flag++;
+            }
+        }
+
+        var optionsAHC = document.getElementsByName('ScoreAHC');
+        for (var optionAHC of optionsAHC){
+            if(optionAHC.checked){
+                flag++;
+            }
+        }
+
+        var optionsAMO = document.getElementsByName('ScoreAMO');
+        for (var optionAMO of optionsAMO){
+            if(optionAMO.checked){
+                flag++;
+            }
+        }
+
+        var optionsIC = document.getElementsByName('ScoreIC');
+        for (var optionIC of optionsIC){
+            if(optionIC.checked){
+                flag++;
+            }
+        }
+
+        var optionsCMT = document.getElementsByName('ScoreCMT');
+        for (var optionCMT of optionsCMT){
+            if(optionCMT.checked){
+                flag++;
+            }
+        }
+
+        var optionsCDA = document.getElementsByName('ScoreCDA');
+        for (var optionCDA of optionsCDA){
+            if(optionCDA.checked){
+                flag++;
+            }
+        }
+
+        if(flag == 15){
+            inputComplete.value = true;
+        }
+
+        console.log(flag);
+
+        var id = document.getElementById("inputID").value;
+        formEl.addEventListener('submit', event => {
+            event.preventDefault();
+            
+            let url = 'performanceevaluation/actualizar/'+id;
+            var parametros = {}
+
+            const formData = new FormData(formEl);
+            const data = new URLSearchParams(formData);
+            
+
+            formData.forEach(function(value, key){
+                parametros[key] = value;
+            })
+
+            var json = JSON.stringify(parametros);
+            console.log(json)
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: json,
+            }).then(res => Swal.fire({title:'Evaluacion terminada', icon:'success'}).then(() => { reloadToTop(); }))
+                .catch(err => console.log(err));
+        });
+    }
+
+    function reloadToTop(){
+        
+        location.reload();
+        
+    }
+
+</script>

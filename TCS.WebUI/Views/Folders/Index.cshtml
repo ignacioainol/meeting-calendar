@@ -1,0 +1,297 @@
+﻿@model IEnumerable<TCS.EF.Entidades.Folders>
+
+@{
+    ViewData["Title"] = "Index";
+    //List<TCS.EF.Entidades.Folders> roots = ViewBag.roots;
+    //List<TCS.EF.Entidades.Folders> childs = ViewBag.childs;
+}
+@section HeadBlock {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.css" rel="stylesheet">
+    <link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+
+}
+
+<div class="modal fade" id="create-folder" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    Creando nueva carpeta 
+                    <span id="mute">
+
+                    </span>
+                </h4>
+
+            </div>
+            <div class="modal-body row">
+                <div class="col-md-12 mb-3">
+                    <label class="control-label">Nombre de carpeta</label>
+                    <input id="nameFolder" type="text" class="form-control" required autocomplete="off" />
+                    <label class="text-danger" id="nameFolder" style="display:none"></label>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" id="save-folder" class="btn btn-primary">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-hdr">
+        <h2>
+            <i class="fal fa-search text-info"></i>&nbsp;Carpetas SIG
+        </h2>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content p-0">
+            <div class="panel-content">
+                <div id="draw">
+                    <div class="col-md-5 mb-3">
+                        <input id="search-text" type="text" class="form-control" placeholder="Buscar por nombre de carpeta o archivo" autocomplete="off" />
+                    </div>
+                    <div id="jstree"></div>
+                </div>
+            </div>
+            <div class="col-md-12 mb-3 text-left">
+                <input id="folder" hidden />
+                <input id="FolderName" hidden />
+                <button id="createFolder" class="btn btn-sm btn-primary ml-auto mb-3 btn-sm-block" type="button">Crear Carpeta</button>
+                <button id="createFolderRoot" class="btn btn-sm btn-primary ml-auto mb-3 btn-sm-block" type="button">Crear Carpeta Raíz</button>
+                <button id="deleteFolder" class="btn btn-sm btn-danger ml-auto mb-3 btn-sm-block" type="button">Eliminar Carpeta</button>
+                @*<button id="save" class="btn btn-warning ml-auto mb-3 btn-sm-block" type="button">Crear Archivo</button>*@
+                @*<a id="createFolder" class="btn  btn-sm  btn-success btn-lg btn-icon waves-effect waves-themed">
+                    <i class="fal fa-check"></i>
+                </a>*@
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+@section ScriptsBlock {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.js"></script>
+    <script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', LoadedFunction);
+        document.getElementById("createFolder").onclick = function () { CreateFolder() };
+        document.getElementById("createFolderRoot").onclick = function () { CreateFolderRoot() };
+        document.getElementById("deleteFolder").onclick = function () { deletFolder() };
+        document.getElementById("save-folder").onclick = function () { SaveFolder() };
+        let jstr;
+
+
+        async function LoadedFunction() {
+
+            $('#jstree').on('ready.jstree', function () {
+                jstr = $('#jstree').jstree(true);
+            });
+            CargarTree();
+            search();
+            changed();
+
+        }
+
+        async function search() {
+            $('#search-text').keyup(function () {
+                var v = $('#search-text').val();
+                jstr.search(v);
+            });
+        }
+
+        async function changed() {
+            $('#jstree').on("changed.jstree", function (e, data) {
+                document.getElementById("folder").value = data.selected[0];
+                document.getElementById("FolderName").value = data.node.text;
+            });
+        }
+
+        async function CargarTree() {
+           $.ajax({
+               type: 'GET',
+                url: '@Url.Action("GetTree", "Folders")',
+               success: function (result) {
+
+                    $('#jstree').jstree({
+                    'plugins': ["wholerow", "search", "sort", "contextmenu"],
+                    'core': {
+                        'data': result,
+                        "animation": true,
+                        "themes": {
+                            "variant": "large"
+                        },
+                    },
+                    "contextmenu": {
+                    items: function ($node) {
+                        return {
+                            "create": {
+                                "label": "<span >Crear carpeta </span>",
+                             /*   "icon": "fa fa-sort-amount-asc",*/
+                                "action": function (obj) {
+                                    CreateFolder()
+                                },
+
+                            },
+                            "desc": {
+                                "label": "<span>Eliminar carpeta </span>",
+
+                                "action": function (obj) {
+                                    DeleteFolder()
+                                },
+                            }
+                        }
+                    },
+                        },
+                    });
+               }
+           })
+        }
+
+        async function CreateFolder() {
+            let parent = document.getElementById("folder").value
+            let name = document.getElementById("FolderName").value
+            if (parent != '') {
+                var span = document.getElementById("mute");
+                span.textContent = 'para: ' + name +''
+                $("#create-folder").modal();
+
+            }
+        }
+
+        async function CreateFolderRoot() {
+            var span = document.getElementById("mute");
+            span.textContent = 'raíz'
+            document.getElementById("folder").value = "";
+
+            $("#create-folder").modal();
+        }
+
+        async function deletFolder() {
+            let parent = document.getElementById("folder").value    
+            if (parent != '') {
+                DeleteFolder()
+                
+            }
+        }
+
+        async function SaveFolder() {
+            let parent = parseInt(document.getElementById("folder").value)
+            let nameFolder = document.getElementById("nameFolder").value
+            if (nameFolder != '') {
+                 $.busyLoadSetup( {
+                    animation: "fade",
+                    animationDuration: "slow"
+                 });
+                $("#jstree").busyLoad("show", { spinner: "accordion" });
+                $.ajax({
+                    type: 'GET',
+                    data: { parent: parent, nameFolder: nameFolder},
+                    url: '@Url.Action("CreateNode", "Folders")',
+                    success: function (result) {
+                        jstr.destroy();
+                        document.getElementById("nameFolder").value = "";
+                        document.getElementById("folder").value = "";
+                       $('#jstree').jstree({
+                           'plugins': ["wholerow", "search", "sort", "contextmenu"],
+                            'core': {
+                                'data': result.item1,
+                                "animation": true,
+                                "themes": {
+                                    "variant": "large",
+
+                                },
+                           },
+                           "contextmenu": {
+                               items: function ($node) {
+                                   return {
+                                       "create": {
+                                           "label": "<span >Crear carpeta </span>",
+                                           /*   "icon": "fa fa-sort-amount-asc",*/
+                                           "action": function (obj) {
+                                               CreateFolder()
+                                           },
+
+                                       },
+                                       "desc": {
+                                           "label": "<span>Eliminar carpeta </span>",
+
+                                           "action": function (obj) {
+                                               DeleteFolder()
+                                           },
+                                       }
+                                   }
+                               },
+                           },
+
+                       });
+                        Swal.fire(
+                            'Listo!',
+                            'Carpeta creada correctamente',
+                            'success'
+                        )
+                        $('#create-folder').modal('hide')
+
+                        LoadedFunction()
+                        $('#jstree').on('ready.jstree', function () {
+                            jstr.select_node(result.item2);
+                        });
+
+                        $("#jstree").busyLoad("hide");
+
+                    }
+                })
+            }
+
+        }
+
+        async function DeleteFolder() {
+
+            Swal.fire({
+                title: 'Eliminando carpeta',
+                text: '¿Estás seguro que deseas eliminar esta carpeta?.',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Continuar',
+                cancelButtonText: "Volver",
+                customClass: {
+                    confirmButton: 'btn btn-primary btn-lg',
+                    cancelButton: 'btn btn-secondary btn-lg'
+                }
+            }).then((result) => {
+
+                if (result.value) {
+                    let parent = parseInt(document.getElementById("folder").value)
+                    $.ajax({
+                            type: 'GET',
+                            data: { parent: parent},
+                            url: '@Url.Action("DeleteNode", "Folders")',
+                            success: function (result) {
+                                    jstr.destroy();
+                                    LoadedFunction()
+                                    document.getElementById("folder").value = "";
+                                    $('#jstree').on('ready.jstree', function () {
+                                        jstr.open_node(result.item2);
+                                        jstr.select_node(result.item2);
+
+                                    });
+                                }
+
+                    })
+                    Swal.fire(
+                        'Listo!',
+                        'Carpeta eliminada correctamente',
+                        'success'
+                    )
+
+                }
+            });
+            }
+    </script>
+
+}

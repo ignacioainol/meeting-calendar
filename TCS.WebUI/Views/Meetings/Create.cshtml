@@ -1,0 +1,1045 @@
+﻿@model TCS.EF.Entidades.Meeting
+
+@{
+    ViewData["Title"] = SharedLocalizer["meeting"].ToString();
+    ViewData["PageName"] = "meetings_index";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + SharedLocalizer["Crear Reunion"].ToString();
+
+    var dateheader = SharedLocalizer["" + DateTime.Now.DayOfWeek.ToString().ToLower() + ""] + ", " + SharedLocalizer["" + ViewBag.monthheaderdate + ""] + " " + DateTime.Now.Day + ", " + DateTime.Now.Year;
+
+}
+@section HeadBlock{
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/viewsCss/Meetings.css">
+    <!-- para sweet alert se debe traer el css antiguo para que tome los estilos del template -->
+    <link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+}
+
+
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="panel">
+        <div class="panel-hdr" role="heading">
+            <h2 class="ui-sortable-handle">@dateheader</h2>
+            <div class="panel-saving mr-2" style="display:none">
+                <i class="fal fa-spinner-third fa-spin-4x fs-xl"></i>
+            </div>
+            <div class="panel-toolbar" role="menu">
+                <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="@SharedLocalizer["collapse"]"></button>
+                <button class="btn btn-panel waves-effect waves-themed" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="@SharedLocalizer["fullscreen"]"></button>
+            </div>
+        </div>
+
+        <div class="panel-container show">
+            <div class="panel-content p-0">
+                <div class="panel-content">
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Title" class="control-label">@SharedLocalizer["title"]</label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Location" class="control-label">@SharedLocalizer["location"]</label>
+                            <input asp-for="Location" class="form-control" placeholder="Ej: sala de reuniones" />
+                            <span asp-validation-for="Location" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="StartDate" class="control-label">@SharedLocalizer["startdate"]</label>
+                            <input type="date" asp-for="StartDate" class="form-control" />
+                            <span asp-validation-for="StartDate" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                             <label asp-for="StartTime" class="control-label">@SharedLocalizer["starthour"]</label>
+                            <input type="time" asp-for="StartTime" class="form-control" />
+                            <span asp-validation-for="StartTime" class="text-danger"></span>
+                         </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="EndTime" class="control-label">@SharedLocalizer["endhour"]</label>
+                            <input type="time" asp-for="EndTime" class="form-control" />
+                            <span asp-validation-for="EndTime" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label asp-for="Description" class="control-label">@SharedLocalizer["description"]</label>
+                            <textarea asp-for="Description" class="form-control"  id="descriptionMeeting" name="description"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                </div>
+                        
+                        
+                        
+                </div>
+                    <div class="form-row">
+                        @*<div class="col-xs-6 col-sm-6 col-md-6 col-lg-2 mb-3">
+                            <br />
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="recurrentCheck">
+                                <label class="custom-control-label" for="recurrentCheck">@SharedLocalizer["recurrent"]</label>
+                            </div>
+                        </div>*@
+                        @*<div class="col-xs-6 col-sm-6 col-md-6 col-lg-4 mb-3">
+                            <label class="control-label">@SharedLocalizer["recurrence"]</label>
+                            <select class="select2 form-control w-100 select2-hidden-accessible" id="recurrentDP" data-select2-id="single-default" tabindex="-1" aria-hidden="true" disabled>
+                                <option>@SharedLocalizer["every day"]</option>
+                                <option>@SharedLocalizer["weekly"]</option>
+                                <option>@SharedLocalizer["monthly"]</option>
+                                <option>@SharedLocalizer["annually"]</option>
+                                <option>@SharedLocalizer["frommondaytofriday"]</option>
+                            </select>
+                            <span class="text-danger"></span>
+                        </div>*@
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <button type="submit" class="btn btn-primary waves-effect waves-themed">@SharedLocalizer["save"]</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+
+</form>
+<!--Vista Participantes-->
+@*<div id="panel-1" class="panel">
+    <div class="panel-hdr">
+        <h2 class="ui-sortable-handle">@SharedLocalizer["participants"]</h2>
+        <div class="panel-toolbar" role="menu">
+            <button class="btn btn-primary btn-sm waves-effect waves-themed" id="addParticipants" data-toggle="modal" data-target="#modalParticipants">@SharedLocalizer["addparticipants"]</button>
+            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="@SharedLocalizer["collapse"]"></button>
+            <button class="btn btn-panel waves-effect waves-themed" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="@SharedLocalizer["fullscreen"]"></button>
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            <div class="alert alert-info" id="alertNoparticipants" role="alert">
+                <strong>@SharedLocalizer["therearenoparticipantsyet"]</strong>
+            </div>
+            <table id="dt-participants" class="table table-bordered table-hover table-striped w-100">
+                <thead class="bg-primary-500">
+                    <tr>
+                        <th>
+                            @SharedLocalizer["fullname"]
+                        </th>
+                        <th>
+                            @SharedLocalizer["department"]
+                        </th>
+                        <th>
+                            @SharedLocalizer["externalparticipant"]
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            Juan Ortiz
+                        </td>
+                        <td>
+                            @SharedLocalizer["itdepartment"]
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Camila San Martin
+                        </td>
+                        <td>
+                            @SharedLocalizer["itdepartment"]
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Pedro Pablo
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            ACHS
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Javier Torres
+                        </td>
+                        <td>
+                            @SharedLocalizer["itdepartment"]
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Jean Quiero
+                        </td>
+                        <td>
+                            @SharedLocalizer["itdepartment"]
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Elias Rivas
+                        </td>
+                        <td>
+                            @SharedLocalizer["accountingdepartment"]
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>*@
+
+<!--Modal-->
+@*<div class="modal fade modal-backdrop-transparent" id="modalParticipants" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="tm-participant" class="modal-title">Agregar participantes</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#tab_participants" role="tab" aria-selected="true"><i class="fal fa-home mr-1"></i>@SharedLocalizer["participants"]</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#tab_externalstuff" role="tab" aria-selected="false"><i class="fal fa-user mr-1"></i>@SharedLocalizer["externalparticipant"]</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#tab_groups" role="tab" aria-selected="false"><i class="fal fa-users mr-1"></i>@SharedLocalizer["group"]</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content border border-top-0 p-3">
+                    <div class="tab-pane fade active show" id="tab_participants" role="tabpanel">
+                        <div class="form-row">
+                            <div class="col-md-6 mb-3">
+                                <label class="control-label">@SharedLocalizer["departments"]</label>
+                                <select class="select2 form-control" id="depto-table" data-select2-id="single-default" tabindex="-1" aria-hidden="true">
+                                    <option selected>@SharedLocalizer["alldepartments"]</option>
+                                    <option>@SharedLocalizer["itdepartment"]</option>
+                                    <option>@SharedLocalizer["accountingdepartment"]</option>
+                                </select>
+                                <span class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="control-label" for="Location">@SharedLocalizer["searchparticipant"]</label>
+                                <div class="input-group bg-white shadow-inset-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-transparent border-right-0">
+                                            <i class="fal fa-search"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control border-left-0 bg-transparent pl-0" placeholder="@SharedLocalizer["search"]...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <table class="table table-bordered table-hover table-striped w-100">
+                            <thead class="bg-primary-500">
+                                <tr>
+                                    <th scope="col"></th>
+                                    <th scope="col">@SharedLocalizer["fullname"]</th>
+                                    <th scope="col">@SharedLocalizer["department"]</th>
+                                    <th scope="col">@SharedLocalizer["company"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="participant1">
+                                            <label class="custom-control-label" for="participant1"></label>
+                                        </div>
+                                    </td>
+                                    <td>Juan Ortiz</td>
+                                    <td>@SharedLocalizer["itdepartment"]</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="participant2">
+                                            <label class="custom-control-label" for="participant2"></label>
+                                        </div>
+                                    </td>
+                                    <td>Camila San Martin</td>
+                                    <td>@SharedLocalizer["itdepartment"]</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="participant3">
+                                            <label class="custom-control-label" for="participant3"></label>
+                                        </div>
+                                    </td>
+                                    <td>Javier Torres</td>
+                                    <td>@SharedLocalizer["itdepartment"]</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="participant4">
+                                            <label class="custom-control-label" for="participant4"></label>
+                                        </div>
+                                    </td>
+                                    <td>Pedro Pablo</td>
+                                    <td></td>
+                                    <td>ACHS</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="participant5">
+                                            <label class="custom-control-label" for="participant5"></label>
+                                        </div>
+                                    </td>
+                                    <td>Jean Quiero</td>
+                                    <td>@SharedLocalizer["itdepartment"]</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="participant6">
+                                            <label class="custom-control-label" for="participant6"></label>
+                                        </div>
+                                    </td>
+                                    <td>Elias Rivas</td>
+                                    <td>@SharedLocalizer["accountingdepartment"]</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>*@
+                    @*<div class="tab-pane fade" id="tab_externalstuff" role="tabpanel">
+                        <div class="form-row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Title" class="control-label">@SharedLocalizer["e-mail"]</label>
+                                <input class="form-control" type="email" />
+                                <span asp-validation-for="@SharedLocalizer["e-mail"]" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="control-label">@SharedLocalizer["name"]</label>
+                                <input class="form-control" />
+                                @* <span class="text-danger"></span> *@
+                                @*@<span asp-validation-for="@SharedLocalizer["name"]" class="text-danger"></span>
+                            </div>*@
+                        @*</div>
+                        <div class="form-row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="@SharedLocalizer["company"]" class="control-label">@SharedLocalizer["company"]</label>
+                                <input class="form-control" />
+                                @*<span class="text-danger"></span> *@@*
+                            </div>
+                        </div>
+                    </div>*@
+                    @*<div class="tab-pane fade" id="tab_groups" role="tabpanel">
+                        <!--Vista sin grupos-->
+                        <div id="nogroupyet">
+                            <h5 class="frame-heading" id="txtNogroups">@SharedLocalizer["nogroupsyet"]</h5>
+                            <button id="" class="btn btn-block btn-primary waves-effect waves-themed createNewGroup">@SharedLocalizer["creategroup"]</button>
+                        </div>*@
+
+                        <!--Vista tabla de grupos-->
+                        @*<div id="divtablegroup">
+                            <table id="tableGroups" class="table table-bordered table-hover table-striped w-100" data-page-length="5">
+                                <thead class="bg-primary-500">
+                                    <tr>
+                                        <th scope="col"></th>
+                                        <th scope="col">@SharedLocalizer["namegroup"]</th>
+                                        <th scope="col">@SharedLocalizer["participants"]</th>*
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="participant1">
+                                                <label class="custom-control-label" for="participant1"></label>
+                                            </div>
+                                        </td>
+                                        <td>@SharedLocalizer["itdepartment"]</td>
+                                        <td style="text-align: center;">9</td>
+                                        <td>
+                                            <button id="1" type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="editGroup(this)">
+                                                <span class="fal fa-edit mr-1 btn-table-edit"></span>
+                                                @SharedLocalizer["edit"]
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteGroup(this)">
+                                                <span class="fal fa-times mr-1 btn-table-delete"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="participant1">
+                                                <label class="custom-control-label" for="participant1"></label>
+                                            </div>
+                                        </td>
+                                        <td>@SharedLocalizer["accountingdepartment"]</td>
+                                        <td style="text-align: center;">5</td>
+                                        <td>
+                                            <button id="2" type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="editGroup(this)">
+                                                <span class="fal fa-edit mr-1 btn-table-edit"></span>
+                                                @SharedLocalizer["edit"]
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteGroup(this)">
+                                                <span class="fal fa-times mr-1 btn-table-delete"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="participant1">
+                                                <label class="custom-control-label" for="participant1"></label>
+                                            </div>
+                                        </td>
+                                        <td>@SharedLocalizer["designdepartment"]</td>
+                                        <td style="text-align: center;">7</td>
+                                        <td>
+                                            <button id="3" type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="editGroup(this)">
+                                                <span class="fal fa-edit mr-1 btn-table-edit"></span>
+                                                @SharedLocalizer["edit"]
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteGroup(this)">
+                                                <span class="fal fa-times mr-1 btn-table-delete"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="participant1">
+                                                <label class="custom-control-label" for="participant1"></label>
+                                            </div>
+                                        </td>
+                                        <td>@SharedLocalizer["designdepartment"]</td>
+                                        <td style="text-align: center;">7</td>
+                                        <td>
+                                            <button id="3" type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="editGroup(this)">
+                                                <span class="fal fa-edit mr-1 btn-table-edit"></span>
+                                                @SharedLocalizer["edit"]
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteGroup(this)">
+                                                <span class="fal fa-times mr-1 btn-table-delete"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="participant1">
+                                                <label class="custom-control-label" for="participant1"></label>
+                                            </div>
+                                        </td>
+                                        <td>@SharedLocalizer["designdepartment"]</td>
+                                        <td style="text-align: center;">7</td>
+                                        <td>
+                                            <button id="3" type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="editGroup(this)">
+                                                <span class="fal fa-edit mr-1 btn-table-edit"></span>
+                                                @SharedLocalizer["edit"]
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteGroup(this)">
+                                                <span class="fal fa-times mr-1 btn-table-delete"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="participant1">
+                                                <label class="custom-control-label" for="participant1"></label>
+                                            </div>
+                                        </td>
+                                        <td>@SharedLocalizer["designdepartment"]</td>
+                                        <td style="text-align: center;">7</td>
+                                        <td>
+                                            <button id="3" type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="editGroup(this)">
+                                                <span class="fal fa-edit mr-1 btn-table-edit"></span>
+                                                @SharedLocalizer["edit"]
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteGroup(this)">
+                                                <span class="fal fa-times mr-1 btn-table-delete"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="participant1">
+                                                <label class="custom-control-label" for="participant1"></label>
+                                            </div>
+                                        </td>
+                                        <td>@SharedLocalizer["designdepartment"]</td>
+                                        <td style="text-align: center;">7</td>
+                                        <td>
+                                            <button id="3" type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="editGroup(this)">
+                                                <span class="fal fa-edit mr-1 btn-table-edit"></span>
+                                                @SharedLocalizer["edit"]
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteGroup(this)">
+                                                <span class="fal fa-times mr-1 btn-table-delete"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>*@
+
+                        <!--Vista Create group-->
+                       @* <div id="divCreateGroup">
+                            <div>
+                                <label label-for="select-participants" class="control-label">@SharedLocalizer["addparticipants"]</label>
+                                <select class="js-example-placeholder-multiple js-states form-control" multiple="multiple" id="select-participants" data-select2-id="multiple-placeholder" tabindex="-1" aria-hidden="true">
+                                    <optgroup label="@SharedLocalizer["designdepartment"]">
+                                        <option value="Jonathan Diaz">Jonathan Diaz</option>
+                                        <option value="Don Hugo">Don Hugo</option>
+                                    </optgroup>
+                                    <optgroup label="@SharedLocalizer["accountingdepartment"]">
+                                        <option value="Elias Rivas">Elias Rivas</option>
+                                        <option value="Edgardo Silva">Edgardo Silva</option>
+                                        <option value="Rodrigo">Rodrigo</option>
+                                    </optgroup>
+                                    <optgroup label="@SharedLocalizer["itdepartment"]">
+                                        <option value="Juan Ortiz">Juan Ortiz</option>
+                                        <option value="Javier Torres">Javier Torres</option>
+                                        <option value="Camila San Martin">Camila San Martin</option>
+                                        <option value="Gustavo del Pino">Gustavo del Pino</option>
+                                        <option value="Carlos Salazar">Carlos Salazar</option>
+                                    </optgroup>
+                                </select>
+                            </div>*@
+
+                            <!--Tabla Edit grupos-->
+                            @*  <table id="tableEditGroup" class="table table-bordered table-hover table-striped w-100" data-page-length="5">
+                            <thead class="bg-primary-500">
+                            <tr>
+                            <th scope="col">@SharedLocalizer["participants"]</th>
+                            <th scope="col">@SharedLocalizer["department"]</th>
+                            <th scope="col"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                            <td>Jean Quiero</td>
+                            <td>@SharedLocalizer["itdepartment"]</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Ignacio Rodriguez</td>
+                            <td>@SharedLocalizer["itdepartment"]</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Kevin Oviedo</td>
+                            <td>@SharedLocalizer["itdepartment"]</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Aletheia Gacitua</td>
+                            <td>@SharedLocalizer["itdepartment"]</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Segurita</td>
+                            <td>Departamento de Prevencion</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Segurita</td>
+                            <td>Departamento de Prevencion</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Segurita</td>
+                            <td>Departamento de Prevencion</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Segurita</td>
+                            <td>Departamento de Prevencion</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Segurita</td>
+                            <td>Departamento de Prevencion</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Segurita</td>
+                            <td>Departamento de Prevencion</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Segurita</td>
+                            <td>Departamento de Prevencion</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Segurita</td>
+                            <td>Departamento de Prevencion</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Segurita</td>
+                            <td>Departamento de Prevencion</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Segurita</td>
+                            <td>Departamento de Prevencion</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Segurita</td>
+                            <td>Departamento de Prevencion</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Segurita</td>
+                            <td>Departamento de Prevencion</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Segurita</td>
+                            <td>Departamento de Prevencion</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Segurita</td>
+                            <td>Departamento de Prevencion</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Segurita</td>
+                            <td>Departamento de Prevencion</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Segurita</td>
+                            <td>Departamento de Prevencion</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>Segurita</td>
+                            <td>Departamento de Prevencion</td>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                            <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                            @SharedLocalizer["delete"]
+                            </button>
+                            </td>
+                            </tr>
+                            </tbody>
+                            </table>  
+                        </div>*@
+
+
+                        <!--Vista Edit group-->
+                        @*<div id="divEditGroup">
+                            <div id="div-selectparticipantes">
+                                <label label-for="select-participants" class="control-label">@SharedLocalizer["addparticipants"]</label>
+                                <select class="js-example-placeholder-multiple js-states form-control" multiple="multiple" id="select-participants" data-select2-id="multiple-placeholder" tabindex="-1" aria-hidden="true">
+                                    <optgroup label="@SharedLocalizer["designdepartment"]">
+                                        <option value="Jonathan Diaz">Jonathan Diaz</option>
+                                        <option value="Don Hugo">Don Hugo</option>
+                                    </optgroup>
+                                    <optgroup label="@SharedLocalizer["accountingdepartment"]">
+                                        <option value="Elias Rivas">Elias Rivas</option>
+                                        <option value="Edgardo Silva">Edgardo Silva</option>
+                                        <option value="Rodrigo">Rodrigo</option>
+                                    </optgroup>
+                                    <optgroup label="@SharedLocalizer["itdepartment"]">
+                                        <option value="Juan Ortiz">Juan Ortiz</option>
+                                        <option value="Javier Torres">Javier Torres</option>
+                                        <option value="Camila San Martin">Camila San Martin</option>
+                                        <option value="Gustavo del Pino">Gustavo del Pino</option>
+                                        <option value="Carlos Salazar">Carlos Salazar</option>
+                                    </optgroup>
+                                </select>
+                            </div>*@
+
+                            <!--Tabla Edit grupos-->
+                           @* <table id="tableEditGroup" class="table table-bordered table-hover table-striped w-100" data-page-length="5">
+                                <thead class="bg-primary-500">
+                                    <tr>
+                                        <th scope="col">@SharedLocalizer["participants"]</th>
+                                        <th scope="col">@SharedLocalizer["department"]</th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Jean Quiero</td>
+                                        <td>@SharedLocalizer["itdepartment"]</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ignacio Rodriguez</td>
+                                        <td>@SharedLocalizer["itdepartment"]</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Kevin Oviedo</td>
+                                        <td>@SharedLocalizer["itdepartment"]</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Aletheia Gacitua</td>
+                                        <td>@SharedLocalizer["itdepartment"]</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Segurita</td>
+                                        <td>Departamento de Prevencion</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Segurita</td>
+                                        <td>Departamento de Prevencion</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Segurita</td>
+                                        <td>Departamento de Prevencion</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Segurita</td>
+                                        <td>Departamento de Prevencion</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Segurita</td>
+                                        <td>Departamento de Prevencion</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Segurita</td>
+                                        <td>Departamento de Prevencion</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Segurita</td>
+                                        <td>Departamento de Prevencion</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Segurita</td>
+                                        <td>Departamento de Prevencion</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Segurita</td>
+                                        <td>Departamento de Prevencion</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Segurita</td>
+                                        <td>Departamento de Prevencion</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Segurita</td>
+                                        <td>Departamento de Prevencion</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Segurita</td>
+                                        <td>Departamento de Prevencion</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Segurita</td>
+                                        <td>Departamento de Prevencion</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Segurita</td>
+                                        <td>Departamento de Prevencion</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Segurita</td>
+                                        <td>Departamento de Prevencion</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Segurita</td>
+                                        <td>Departamento de Prevencion</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Segurita</td>
+                                        <td>Departamento de Prevencion</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-themed" onclick="deleteParticipant(this)">
+                                                <span class="fal fa-times mr-1 btn-delete-participant"></span>
+                                                @SharedLocalizer["delete"]
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+
+            @*<div class="modal-footer">
+                <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal" id="btnCloseModalParticipants">@SharedLocalizer["close"]</button>
+                <button type="button" class="btn btn-default waves-effect waves-themed" id="btnback">Volver</button>
+                <button type="button" class="btn btn-primary waves-effect waves-themed" id="btnSaveParticipants">@SharedLocalizer["save"]</button>
+            </div>
+        </div>
+    </div>
+</div>*@
+
+@section ScriptsBlock {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="~/js/views/Meeting.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <!-- para sweet alert se debe traer el js nuevo para que tome las funciones del template -->
+    <script src="~/js/notifications/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/js/formplugins/select2/select2.bundle.js"></script>
+
+    <script>
+        $('#select-participants').select2({
+            //propiedad para que el select participant no quede detras del modal
+            dropdownParent: $('#modalParticipants'),
+            placeholder: "Participantes"
+        });
+    </script>
+}

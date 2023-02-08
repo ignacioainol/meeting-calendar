@@ -1,0 +1,71 @@
+﻿@*@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer*@
+@inject Microsoft.Extensions.Options.IOptions<Microsoft.AspNetCore.Builder.RequestLocalizationOptions> locOptions
+@{
+    var culture = Context.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>();
+    var cultureList = locOptions.Value.SupportedUICultures.Select(x => new SelectListItem { Value = x.Name, Text = @SharedLocalizer[x.Name] }).ToList();
+    var returnUrl = string.IsNullOrWhiteSpace(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value} {Context.Request.QueryString}";
+}
+
+
+@*<form asp-action="CultureManagement" asp-controller="Home" method="post" asp-route-returnUrl="@returnUrl.Replace(" ","")">
+<div id="myselect">
+        <select size="2" name="culture" asp-for="@culture.RequestCulture.UICulture.Name" asp-items="cultureList"
+                onchange="this.form.submit();">
+        </select>
+    </div>
+
+
+</form>*@
+
+<a id="a-language-es" class="dropdown-item a-flex-container" onclick="location.href = '@Url.Action("CultureManagement", "Home", new { culture = "es", returnUrl = returnUrl.Replace(" ","") })';">
+    <span class="a-flex-item">@cultureList[0].Text</span>
+    <img class="a-flex-item" style="max-width: 2.4em;" src="~/img/flags/cl.svg">
+</a>
+<a id="a-language-en" class="dropdown-item a-flex-container" onclick="location.href = '@Url.Action("CultureManagement", "Home", new { culture = "en", returnUrl = returnUrl.Replace(" ","") })';">
+    <span class="a-flex-item">@cultureList[1].Text</span>
+    <img class="a-flex-item" style="max-width: 2.4em;" src="~/img/flags/gb.svg">
+</a>
+
+<style>
+/*    #myselect {
+        display: inline-block;
+        overflow: hidden;
+        width: 190px;
+        border: solid black 0px;
+    }
+
+        #myselect > select {
+            margin: 0px -20px 0px 0px;
+            border: solid black 0px;
+        }
+
+            #myselect > select > option {
+                padding-top: 10px;
+                height: 35px;
+                padding-left: 20px;
+                padding-right: 200px;
+            }*/
+
+
+    .a-flex-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .a-flex-item {
+        flex: 0 1 calc(50% - 1rem);
+    }
+</style>
+@*<script>
+    console.log('@returnUrl');
+    const aLanguage1 = document.querySelector('#a-language-1');
+    aLanguage1.addEventListener('click', Load1);
+
+    async function Load1()
+    {
+        let url = "Home/CultureManagement?culture=es" + "&returnUrl=" + '@returnUrl';
+        console.log(url);
+        const respuesta = await fetch(url);
+    }
+</script>*@

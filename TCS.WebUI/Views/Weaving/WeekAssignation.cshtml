@@ -1,0 +1,511 @@
+﻿@{
+    ViewData["Title"] = SharedLocalizer["shiftsassignment"].ToString();
+    ViewData["PageName"] = "weaving_weekassignation";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i>" + SharedLocalizer["shiftsassignment"].ToString();
+    IEnumerable<TCS.WebUI.Controllers.UnassignedWorker> Noassig = ViewBag.Unassigned;
+    IEnumerable<TCS.EF.Entidades.WeaverAssignation> WeaverAssigA = ViewBag.WeaverAssigA;
+    IEnumerable<TCS.EF.Entidades.WeaverAssignation> WeaverAssigB = ViewBag.WeaverAssigB;
+    IEnumerable<TCS.EF.Entidades.WeaverAssignation> WeaverAssigC = ViewBag.WeaverAssigC;
+    TCS.EF.Entidades.Worker SupervisorA = ViewBag.SupervisorA;
+    TCS.EF.Entidades.Worker SupervisorB = ViewBag.SupervisorB;
+    TCS.EF.Entidades.Worker SupervisorC = ViewBag.SupervisorC;
+}
+
+<div class="panel p-2">
+    <label style="font-size: 15px;padding :0.5rem" class="control-label">ASIGNACIÓN SEMANAL (TURNO / GRUPO DE TRABAJO)</label>
+    <select id="select-shift-pattern" class="form-control select-custom-filter pl-1" asp-items="ViewBag.ShiftPattern"></select>
+</div>
+<div class="div-grid-container-dashboard">
+    <div class="div-grid-element-grupo1 panel">
+        <div class="grid-container-header">
+            <div class="div-group-day">
+                <strong>
+                    @SharedLocalizer["nightshift"] - @SharedLocalizer["group"] @WeaverAssigA.FirstOrDefault().WorkerGroup.WorkerGroupName
+                </strong>
+            </div>
+        </div>
+        <div class="panel-container show p-2">
+                <table class="table table-bordered table-hover table-striped w-100">
+                    <thead class="bg-primary-500">
+                        <tr class="text-center">
+                            <th style="vertical-align:middle">@SharedLocalizer["weaver"]</th>
+                            <th style="vertical-align:middle">@SharedLocalizer["loomgroup"]</th>
+                            <th style="vertical-align:middle">@SharedLocalizer["edit"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in WeaverAssigA)
+                        {
+                            <tr>
+                                <td id="tdName+@item.LoomGroupId+@item.WorkerGroupId" class="text-center" style="vertical-align:middle">
+                                    @if (item.Worker != null)
+                                    {
+                                        @item.Worker.WorkerName
+                                    }
+                                    else
+                                    {
+                                        @SharedLocalizer["unassigned"]
+                                    }
+                                </td>
+                                <td class="text-center" style="vertical-align:middle; width:140px">@item.LoomGroup.Name</td>
+                                <td id="tdEdit+@item.LoomGroupId+@item.WorkerGroupId" class="text-center" style="vertical-align:middle; width:90px">
+                                    <button class="btn btn-info btn-xs" 
+                                            onclick="EnableEdit(loomGroupId = @item.LoomGroupId, workerGroupId = @item.WorkerGroupId)">
+                                    @SharedLocalizer["edit"]
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td class="text-center font-weight-bold">
+                                @SharedLocalizer["shiftsupervisor"].ToString().ToUpper()
+                            </td>
+                            <td id="tdName+@(WeaverAssigA.FirstOrDefault().WorkerGroupId)" class="text-center">@(SupervisorA != null? SupervisorA.WorkerName : SharedLocalizer["unassigned"])</td>
+                            <td id="tdEdit+@(WeaverAssigA.FirstOrDefault().WorkerGroupId)" class="text-center" style="vertical-align:middle; width:90px">
+                                <button class="btn btn-info btn-xs"
+                                        onclick="EnableEditSup(workerGroupId = @(WeaverAssigA.FirstOrDefault().WorkerGroupId))">
+                                    @SharedLocalizer["edit"]
+                                </button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+        </div>
+    </div>
+    <div class="div-grid-element-grupo2 panel">
+        <div class="grid-container-header">
+            <div class="div-group-day">
+                <strong>
+                    @SharedLocalizer["morningshift"] - @SharedLocalizer["group"] @WeaverAssigB.FirstOrDefault().WorkerGroup.WorkerGroupName
+                </strong>
+            </div>
+        </div>
+        <div class="panel-container show p-2">
+                <table class="table table-bordered table-hover table-striped w-100">
+                    <thead class="bg-primary-500">
+                        <tr class="text-center">
+                            <th style="vertical-align:middle">@SharedLocalizer["weaver"]</th>
+                            <th style="vertical-align:middle">@SharedLocalizer["loomgroup"]</th>
+                            <th style="vertical-align:middle">@SharedLocalizer["edit"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in WeaverAssigB)
+                        {
+                        <tr>
+                            <td id="tdName+@item.LoomGroupId+@item.WorkerGroupId" class="text-center" style="vertical-align:middle">
+                                @if (item.Worker != null)
+                                    {
+                                @item.Worker.WorkerName
+                                    }
+                                    else
+                                    {
+                                @SharedLocalizer["unassigned"]
+                                    }
+                            </td>
+                            <td class="text-center" style="vertical-align:middle; width:140px">@item.LoomGroup.Name</td>
+                            <td id="tdEdit+@item.LoomGroupId+@item.WorkerGroupId" class="text-center" style="vertical-align:middle; width:90px">
+                                <button class="btn btn-info btn-xs"
+                                        onclick="EnableEdit(loomGroupId = @item.LoomGroupId, workerGroupId = @item.WorkerGroupId)">
+                                    @SharedLocalizer["edit"]
+                                </button>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td class="text-center font-weight-bold">
+                                @SharedLocalizer["shiftsupervisor"].ToString().ToUpper()
+                            </td>
+                            <td  id="tdName+@(WeaverAssigB.FirstOrDefault().WorkerGroupId)" class="text-center">@(SupervisorB != null? SupervisorB.WorkerName : SharedLocalizer["unassigned"])</td>
+                            <td id="tdEdit+@(WeaverAssigB.FirstOrDefault().WorkerGroupId)" class="text-center" style="vertical-align:middle; width:90px">
+                                <button class="btn btn-info btn-xs"
+                                        onclick="EnableEditSup(workerGroupId = @(WeaverAssigB.FirstOrDefault().WorkerGroupId))">
+                                    @SharedLocalizer["edit"]
+                                </button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+        </div>
+    </div>
+    <div class="div-grid-element-grupo3 panel">
+        <div class="grid-container-header">
+            <div class="div-group-day">
+                <strong>
+                    @SharedLocalizer["afternoonshift"] - @SharedLocalizer["group"] @WeaverAssigC.FirstOrDefault().WorkerGroup.WorkerGroupName
+                </strong>
+            </div>
+        </div>
+        <div class="panel-container show p-2">
+            <table class="table table-bordered table-hover table-striped w-100">
+                <thead class="bg-primary-500">
+                    <tr class="text-center">
+                        <th style="vertical-align:middle">@SharedLocalizer["weaver"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["loomgroup"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["edit"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in WeaverAssigC)
+                    {
+                    <tr>
+                        <td id="tdName+@item.LoomGroupId+@item.WorkerGroupId" class="text-center" style="vertical-align:middle">
+                            @if (item.Worker != null)
+                                {
+                            @item.Worker.WorkerName
+                                }
+                                else
+                                {
+                            @SharedLocalizer["unassigned"]
+                                }
+                        </td>
+                        <td class="text-center" style="vertical-align:middle; width:140px">@item.LoomGroup.Name</td>
+                        <td id="tdEdit+@item.LoomGroupId+@item.WorkerGroupId" class="text-center" style="vertical-align:middle; width:90px">
+                            <button class="btn btn-info btn-xs"
+                                    onclick="EnableEdit(loomGroupId = @item.LoomGroupId, workerGroupId = @item.WorkerGroupId)">
+                                @SharedLocalizer["edit"]
+                            </button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+                <tfoot>
+
+                    <tr>
+                        <td class="text-center font-weight-bold">
+                            @SharedLocalizer["shiftsupervisor"].ToString().ToUpper()
+                        </td>
+                        <td id="tdName+@(WeaverAssigC.FirstOrDefault().WorkerGroupId)" class="text-center">@(SupervisorC != null? SupervisorC.WorkerName : SharedLocalizer["unassigned"])</td>
+                        <td id="tdEdit+@(WeaverAssigC.FirstOrDefault().WorkerGroupId)" class="text-center" style="vertical-align:middle; width:90px">
+                            <button class="btn btn-info btn-xs"
+                                    onclick="EnableEditSup(workerGroupId = @(WeaverAssigC.FirstOrDefault().WorkerGroupId))">
+                                @SharedLocalizer["edit"]
+                            </button>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <div class="div-grid-element-sin-asignar panel">
+        <div class="grid-container-header">
+            <div class="div-shift-supervisor">
+                <strong>
+                    @SharedLocalizer["unassigned"]
+                </strong>
+            </div>
+        </div>
+        <div class="panel-container show">
+            <div class="panel-content">
+                <table class="table table-bordered table-hover table-striped w-100">
+                    <thead class="bg-primary-500">
+                        <tr class="text-center">
+                            <th style="vertical-align:middle">Nombre</th>
+                            <th style="vertical-align:middle">Cargo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var item in Noassig)
+                        {
+                            <tr class="text-center">
+                                <td style="vertical-align:middle">@item.WorkerName</td>
+                                <td style="vertical-align:middle">@item.Cargo</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .grid-container-header {
+        padding: 1.1rem;
+        border-bottom: 0.1rem solid lightgray;
+    }
+
+    .div-shift-supervisor {
+        padding-top: 0.8rem;
+        font-size: 1.1rem;
+    }
+
+    .div-group-day {
+        font-size: 1.1rem;
+    }
+
+    .div-grid-container-dashboard {
+        height: 110vh;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        grid-template-areas:
+            "grupo1  grupo1       grupo2        grupo2         grupo3         grupo3"
+            ".       sin-asignar  sin-asignar   sin-asignar    sin-asignar    .";
+        padding: 6px;
+        grid-gap: 6px
+    }
+
+    .div-grid-element-grupo1 {
+        grid-area: grupo1;
+        height: 47vh;
+        overflow-y: auto;
+    }
+
+    .div-grid-element-grupo2 {
+        grid-area: grupo2;
+        height: 47vh;
+        overflow-y: auto;
+    }
+
+    .div-grid-element-grupo3 {
+        grid-area: grupo3;
+        height: 47vh;
+        overflow-y: auto;
+    }
+
+    .div-grid-element-sin-asignar {
+        grid-area: sin-asignar;
+        height: 60vh;
+        overflow-y: auto;
+    }
+
+    @@media screen and (max-width:1270px) {
+        .div-grid-container-dashboard {
+            height: 110vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            grid-template-areas:
+                "grupo1 grupo2"
+                "grupo3 sin-asignar";
+            padding: 6px;
+            grid-gap: 6px
+        }
+    }
+    @@media screen and (max-width:640px) {
+        .div-grid-container-dashboard {
+            height: 210vh;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr 1fr 1fr 1fr;
+            grid-template-areas:
+                "grupo1"
+                "grupo2"
+                "grupo3"
+                "sin-asignar";
+            padding: 6px;
+            grid-gap: 6px
+        }
+    }
+</style>
+
+<script>
+    const selectShiftPattern = document.querySelector('#select-shift-pattern');
+
+    eventListeners();
+
+    function eventListeners()
+    {
+        selectShiftPattern.addEventListener('input', CambiarAsignacion);
+    }
+
+    async function EnableEdit(loomGroupId, workerGroupId)
+    {
+        const idName = `tdName+${loomGroupId}+${workerGroupId}`;
+        const idEdit = `tdEdit+${loomGroupId}+${workerGroupId}`;
+/*        alert(id);*/
+        tdIdName = document.getElementById(idName);
+        tdIdName.innerHTML = '';
+
+        tdIdEdit = document.getElementById(idEdit);
+        tdIdEdit.innerHTML = '';
+
+        let selectWeaver = document.createElement('select');
+
+        const url = `Weaving/GetTejedores`;
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+        let option;
+        for (let i = 0; i < resultado.length; i++) {
+            option = document.createElement('option');
+            option.text = resultado[i].workerName;
+            option.value = resultado[i].workerId;
+            selectWeaver.add(option);
+        }
+
+        tdIdName.appendChild(selectWeaver);
+
+        let buttonSave = document.createElement('button');
+        buttonSave.textContent = "Guardar";
+        buttonSave.classList.add("btn", "btn-info", "btn-xs", "mb-1","w-100");
+
+        let buttonCancel = document.createElement('button');
+        buttonCancel.textContent = "Cancelar";
+        buttonCancel.classList.add("btn", "btn-danger", "btn-xs", "w-100");
+        
+        tdIdEdit.appendChild(buttonSave);
+        tdIdEdit.appendChild(buttonCancel);
+
+        buttonCancel.addEventListener('click', () => { CancelClick(loomGroupId, workerGroupId); });
+        buttonSave.addEventListener('click', () => { SaveClick(loomGroupId, workerGroupId, selectWeaver.value); });
+    }
+
+    async function CancelClick(loomGroupId, workerGroupId)
+    {
+        const idName = `tdName+${loomGroupId}+${workerGroupId}`;
+        const idEdit = `tdEdit+${loomGroupId}+${workerGroupId}`;
+
+        let buttonEdit = document.createElement('button');
+        buttonEdit.textContent = "Editar";
+        buttonEdit.classList.add("btn", "btn-info", "btn-xs", "mb-1", "w-100");
+
+        tdIdEdit = document.getElementById(idEdit);
+        tdIdEdit.innerHTML = '';
+        tdIdEdit.appendChild(buttonEdit);
+
+        tdIdName = document.getElementById(idName);
+        tdIdName.innerHTML = '';
+
+        const url = `Weaving/GetTejedorAsignado?loomGroupId=${loomGroupId}&workerGroupId=${workerGroupId}`;
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+
+        tdIdName.textContent = resultado;
+
+        buttonEdit.addEventListener('click', () => { EnableEdit(loomGroupId, workerGroupId); });
+    }
+
+    async function SaveClick(loomGroupId, workerGroupId, selectWeaver)
+    {
+        const urlSave = `Weaving/GuardarTejedorAsignado?loomGroupId=${loomGroupId}&workerGroupId=${workerGroupId}&selectWeaver=${selectWeaver}`;
+        await fetch(urlSave);
+
+        const idName = `tdName+${loomGroupId}+${workerGroupId}`;
+        const idEdit = `tdEdit+${loomGroupId}+${workerGroupId}`;
+
+        let buttonEdit = document.createElement('button');
+        buttonEdit.textContent = "Editar";
+        buttonEdit.classList.add("btn", "btn-info", "btn-xs", "mb-1", "w-100");
+
+        tdIdEdit = document.getElementById(idEdit);
+        tdIdEdit.innerHTML = '';
+        tdIdEdit.appendChild(buttonEdit);
+
+        tdIdName = document.getElementById(idName);
+        tdIdName.innerHTML = '';
+
+        const url = `Weaving/GetTejedorAsignado?loomGroupId=${loomGroupId}&workerGroupId=${workerGroupId}`;
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+
+        tdIdName.textContent = resultado;
+
+        buttonEdit.addEventListener('click', () => { EnableEdit(loomGroupId, workerGroupId); });
+    }
+
+    async function EnableEditSup(workerGroupId)
+    {
+        const idName = `tdName+${workerGroupId}`;
+        const idEdit = `tdEdit+${workerGroupId}`;
+        tdIdName = document.getElementById(idName);
+        tdIdName.innerHTML = '';
+
+        tdIdEdit = document.getElementById(idEdit);
+        tdIdEdit.innerHTML = '';
+
+        let selectWeaver = document.createElement('select');
+
+        const url = `Weaving/GetSurpervisores`;
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+
+        let option;
+        for (let i = 0; i < resultado.length; i++) {
+            option = document.createElement('option');
+            option.text = resultado[i].workerName;
+            option.value = resultado[i].workerId;
+            selectWeaver.add(option);
+        }
+
+        tdIdName.appendChild(selectWeaver);
+
+        let buttonSave = document.createElement('button');
+        buttonSave.textContent = "Guardar";
+        buttonSave.classList.add("btn", "btn-info", "btn-xs", "mb-1", "w-100");
+
+        let buttonCancel = document.createElement('button');
+        buttonCancel.textContent = "Cancelar";
+        buttonCancel.classList.add("btn", "btn-danger", "btn-xs", "w-100");
+
+        tdIdEdit.appendChild(buttonSave);
+        tdIdEdit.appendChild(buttonCancel);
+
+        buttonCancel.addEventListener('click', () => { CancelClickSup(workerGroupId); });
+        buttonSave.addEventListener('click', () => { SaveClickSup(workerGroupId, selectWeaver.value); });
+    }
+
+    async function CancelClickSup(workerGroupId) {
+        const idName = `tdName+${workerGroupId}`;
+        const idEdit = `tdEdit+${workerGroupId}`;
+
+        let buttonEdit = document.createElement('button');
+        buttonEdit.textContent = "Editar";
+        buttonEdit.classList.add("btn", "btn-info", "btn-xs", "mb-1", "w-100");
+
+        tdIdEdit = document.getElementById(idEdit);
+        tdIdEdit.innerHTML = '';
+        tdIdEdit.appendChild(buttonEdit);
+
+        tdIdName = document.getElementById(idName);
+        tdIdName.innerHTML = '';
+
+        const url = `Weaving/GetSupervisorAsignado?workerGroupId=${workerGroupId}`;
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+
+        tdIdName.textContent = resultado;
+
+        buttonEdit.addEventListener('click', () => { EnableEditSup(workerGroupId); });
+    }
+
+    async function SaveClickSup(workerGroupId, selectWeaver) {
+        const urlSave = `Weaving/GuardarSupervisorAsignado?workerGroupId=${workerGroupId}&selectWeaver=${selectWeaver}`;
+        await fetch(urlSave);
+
+        const idName = `tdName+${workerGroupId}`;
+        const idEdit = `tdEdit+${workerGroupId}`;
+
+        let buttonEdit = document.createElement('button');
+        buttonEdit.textContent = "Editar";
+        buttonEdit.classList.add("btn", "btn-info", "btn-xs", "mb-1", "w-100");
+
+        tdIdEdit = document.getElementById(idEdit);
+        tdIdEdit.innerHTML = '';
+        tdIdEdit.appendChild(buttonEdit);
+
+        tdIdName = document.getElementById(idName);
+        tdIdName.innerHTML = '';
+
+        const url = `Weaving/GetSupervisorAsignado?workerGroupId=${workerGroupId}`;
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+
+        tdIdName.textContent = resultado;
+
+        buttonEdit.addEventListener('click', () => { EnableEdit(workerGroupId); });
+    }
+
+    async function CambiarAsignacion() {
+        let url = `Weaving/ChangeShiftPattern?patternID=${selectShiftPattern.value}`;
+        await fetch(url);
+
+        url = "Weaving/WeekAssignation";
+        window.location.href = url;
+    }
+
+</script>

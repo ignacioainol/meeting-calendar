@@ -1,0 +1,183 @@
+﻿@model IEnumerable<TCS.EF.Entidades.CurrentProdHistory>
+@{
+    ViewData["Title"] = SharedLocalizer["last24hours"].ToString();
+    ViewData["PageName"] = "weaving_last24hours";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + SharedLocalizer["last24hours"].ToString();
+    ViewData["PageDescription"] = String.Format("Fecha : {0}", DateTime.Now);
+}
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+}
+<head>
+</head>
+
+@{
+    string EffColorClass = "";
+    string PEffColorClass = "";
+    string LabelColor = "";
+}
+<div id="panel-1" class="panel">
+    <div class="panel-hdr">
+        <div style="width : 97%">
+        </div>
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100">
+                <thead class="bg-primary-500">
+                    <tr class="text-center" style="font-size: 16px;">
+                        <th style="vertical-align:middle">@SharedLocalizer["loom"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["type"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["running"]%</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["standard"]%</th>
+                        <th style="vertical-align:middle">PPC</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["meters"]</th>
+                        <th style="vertical-align:middle">Kpicks</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["speed"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["warpstops"]  <br /> (@SharedLocalizer["quantity"] / @SharedLocalizer["time"])</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["weftstops"]  <br /> (@SharedLocalizer["quantity"] / @SharedLocalizer["time"])</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["otherstops"] <br /> (@SharedLocalizer["quantity"] / @SharedLocalizer["time"])</th>
+                        @*<th style="vertical-align:middle">Tejedor</th>*@
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        switch (item.Status)
+                        {
+                            case "Running":
+                                LabelColor = "badge badge-success";
+                                break;
+                            case "Stopped":
+                                LabelColor = "badge badge-danger";
+                                break;
+                            case "Offline":
+                                LabelColor = "badge badge-warning";
+                                break;
+                            case "NR":
+                                LabelColor = "badge badge-warning";
+                                break;
+                        }
+
+                        if (item.ActualEff <= 30)
+                        {
+                            EffColorClass = "badge badge-danger";
+                        }
+                        else if (item.ActualEff > 30 && item.ActualEff < 70)
+                        {
+                            EffColorClass = "badge badge-warning";
+                        }
+                        else if (item.ActualEff >= 70)
+                        {
+                            EffColorClass = "badge badge-success";
+                        }
+
+                        if (item.StdEff <= 30)
+                        {
+                            PEffColorClass = "badge badge-danger";
+                        }
+                        else if (item.StdEff > 30 && item.StdEff < 70)
+                        {
+                            PEffColorClass = "badge badge-warning";
+                        }
+                        else if (item.StdEff >= 70)
+                        {
+                            PEffColorClass = "badge badge-success";
+                        }
+
+                        string WarpStopColorClass = "badge-info";
+                        string WeftStopColorClass = "badge-info";
+                        string OtherStopColorClass = "badge-info";
+
+                       
+                        <tr style="font-size: 15px;">
+                            <td>@item.Loom.LoomNumber</td>
+                            <td style=" width:11%;"><strong> @item.Loom.LoomType.Description</strong></td>
+                            <td class="text-right"><span class="badge @EffColorClass">@string.Format("{0:N1}%", item.ActualEff)</span></td>
+                            <td class="text-right"><span class="badge @PEffColorClass">@string.Format("{0:N1}%", item.StdEff)</span></td>
+                            <td class="text-right">@string.Format("{0:N1}", item.Ppc)</td>
+                            <td class="text-right">@string.Format("{0:N1}", Convert.ToDouble(item.Lenght) / 100) </td>
+                            <td class="text-right">@string.Format("{0:N1}", Convert.ToDouble(item.Picks) / 1000)</td>
+                            <td class="text-right">@item.ActualSpeed</td>
+                            <td class="text-center">
+                                <span class="badge @WarpStopColorClass">@item.WarpStops</span>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <span>@TimeSpan.FromSeconds((double)item.WarpStopTime).ToString(@"hh\:mm")</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge @WeftStopColorClass">@item.WeftStops</span>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <span>@TimeSpan.FromSeconds((double)item.WeftStopTime).ToString(@"hh\:mm")</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge @OtherStopColorClass">@item.OtherStops</span>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <span>@TimeSpan.FromSeconds((double)item.OtherStopTime).ToString(@"hh\:mm")</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<style>
+    .badge-danger {
+        background-color: red
+    }
+
+    .badge-success {
+        background-color: forestgreen
+    }
+</style>
+@section ScriptsBlock
+{
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    @{ if (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "es")
+        {
+            <script src="~/js/datagrid/datatables/datatables.bundle.es.js"></script>
+        }
+    }
+    <script>
+        $(document).ready(function () {
+            $('#dt-basic-example').dataTable({
+                responsive: true,
+                lengthChange: false,
+                fixedHeader: true,
+                ordering: false,
+                pageLength: 60,
+                paging : false,
+                dom:
+                    "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                buttons: [
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF',
+                        titleAttr: 'Generate PDF',
+                        className: 'btn-outline-danger btn-sm mr-1'
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        titleAttr: 'Generate Excel',
+                        className: 'btn-outline-success btn-sm mr-1'
+                    },
+                    {
+                        extend: 'print',
+                        text: 'Print',
+                        titleAttr: 'Print Table',
+                        className: 'btn-outline-primary btn-sm'
+                    }
+                ]
+            });
+        });
+    </script>
+}
+

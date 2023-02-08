@@ -1,0 +1,744 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="afternoon" xml:space="preserve">
+    <value>Tarde</value>
+  </data>
+  <data name="afternoonshift" xml:space="preserve">
+    <value>Turno Tarde</value>
+  </data>
+  <data name="alert" xml:space="preserve">
+    <value>Alerta</value>
+  </data>
+  <data name="alertPermission" xml:space="preserve">
+    <value>Permisos Alerta</value>
+  </data>
+  <data name="all" xml:space="preserve">
+    <value>Todos</value>
+  </data>
+  <data name="april" xml:space="preserve">
+    <value>Abril</value>
+  </data>
+  <data name="attendance" xml:space="preserve">
+    <value>Asistencia</value>
+  </data>
+  <data name="attendance/absencecontrol" xml:space="preserve">
+    <value>Control de Asistencia/Ausencia</value>
+  </data>
+  <data name="attitudes" xml:space="preserve">
+    <value>Actitudes</value>
+  </data>
+  <data name="august" xml:space="preserve">
+    <value>Agosto</value>
+  </data>
+  <data name="bestlooms" xml:space="preserve">
+    <value>Mejores Telares</value>
+  </data>
+  <data name="binnacle" xml:space="preserve">
+    <value>Bitácora</value>
+  </data>
+  <data name="calculate" xml:space="preserve">
+    <value>Calcular</value>
+  </data>
+  <data name="closedby" xml:space="preserve">
+    <value>Cerrado por</value>
+  </data>
+  <data name="closeinventory" xml:space="preserve">
+    <value>Cerrar Inventario</value>
+  </data>
+  <data name="collapse" xml:space="preserve">
+    <value>Colapsar</value>
+  </data>
+  <data name="create meeting" xml:space="preserve">
+    <value>Crear Reunión</value>
+  </data>
+  <data name="culture" xml:space="preserve">
+    <value>Localización</value>
+  </data>
+  <data name="currentinventory" xml:space="preserve">
+    <value>Inventario Actual</value>
+  </data>
+  <data name="currentshift" xml:space="preserve">
+    <value>Turno Actual</value>
+  </data>
+  <data name="dailyproduction" xml:space="preserve">
+    <value>Producción Diaria</value>
+  </data>
+  <data name="dashboard" xml:space="preserve">
+    <value>Tablero</value>
+  </data>
+  <data name="date" xml:space="preserve">
+    <value>Fecha</value>
+  </data>
+  <data name="dateenter" xml:space="preserve">
+    <value>Fecha de entrada</value>
+  </data>
+  <data name="day" xml:space="preserve">
+    <value>Days</value>
+  </data>
+  <data name="days" xml:space="preserve">
+    <value>Días</value>
+  </data>
+  <data name="december" xml:space="preserve">
+    <value>Diciembre</value>
+  </data>
+  <data name="delete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="department" xml:space="preserve">
+    <value>Departamento</value>
+  </data>
+  <data name="departmentevaluation" xml:space="preserve">
+    <value>Evaluacion Departamento</value>
+  </data>
+  <data name="description" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="descriptionisrequired" xml:space="preserve">
+    <value>La descripción es requerida</value>
+  </data>
+  <data name="design" xml:space="preserve">
+    <value>Diseño</value>
+  </data>
+  <data name="designA" xml:space="preserve">
+    <value>Artículo</value>
+  </data>
+  <data name="details" xml:space="preserve">
+    <value>Detalles</value>
+  </data>
+  <data name="directory" xml:space="preserve">
+    <value>Directorio</value>
+  </data>
+  <data name="dispatchwarehouse" xml:space="preserve">
+    <value>Bodega de Despacho</value>
+  </data>
+  <data name="domain" xml:space="preserve">
+    <value>Dominio</value>
+  </data>
+  <data name="doyouwanttodelete" xml:space="preserve">
+    <value>¿Desea eliminar el</value>
+  </data>
+  <data name="duration" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <data name="edit" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="efficiency" xml:space="preserve">
+    <value>Eficiencia</value>
+  </data>
+  <data name="email" xml:space="preserve">
+    <value>Correo</value>
+  </data>
+  <data name="en" xml:space="preserve">
+    <value>Inglés</value>
+  </data>
+  <data name="enddate" xml:space="preserve">
+    <value>Fecha de Término</value>
+  </data>
+  <data name="endhour" xml:space="preserve">
+    <value>Hora de Término</value>
+  </data>
+  <data name="es" xml:space="preserve">
+    <value>Español</value>
+  </data>
+  <data name="evaluation" xml:space="preserve">
+    <value>Evaluacion Desempeño</value>
+  </data>
+  <data name="exporttoexcel" xml:space="preserve">
+    <value>Exportar a Excel</value>
+  </data>
+  <data name="february" xml:space="preserve">
+    <value>Febrero</value>
+  </data>
+  <data name="finish" xml:space="preserve">
+    <value>Terminación</value>
+  </data>
+  <data name="finished" xml:space="preserve">
+    <value>Terminado</value>
+  </data>
+  <data name="firstname" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="friday" xml:space="preserve">
+    <value>Viernes</value>
+  </data>
+  <data name="full screen" xml:space="preserve">
+    <value>Pantalla Completa</value>
+  </data>
+  <data name="fullscreen" xml:space="preserve">
+    <value>Pantalla Completa</value>
+  </data>
+  <data name="general" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="generalinventory" xml:space="preserve">
+    <value>Inventario General</value>
+  </data>
+  <data name="generalproduccion" xml:space="preserve">
+    <value>Produccion General</value>
+  </data>
+  <data name="go" xml:space="preserve">
+    <value>Ir a</value>
+  </data>
+  <data name="goback" xml:space="preserve">
+    <value>Volver Atrás</value>
+  </data>
+  <data name="group" xml:space="preserve">
+    <value>Grupo</value>
+  </data>
+  <data name="home" xml:space="preserve">
+    <value>Inicio</value>
+  </data>
+  <data name="hour" xml:space="preserve">
+    <value>Hora</value>
+  </data>
+  <data name="hours" xml:space="preserve">
+    <value>Horas</value>
+  </data>
+  <data name="inspection" xml:space="preserve">
+    <value>Inspección</value>
+  </data>
+  <data name="inspectpiece" xml:space="preserve">
+    <value>Inspeccionar Pieza</value>
+  </data>
+  <data name="inventories" xml:space="preserve">
+    <value>Inventarios</value>
+  </data>
+  <data name="inventory" xml:space="preserve">
+    <value>Inventario</value>
+  </data>
+  <data name="inventoryclosed" xml:space="preserve">
+    <value>Inventario Cerrado</value>
+  </data>
+  <data name="inventorydashboard" xml:space="preserve">
+    <value>Tablero de Inventario</value>
+  </data>
+  <data name="invoice" xml:space="preserve">
+    <value>Factura</value>
+  </data>
+  <data name="january" xml:space="preserve">
+    <value>Enero</value>
+  </data>
+  <data name="july" xml:space="preserve">
+    <value>Julio</value>
+  </data>
+  <data name="june" xml:space="preserve">
+    <value>Junio</value>
+  </data>
+  <data name="knottorchange" xml:space="preserve">
+    <value>Amarre o Cambio de Artículo</value>
+  </data>
+  <data name="language" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="last24hours" xml:space="preserve">
+    <value>Últimas 24 Horas</value>
+  </data>
+  <data name="last30days" xml:space="preserve">
+    <value>Últimos 30 Días</value>
+  </data>
+  <data name="lastevaluationscores" xml:space="preserve">
+    <value>Puntajes última evaluación</value>
+  </data>
+  <data name="lastinventory" xml:space="preserve">
+    <value>Último Inventario</value>
+  </data>
+  <data name="lastlogin" xml:space="preserve">
+    <value>Última fecha de entrada</value>
+  </data>
+  <data name="lastname" xml:space="preserve">
+    <value>Apellido</value>
+  </data>
+  <data name="lastshift" xml:space="preserve">
+    <value>Turno Anterior</value>
+  </data>
+  <data name="lastshifts" xml:space="preserve">
+    <value>Últimos Turnos</value>
+  </data>
+  <data name="level1outrange" xml:space="preserve">
+    <value>1 - Fuera de rango</value>
+  </data>
+  <data name="level2low" xml:space="preserve">
+    <value>2 - Nivel bajo</value>
+  </data>
+  <data name="level3medium" xml:space="preserve">
+    <value>3 - Nivel medio</value>
+  </data>
+  <data name="level4high" xml:space="preserve">
+    <value>4 - Nivel alto</value>
+  </data>
+  <data name="level5featured" xml:space="preserve">
+    <value>5 - Nivel destacado</value>
+  </data>
+  <data name="loading" xml:space="preserve">
+    <value>Cargando</value>
+  </data>
+  <data name="location" xml:space="preserve">
+    <value>Ubicación</value>
+  </data>
+  <data name="logout" xml:space="preserve">
+    <value>Cerrar Sesión</value>
+  </data>
+  <data name="loom" xml:space="preserve">
+    <value>Telar</value>
+  </data>
+  <data name="loomgroup" xml:space="preserve">
+    <value>Grupo Telar</value>
+  </data>
+  <data name="loommonitor" xml:space="preserve">
+    <value>Monitor Telares</value>
+  </data>
+  <data name="looms" xml:space="preserve">
+    <value>Telares</value>
+  </data>
+  <data name="loomtofinish" xml:space="preserve">
+    <value>Telares por Terminar</value>
+  </data>
+  <data name="loomtype" xml:space="preserve">
+    <value>Tipo de Telar</value>
+  </data>
+  <data name="manufacturingorder" xml:space="preserve">
+    <value>Orden de Fabricación</value>
+  </data>
+  <data name="march" xml:space="preserve">
+    <value>Marzo</value>
+  </data>
+  <data name="may" xml:space="preserve">
+    <value>Mayo</value>
+  </data>
+  <data name="meeting" xml:space="preserve">
+    <value>Reunión</value>
+  </data>
+  <data name="meetings" xml:space="preserve">
+    <value>Reuniones</value>
+  </data>
+  <data name="mending" xml:space="preserve">
+    <value>Zurcido</value>
+  </data>
+  <data name="meters" xml:space="preserve">
+    <value>Metros</value>
+  </data>
+  <data name="minutes" xml:space="preserve">
+    <value>Minutos</value>
+  </data>
+  <data name="module" xml:space="preserve">
+    <value>Módulo</value>
+  </data>
+  <data name="modules" xml:space="preserve">
+    <value>Módulos</value>
+  </data>
+  <data name="monday" xml:space="preserve">
+    <value>Lunes</value>
+  </data>
+  <data name="morning" xml:space="preserve">
+    <value>Mañana</value>
+  </data>
+  <data name="morningshift" xml:space="preserve">
+    <value>Turno Mañana</value>
+  </data>
+  <data name="name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="new" xml:space="preserve">
+    <value>Nuevo</value>
+  </data>
+  <data name="newpiece" xml:space="preserve">
+    <value>Nueva Pieza</value>
+  </data>
+  <data name="night" xml:space="preserve">
+    <value>Noche</value>
+  </data>
+  <data name="nightshift" xml:space="preserve">
+    <value>Turno Noche</value>
+  </data>
+  <data name="noinventory" xml:space="preserve">
+    <value>No hay un inventario abierto en este momento.</value>
+  </data>
+  <data name="noinventoryopenatthistime" xml:space="preserve">
+    <value>No hay inventario abierto en este momento</value>
+  </data>
+  <data name="notes" xml:space="preserve">
+    <value>Notas</value>
+  </data>
+  <data name="november" xml:space="preserve">
+    <value>Noviembre</value>
+  </data>
+  <data name="observations" xml:space="preserve">
+    <value>Observaciones</value>
+  </data>
+  <data name="october" xml:space="preserve">
+    <value>Octubre</value>
+  </data>
+  <data name="of" xml:space="preserve">
+    <value>de</value>
+  </data>
+  <data name="ordernumber" xml:space="preserve">
+    <value>Número de Orden</value>
+  </data>
+  <data name="ordertracking" xml:space="preserve">
+    <value>Seguimiento de Ordenes</value>
+  </data>
+  <data name="otherstops" xml:space="preserve">
+    <value>Otros Paros</value>
+  </data>
+  <data name="performancetasks" xml:space="preserve">
+    <value>Desempeño en la tarea</value>
+  </data>
+  <data name="permission" xml:space="preserve">
+    <value>Permiso</value>
+  </data>
+  <data name="permissionassignment" xml:space="preserve">
+    <value>Asignación de Permisos</value>
+  </data>
+  <data name="permissions" xml:space="preserve">
+    <value>Permisos</value>
+  </data>
+  <data name="phoneline" xml:space="preserve">
+    <value>Teléfono</value>
+  </data>
+  <data name="photo" xml:space="preserve">
+    <value>Foto</value>
+  </data>
+  <data name="piecenumber" xml:space="preserve">
+    <value>Número de Pieza</value>
+  </data>
+  <data name="pieces" xml:space="preserve">
+    <value>Piezas</value>
+  </data>
+  <data name="piecesearcher" xml:space="preserve">
+    <value>Búsqueda de Piezas</value>
+  </data>
+  <data name="position" xml:space="preserve">
+    <value>Cargo</value>
+  </data>
+  <data name="print" xml:space="preserve">
+    <value>Imprimir</value>
+  </data>
+  <data name="productionsummary" xml:space="preserve">
+    <value>Sumario de Producción</value>
+  </data>
+  <data name="progress" xml:space="preserve">
+    <value>Progreso</value>
+  </data>
+  <data name="quality" xml:space="preserve">
+    <value>Calidad</value>
+  </data>
+  <data name="quantity" xml:space="preserve">
+    <value>Cantidad</value>
+  </data>
+  <data name="removepermission?" xml:space="preserve">
+    <value>¿Desea eliminar el permiso?</value>
+  </data>
+  <data name="reports" xml:space="preserve">
+    <value>Reportes</value>
+  </data>
+  <data name="resetlayout" xml:space="preserve">
+    <value>Opciones por defecto</value>
+  </data>
+  <data name="retainedpiece" xml:space="preserve">
+    <value>Piezas Retenidas</value>
+  </data>
+  <data name="running" xml:space="preserve">
+    <value>Corriendo</value>
+  </data>
+  <data name="runningefficiency" xml:space="preserve">
+    <value>Eficiencia en Funcionamiento</value>
+  </data>
+  <data name="saturday" xml:space="preserve">
+    <value>Sábado</value>
+  </data>
+  <data name="save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="search" xml:space="preserve">
+    <value>Buscar</value>
+  </data>
+  <data name="select" xml:space="preserve">
+    <value>Seleccione</value>
+  </data>
+  <data name="september" xml:space="preserve">
+    <value>Septiembre</value>
+  </data>
+  <data name="settings" xml:space="preserve">
+    <value>Opciones</value>
+  </data>
+  <data name="shade" xml:space="preserve">
+    <value>Color</value>
+  </data>
+  <data name="shift" xml:space="preserve">
+    <value>Turno</value>
+  </data>
+  <data name="shiftproduction" xml:space="preserve">
+    <value>Producción Turno</value>
+  </data>
+  <data name="shiftsassignment" xml:space="preserve">
+    <value>Asignación de Turnos</value>
+  </data>
+  <data name="shiftsupervisor" xml:space="preserve">
+    <value>Jefe de Turno</value>
+  </data>
+  <data name="since" xml:space="preserve">
+    <value>Desde</value>
+  </data>
+  <data name="skills" xml:space="preserve">
+    <value>Habilidades</value>
+  </data>
+  <data name="speed" xml:space="preserve">
+    <value>Velocidad</value>
+  </data>
+  <data name="standard" xml:space="preserve">
+    <value>Estándar</value>
+  </data>
+  <data name="standardefficiency" xml:space="preserve">
+    <value>Eficiencia Estándar</value>
+  </data>
+  <data name="startdate" xml:space="preserve">
+    <value>Fecha de Inicio</value>
+  </data>
+  <data name="startedby" xml:space="preserve">
+    <value>Iniciado por</value>
+  </data>
+  <data name="starthour" xml:space="preserve">
+    <value>Hora de Inicio</value>
+  </data>
+  <data name="startinventory" xml:space="preserve">
+    <value>Iniciar Inventario</value>
+  </data>
+  <data name="startinventorymessage" xml:space="preserve">
+    <value>Para iniciar un nuevo inventario, presione el botón.</value>
+  </data>
+  <data name="status" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="stopdetail" xml:space="preserve">
+    <value>Detalle de Paro</value>
+  </data>
+  <data name="stophour" xml:space="preserve">
+    <value>Hora de Paro</value>
+  </data>
+  <data name="stoppagecurrentshift" xml:space="preserve">
+    <value>Paros Turno Actual</value>
+  </data>
+  <data name="stoppagehistory" xml:space="preserve">
+    <value>Historial de Paros</value>
+  </data>
+  <data name="stoppedtime" xml:space="preserve">
+    <value>Tiempo Detenido</value>
+  </data>
+  <data name="stops" xml:space="preserve">
+    <value>Paros</value>
+  </data>
+  <data name="stoptype" xml:space="preserve">
+    <value>Tipo de Paro</value>
+  </data>
+  <data name="sunday" xml:space="preserve">
+    <value>Domingo</value>
+  </data>
+  <data name="thursday" xml:space="preserve">
+    <value>Jueves</value>
+  </data>
+  <data name="time" xml:space="preserve">
+    <value>Tiempo</value>
+  </data>
+  <data name="title" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="towarp" xml:space="preserve">
+    <value>Por Urdir</value>
+  </data>
+  <data name="tracking" xml:space="preserve">
+    <value>Seguimiento</value>
+  </data>
+  <data name="tuesday" xml:space="preserve">
+    <value>Martes</value>
+  </data>
+  <data name="type" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="unassigned" xml:space="preserve">
+    <value>Sin Asignar</value>
+  </data>
+  <data name="unnassigned" xml:space="preserve">
+    <value>Sin Asignar</value>
+  </data>
+  <data name="unshippedpiece" xml:space="preserve">
+    <value>Piezas no Despachadas</value>
+  </data>
+  <data name="until" xml:space="preserve">
+    <value>Hasta</value>
+  </data>
+  <data name="user" xml:space="preserve">
+    <value>Usuario</value>
+  </data>
+  <data name="username" xml:space="preserve">
+    <value>Nombre de Usuario</value>
+  </data>
+  <data name="userPermissionRepeated" xml:space="preserve">
+    <value>El permiso ya fué asignado</value>
+  </data>
+  <data name="users" xml:space="preserve">
+    <value>Usuarios</value>
+  </data>
+  <data name="warping" xml:space="preserve">
+    <value>Urdido</value>
+  </data>
+  <data name="warpstops" xml:space="preserve">
+    <value>Paros por Urdido</value>
+  </data>
+  <data name="weaver" xml:space="preserve">
+    <value>Tejedor</value>
+  </data>
+  <data name="weaving" xml:space="preserve">
+    <value>Telares</value>
+  </data>
+  <data name="weavingsummary" xml:space="preserve">
+    <value>Informe de Telares</value>
+  </data>
+  <data name="wednesday" xml:space="preserve">
+    <value>Miércoles</value>
+  </data>
+  <data name="week" xml:space="preserve">
+    <value>Semana</value>
+  </data>
+  <data name="weftstops" xml:space="preserve">
+    <value>Paros por Trama</value>
+  </data>
+  <data name="worker" xml:space="preserve">
+    <value>Trabajador</value>
+  </data>
+  <data name="workerevaluation" xml:space="preserve">
+    <value>Evaluacion Trabajador</value>
+  </data>
+  <data name="workergroup" xml:space="preserve">
+    <value>Grupo de Trabajadores</value>
+  </data>
+  <data name="workerinformation" xml:space="preserve">
+    <value>Información Trabajador</value>
+  </data>
+  <data name="workername" xml:space="preserve">
+    <value>Nombre del Trabajador</value>
+  </data>
+  <data name="workers" xml:space="preserve">
+    <value>Trabajadores</value>
+  </data>
+  <data name="worstlooms" xml:space="preserve">
+    <value>Peores Telares</value>
+  </data>
+</root>

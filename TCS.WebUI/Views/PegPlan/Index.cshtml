@@ -1,0 +1,337 @@
+﻿@model IEnumerable<TCS.EF.Entidades.PegPlan>
+
+@{
+    ViewData["Title"] = "Index";
+    ViewData["PageName"] = "pegplan_index";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> PegPlan";
+    List<TCS.EF.Entidades.Draft> sleys = ViewBag.sleys;
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+    <link rel="stylesheet" href="~/css/notifications/sweetalert2/sweetalert2.min.css">
+}
+<form asp-action="index">
+    <div class="panel">
+        <div class="panel-hdr">
+            <h2>
+                <i class="fal fa-search text-info"></i>&nbsp;Panel filtro
+            </h2>
+            <div class="panel-toolbar">
+                <button type="submit" class="btn btn-sm btn-outline-info">
+                    <i class="fal fa-search"></i> Filtrar
+                </button>
+                <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Colapsar"></button>
+            </div>
+        </div>
+        <div class="panel-container show">
+            <div class="panel-content p-0">
+                <div class="panel-content">
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <label class="control-label">Shafts(s)</label>
+                            <input type="number" class="form-control" name="shaft" value="@ViewBag.shaft">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="control-label">End(s)</label>
+                            <input type="number" class="form-control" name="end" value="@ViewBag.end">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div id="panel-1" class="panel">
+    <div class="panel-hdr">
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            <div class="d-flex contenedor-special" style="width:100%">
+                <div class="mb-3 text-center">
+                    <a asp-action="Create" class="btn btn-primary">
+                        Nuevo PegPlan
+                    </a>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="form-group mb-3 ml-sm-0 ml-md-2 ml-lg-2">
+                        <div class="input-group">
+                            <input type="search" id="search_textbox" class="form-control" placeholder="Buscar..." autocomplete="off" />
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="@(Settings.Theme.IconPrefix) fa-search"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="loadingSpinner" style="width:100%">
+                <div class="card-body">
+                    <div class="w-100 text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Cargando...</span>
+                        </div><br />
+                        <span class="text-big text-primary">Cargando <strong>@ViewBag.total</strong> drafts.</span>
+                    </div>
+                </div>
+            </div>
+            <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100" style="display:none" data-page-length="25">
+                <thead class="thead-themed">
+                    <tr style="font-size: 16px;">
+                        <th width="1" data-orderable="false"></th>
+                        <th width="1">
+                            @Html.DisplayNameFor(model => model.Code)
+                        </th>
+                        <th class="text-nowrap">
+                            @Html.DisplayNameFor(model => model.Description)
+                        </th>
+
+                        <th width="1">
+                            @Html.DisplayNameFor(model => model.Shafts)
+                        </th>
+                        <th width="1">
+                            @Html.DisplayNameFor(model => model.Ends)
+                        </th>
+
+                        <th width="1">
+                            @Html.DisplayNameFor(model => model.Authorized)
+                        </th>
+                        <th class="all" width="1" data-orderable="false" data-searchable="false"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                    <tr style="font-size: 15px;">
+                        <td>
+                            <a data-toggle="tooltip" data-placement="top" title="Vista Previa" class="btn btn-outline-primary btn-sm btn-icon rounded-circle waves-effect waves-themed">
+                                <span class="text-info"><i class="@(Settings.Theme.IconPrefix) fa-eye"></i></span>
+                            </a>
+                        </td>
+                        <td class="td-container">
+                            @item.Code
+                            @*<span class="span-hover-tooltip">
+                <span class="span-tooltip">
+                     @await Component.InvokeAsync("DesignDraw", new { cols = item.Shafts, rows = item.Ends, data = item.DraftPlan, repeats = item.Repeats })
+                </span>
+            </span>*@
+                            <input value="@item.Shafts" hidden>
+                            <input value="@item.Ends" hidden>
+                            <input value="@item.DraftPlan" hidden>
+                            <input value="@item.Repeats" hidden>
+                        </td>
+                        <td>
+                            @Html.Raw(item.Description)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Shafts)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Ends)
+                        </td>
+
+                        @if (item.Authorized == true)
+                        {
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Autorized.FullName)
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                            </td>
+                        }
+                        <td class="text-center">
+                            <div class="dropdown dropleft">
+                                <a href="#" class='btn btn-sm btn-icon btn-outline-primary rounded-circle shadow-0' data-toggle='dropdown' aria-expanded='true' title='Mas opciones'>
+                                    <i class="@(Settings.Theme.IconPrefix) fa-ellipsis-v"></i>
+                                </a>
+                                <div class='dropdown-menu'>
+                                    <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.PegPlanId"><span class="text-primary"><i class="@(Settings.Theme.IconPrefix) fa-edit"></i></span>  Editar</a>
+                                    <a class="dropdown-item" asp-action="Delete" asp-route-id="@item.PegPlanId"><span class="text-danger"><i class="@(Settings.Theme.IconPrefix) fa-trash-alt"></i></span>  Borrar</a>
+                                    <button type="button" class="dropdown-item" formtarget="_blank" onclick="window.open('@Url.Action("ImagePrint", new { id = item.PegPlanId })', '_blank');">
+                                        <span><i class="@(Settings.Theme.IconPrefix) fa-file-alt"></i> Imprimir Draft</span>
+                                    </button>
+                                    <button type="button" class="dropdown-item" formtarget="_blank" onclick="window.open('@Url.Action("ImagePrintExcel", new { id = item.PegPlanId })');">
+                                        <span><i class="@(Settings.Theme.IconPrefix) fa-file-alt"></i> Crear Excel</span>
+                                    </button>
+                                    @*@{
+                        var hola = sleys.Where(x => x.Code == item.Code).FirstOrDefault();
+
+                    }
+                    @if (hola != null)
+                    {
+                        <button type="button" class="dropdown-item" formtarget="_blank" onclick="window.open('@Url.Action("ImagePrint2", new { id = item.DraftId })', '_blank');">
+                            <span><i class="@(Settings.Theme.IconPrefix) fa-file-alt"></i> Imprimir dibujo</span>
+                        </button>
+                        <button type="button" class="dropdown-item" formtarget="_blank" onclick="window.open('@Url.Action("ImagePrintExcelDibujo", new { id = item.DraftPlan, draftId = item.DraftId })');">
+                            <span><i class="@(Settings.Theme.IconPrefix) fa-file-alt"></i> Crear Excel Dibujo</span>
+                        </button>
+                    }*@
+                                    <button type="button" class="dropdown-item" formtarget="_blank" onclick="location.href='@Url.Action("Index","Draft", new { draftId = item.PegPlanId })';">
+                                        <span><i class="@(Settings.Theme.IconPrefix) fa-file-alt"></i> Seleccionar sley</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<style>
+/*    .td-container {
+        position: relative;
+    }
+
+    .span-hover-tooltip {
+        position: absolute;
+        visibility: hidden;
+        opacity: 0;
+        z-index: 1;
+        bottom: -100px;
+        transform: translateX(-0%);
+    }
+
+    .td-container:hover .span-hover-tooltip {
+        opacity: 1;
+        visibility: visible;
+    }*/
+
+/*    .span-tooltip {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        background-color: white;
+        transition: 1s;
+        width: max-content;
+        min-height: 30vh;
+        height: max-content;
+        max-height: 60vh;
+        overflow: scroll;
+        transform: scale(0.7);
+
+        padding:1em;
+    }*/
+    .span-tooltip {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        background-color: white;
+        transition: 1s;
+        width: 100%;
+        height: 50vh;
+        overflow: auto;
+        padding: 0.5rem;
+    }
+</style>
+@section ScriptsBlock {
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/notifications/sweetalert2/sweetalert2.min.js"></script>
+<script>
+    const tableTest = document.querySelector('#dt-basic-example');
+
+    eventListeners();
+
+    function eventListeners()
+    {
+        addRowHandlers();
+    }
+
+    function addRowHandlers()
+    {
+        const rows = tableTest.getElementsByTagName("tr");
+
+        for (i = 1; i < rows.length; i++)
+        {
+            const currentRow = tableTest.rows[i];
+            const createClickHandler = function ()
+            {
+                return function()
+                {
+                    const tdVista = currentRow.getElementsByTagName("td")[0];
+                    const tdCodeCol = currentRow.getElementsByTagName("td")[1];
+                    tdCodeCol.id = `td-${i}`;
+
+                    loadComponent(tdVista, tdCodeCol);
+                };
+            };
+            currentRow.getElementsByTagName("td")[0].addEventListener('mouseover', createClickHandler());
+        }
+    }
+
+    async function loadComponent(tdVista, tdCodeCol)
+    {
+        const shafts = tdCodeCol.children[0].value;
+        const ends = tdCodeCol.children[1].value;
+        const draftPlan = tdCodeCol.children[2].value;
+        const repeats = tdCodeCol.children[3].value;
+
+        let url = `PegPlan/GetModalPegPlan?Shafts=${shafts}&Ends=${ends}&data=${draftPlan}&repeats=${repeats}`;
+
+        let htmlInfo;
+
+        const respuesta = await  fetch(url);
+        const resultado = await  respuesta.text();
+
+        htmlInfo = resultado;
+
+        tdVista.children[0].addEventListener('click', () =>
+        {
+            Swal.fire({
+                title: 'Modelo',
+                text: "",
+                html: `<span class="span-tooltip">
+                        ${htmlInfo}
+                       </span>`,
+                confirmButtonColor: '#038387',
+                confirmButtonText: 'Cerrar',
+            }).then((result) =>
+            {
+                
+            })
+        });
+    }
+
+</script>
+    <script>
+        $(document).ready(function () {
+            var table = $('#dt-basic-example').DataTable({
+                dom: "lrtip",
+                responsive: true,
+                blurable: false,
+                order: [],
+                lengthChange: false,
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
+                },
+                initComplete: function (settings, json) {
+                    $('#loadingSpinner').hide();
+                    $('#dt-basic-example').show();
+                }
+            });
+            $('#search_textbox').keyup(function () {
+                table.search($(this).val()).draw();
+            })
+            $('#search_textbox').change(function () {
+                table.search($(this).val()).draw();
+            })
+            $('#search_textbox').on("search", function () {
+                table.search($(this).val()).draw();
+            })
+        });
+        $(document).ready(function () {
+            $(window).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,29 @@
+﻿@model TCS.EF.Entidades.Module
+
+@{
+    ViewData["Title"] = SharedLocalizer["modules"].ToString();
+    ViewData["PageName"] = "modules_index";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + SharedLocalizer["modules"].ToString();
+}
+<h3>@SharedLocalizer["doyouwanttodelete"] @SharedLocalizer["module"]?</h3>
+<div>
+    <br>
+    <dl class="row" style="font-size :20px">
+        <dt class="col-sm-1">
+            @SharedLocalizer[@Html.DisplayNameFor(model => model.Description).ToLower()]
+        </dt>
+        <dd class="col-sm-11">
+            <span style="padding-right : 15px">:</span>@Html.DisplayFor(model => model.Description)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="ModuleId" />
+        <div>
+            <button type="submit" value="Delete" class="btn btn-primary mb-3">@SharedLocalizer["delete"]</button>
+            <a asp-action="Index" class="btn btn-primary mb-3">
+                @SharedLocalizer["goback"]
+            </a>
+        </div>
+    </form>
+</div>

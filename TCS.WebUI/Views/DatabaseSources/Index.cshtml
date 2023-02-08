@@ -1,0 +1,53 @@
+﻿@model IEnumerable<DEVTOOLS.EF.Entidades.DatabaseSource>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DatabaseSourceName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Project)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DatabaseSourceType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DatabaseSourceDNS)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DatabaseSourceName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Project.ProjectName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DatabaseSourceType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DatabaseSourceDNS)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.DatabaseSourceId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.DatabaseSourceId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.DatabaseSourceId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

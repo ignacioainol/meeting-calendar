@@ -1,0 +1,108 @@
+﻿@model IEnumerable<TCS.EF.Entidades.Module>
+
+@{
+    ViewData["Title"] = SharedLocalizer["modules"].ToString();
+    ViewData["PageName"] = "modules_index";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + SharedLocalizer["modules"].ToString();
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+}
+
+<div id="panel-1" class="panel">
+    <div class="panel-hdr">
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            <div class="d-flex contenedor-special" style="width:100%">
+                <div class="mb-3 text-center">
+                    <a asp-action="Create" class="btn btn-primary">
+                        @SharedLocalizer["new"] @SharedLocalizer["module"].ToString()
+                    </a>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="form-group mb-3 ml-sm-0 ml-md-2 ml-lg-2">
+                        <div class="input-group">
+                            <input type="search" id="search_textbox" class="form-control" placeholder="@SharedLocalizer["search"]..." autocomplete="off" />
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="@(Settings.Theme.IconPrefix) fa-search"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100">
+                <thead class="bg-primary-500">
+                    <tr>
+                        <th>
+                            @SharedLocalizer[@Html.DisplayNameFor(model => model.Description).ToLower()]
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Description)
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.ModuleId">@SharedLocalizer["edit"]</a> |
+                                <a asp-action="Details" asp-route-id="@item.ModuleId">@SharedLocalizer["details"]</a> |
+                                <a asp-action="Delete" asp-route-id="@item.ModuleId">@SharedLocalizer["delete"]</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    @{ if (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "es")
+        {
+            <script src="~/js/datagrid/datatables/datatables.bundle.es.js"></script>
+        }
+    }
+    <script>
+        $(document).ready(function () {
+            var table = $('#dt-basic-example').DataTable({
+                dom: "lrtip",
+                responsive: true,
+                blurable: false,
+                order: [],
+                lengthChange: false,
+                pageLength: 25,
+                initComplete: function (settings, json) {
+                    $('#loadingSpinner').hide();
+                    $('#dt-basic-example').show();
+                }
+            });
+            $('#search_textbox').keyup(function () {
+                table.search($(this).val()).draw();
+            })
+            $('#search_textbox').change(function () {
+                table.search($(this).val()).draw();
+            })
+            $('#search_textbox').on("search", function () {
+                table.search($(this).val()).draw();
+            })
+        });
+        $(document).ready(function () {
+            $(window).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        });
+    </script>
+}

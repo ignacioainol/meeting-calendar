@@ -1,0 +1,181 @@
+﻿@model TCS.WebUI.Models.DesignDraw
+@using System.Globalization
+
+
+@{
+    int r = 1;
+    int? x = ViewBag.delete;
+    Matriz matriz = ViewBag.matriz;
+    int color = 1;
+}
+<div class="div-container">
+    <table id="design-table">
+        <thead>
+            <tr>
+                @for (int i = 0; i < Model.Cols + 1; i++)
+                {
+                    @if (Model.Cols > 0)
+                    {
+                        if (i == 0)
+                        {
+                            <th class="cube-size"></th>
+                        }
+                        else
+                        {
+                            <th class="cube-size">@i</th>
+                        }
+                    }
+                }
+
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 1; i < Model.Rows + 1; i++)
+            {
+                <tr class="cube-size">
+                    @{
+                        <th>@r</th>
+                        r = r + 1;
+                    }
+                    @for (int j = 1; j < Model.Cols + 1; j++)
+                    {
+                        if (Model.PointDataWarpings.Where(p => p.row == i && p.col == j).FirstOrDefault() != null)
+                        {
+                            <td name="@i;@j" id="@i;@j" class="cube-size" contentEditable oninput="toggleColor(this);">@Model.PointDataWarpings.Where(p => p.row == i && p.col == j).FirstOrDefault().val</td>
+                        }
+                        else if (Model.PointDataWarpings2.Where(p => p.row == i && p.col == j).FirstOrDefault() != null)
+                        {
+                            <td name="@i;@j" id="@i;@j" class="cube-size" style="background-color:#ffd800;" onClick="toggleColor(this);" contentEditable></td>
+                        }
+                        else
+                        {
+                            if (x > 0)
+                            {
+                                <td name="@i;@j" id="@i;@j" class="cube-size" contentEditable oninput="toggleColor(this);"></td>
+                            }
+                            else
+                            {
+
+                                <td name="@i;@j" id="@i;@j" contentEditable class="cube-size" data-inputmask="'alias': 'integer'" oninput="toggleColor(this);"></td>
+
+                                @*<td name="@i;@j" class="cube-size" onClick="toggleColor(this);"></td>*@
+                            }
+                        }
+                    }
+
+                </tr>
+            }
+
+            @foreach (var item in Model.Repeats)
+            {
+                int count = 0;
+
+                string colores = "";
+                if (color % 2 == 0)
+                {
+                    colores = "#ee8336";
+                }
+                else
+                {
+                    colores = "#d13636";
+                }
+                <tr class="cube-size">
+                    <td class="cube-size"style="background-color:@colores;color:white">R</td>
+                    @for (int j = 1; j < Model.Cols + 1; j++)
+                    {
+                        @if (item.inicio <= j && item.fin >= j)
+                        {
+                           
+                            if (count == 0)
+                            {
+                                int colspan = item.fin - item.inicio + 1;
+                                <td class="cube-size text-center" style="background-color:@colores;color:white" colspan="@colspan">@item.cantidad</td>
+                                count++;
+                            }
+                            
+                        }
+                        else
+                        {
+                            <td class="cube-size"></td>
+                        }
+                    }
+                </tr>
+                color++;
+            }
+        </tbody>
+    </table>
+
+
+</div>
+<style>
+    .div-container {
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    table, th, td {
+        padding-right: 0.2em;
+        border: 0.05rem solid black;
+        border-collapse: collapse;
+    }
+
+    .cube-size {
+        height: 28px;
+        min-width: 28px;
+        font-size: 0.9rem;
+        text-align: end;
+    }
+
+    .reps-width {
+        background-color: #FF0000;
+        color: white;
+        padding: 0px;
+        font-size: 0.9rem;
+        text-align: center;
+    }
+</style>
+
+<script type="text/javascript">
+
+    function toggleColor(obj) {
+        customInputmask.init();
+        //var bgColor = obj.style.backgroundColor;
+        //var idtd = obj.id
+        //var valortd = document.getElementById(idtd).innerText
+
+
+        $("#WarpPlan").val(getData())
+
+    };
+    function getData() {
+        debugger
+        var table = document.getElementById("design-table");
+        var data = '';
+        //var data2 = '';
+        //abc = 'ñ,A,B,C,D,E,F,G,H,I,J,K,L,M,N,Ñ,O,P,Q,R,S,T,U,V,W,X,Y,Z'
+        //aABC = abc.split(',')
+        for (var i = 1, row; row = table.rows[i]; i++) {
+            for (var j = 0, col; col = row.cells[j]; j++) {
+                //var bgColor = col.style.backgroundColor;
+                //if (bgColor == "rgb(0, 0, 255)") {
+                //    data = data + col.getAttribute("name") + "|";
+                //}
+
+                var idtd = col.id
+                if (idtd != '') {
+                    var valortd = document.getElementById(idtd).innerText
+                    if (valortd != '') {
+                        data = data + col.getAttribute("name") + ";" + valortd + "|";
+                        //data2 = data2 + aABC[i] + "," + valortd + "|";
+
+                    }
+                }
+
+            }
+        }
+        console.log(data.slice(0, -1));
+       
+
+        return data.slice(0, -1);
+    };
+</script>

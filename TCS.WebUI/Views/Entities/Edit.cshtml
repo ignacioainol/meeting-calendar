@@ -1,0 +1,277 @@
+﻿@model DEVTOOLS.EF.Entidades.Entity
+
+@{
+    ViewData["Title"] = "Edit";
+    //List<DEVTOOLS.EF.Entidades.RelationShip> childList = ViewBag.ChildList;
+    List<DEVTOOLS.EF.Entidades.Column> parentList = ViewBag.ParentList;
+
+    List<DEVTOOLS.EF.Entidades.Column> columnList =(Model.EntityColumns!= null)?
+    Model.EntityColumns.ToList(): 
+    new List<DEVTOOLS.EF.Entidades.Column>();
+
+    List<DEVTOOLS.EF.Entidades.EntityTemplate> entityTemplateList =(Model.EntityTemplates!= null)?
+    Model.EntityTemplates.ToList(): 
+    new List<DEVTOOLS.EF.Entidades.EntityTemplate>();
+
+    //List<DEVTOOLS.EF.Entidades.RelationShip> relationShipChildList =(childList != null)?
+    //childList.ToList(): 
+    //new List<DEVTOOLS.EF.Entidades.RelationShip>();
+
+    List<DEVTOOLS.EF.Entidades.Column> relationShipParentList =(parentList != null)?
+    parentList.ToList(): 
+    new List<DEVTOOLS.EF.Entidades.Column>();
+}
+
+<h1>Edit</h1>
+
+<h4>Entity</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="EntityId" />
+            <div class="form-group">
+                <label asp-for="ProjectId" class="control-label"></label>
+                <select asp-for="ProjectId" class="form-control" asp-items="ViewBag.ProjectId"></select>
+                <span asp-validation-for="ProjectId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EntityName" class="control-label"></label>
+                <input asp-for="EntityName" class="form-control" />
+                <span asp-validation-for="EntityName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EntityTableName" class="control-label"></label>
+                <input asp-for="EntityTableName" class="form-control" />
+                <span asp-validation-for="EntityTableName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EntityProjectDatabaseSourceId" class="control-label"></label>
+                <select asp-for="EntityProjectDatabaseSourceId" class="form-control" asp-items="ViewBag.EntityProjectDatabaseSourceId"></select>
+                <span asp-validation-for="EntityProjectDatabaseSourceId" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Active" /> @Html.DisplayNameFor(model => model.Active)
+                </label>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <h2 style="border-bottom:1px solid black">Entity Columns</h2>
+    <button class="btn btn-primary" onclick="location.href='/Columns/Create?EntityId=@Model.EntityId'">Create New Column</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    ColumnIndex
+                </th>
+                <th>
+                    Active
+                </th>
+                <th>
+                    ColumnPrimaryKey
+                </th>
+                <th>
+                    ColumnForeignKey
+                </th>
+                <th>
+                    ColumnName
+                </th>
+                <th>
+                    ColumnDescription
+                </th>
+                <th>
+                    ColumnType
+                </th>
+                <th>
+                    Entity
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in columnList) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ColumnIndex)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Active)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ColumnPrimaryKey)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ColumnForeignKey)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ColumnName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ColumnDescription)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ColumnType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Entity.EntityName)
+                </td>
+                <td>
+                    <a href="Columns/Edit?Id=@item.ColumnId">Edit</a> |
+                    <a href="Columns/Details?Id=@item.ColumnId">Details</a> |
+                    <a href="Columns/Delete?Id=@item.ColumnId">Delete</a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <h2 style="border-bottom:1px solid black">Entity Template</h2>
+    <button class="btn btn-primary" onclick="location.href='/EntityTemplates/Create?EntityId=@Model.EntityId'">Create New Entity Template</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    EntityTemplateName
+                </th>
+                <th>
+                    EntityTemplateObservations
+                </th>
+                <th>
+                    EntityTemplateSourceCodeType
+                </th>
+                <th>
+                    EntityTemplateContent
+                </th>
+                <th>
+                    Entity
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in entityTemplateList) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EntityTemplateName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EntityTemplateObservations)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EntityTemplateSourceCodeType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EntityTemplateContent)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Entity.EntityName)
+                </td>
+                <td>
+                    <a href="EntityTemplates/Edit?Id=@item.EntityTemplateId">Edit</a> |
+                    <a href="EntityTemplates/Details?Id=@item.EntityTemplateId">Details</a> |
+                    <a href="EntityTemplates/Delete?Id=@item.EntityTemplateId">Delete</a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
+
+@*<div>
+    <h2 style="border-bottom:1px solid black">RelationShip Child</h2>
+    <button class="btn btn-primary" onclick="location.href='/RelationShips/Create?IsChild=true&EntityId=@Model.EntityId'">Create New RelationShip Child</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Child Entity
+                </th>
+                <th>
+                    Child Column
+                </th>
+                <th>
+                    RelationShipType
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in relationShipChildList) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ColumnChild.Entity.EntityName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ColumnChild.ColumnName)
+                </td>
+                <td>
+                    @RelationTypes.FirstOrDefault(x=>x.Id == item.RelationShipType).Name
+                </td>
+                <td>
+                    <a href="/RelationShips/Edit?Id=@item.RelationShipId">Edit</a> |
+                    <a href="/RelationShips/Details?Id=@item.RelationShipId">Details</a> |
+                    <a href="/RelationShips/Delete?Id=@item.RelationShipId">Delete</a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>*@
+
+<div>
+    <h2 style="border-bottom:1px solid black">RelationShip Parent</h2>
+    @*<button class="btn btn-primary" onclick="location.href='/RelationShips/Create?IsChild=false&EntityId=@Model.EntityId'">Create New RelationShip Parent</button>*@
+@*    <p>
+        <a href="/RelationShips/Create?IsChild=false&EntityId=@Model.EntityId">Create New RelationShip Parent</a>
+    </p>*@
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Parent Entity
+                </th>
+                <th>
+                    Parent Column
+                </th>
+                <th>
+                    Columns Type
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in relationShipParentList) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Entity.EntityName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ColumnName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ColumnType)
+                </td>
+
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
+
+
+<div>
+    <a href="Projects/Edit?id=@Model.ProjectId">Back to Proy</a>
+</div>
+
+@section ScriptsBlock {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

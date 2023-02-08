@@ -1,0 +1,65 @@
+﻿@model IEnumerable<TCS.WebUI.Models.EnrollModel>
+
+@{
+    ViewData["Title"] = SharedLocalizer["alertPermission"].ToString();
+    ViewData["PageName"] = "alert_alertpermission";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + SharedLocalizer["alertPermission"].ToString();
+}
+
+<div id="panel-1" class="panel">
+    <div class="panel-hdr">
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100">
+                <thead class="bg-primary-500">
+                    <tr>
+                        <th>
+                            Nombre Completo
+                        </th>
+                        <th>
+                            @SharedLocalizer["phoneline"]
+                        </th>
+                        <th>
+                            Habilitado
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FullName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PhoneNumber)
+                            </td>
+                            <td>
+                                 <input onclick = "ChangeAuthorization('@item.FichaCRS','@item.Ficha',this)" type="checkbox" checked = "@item.Enabled">
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock
+{
+    <script>
+
+        async function ChangeAuthorization(fichaCrs,ficha,val) 
+        {  
+            let url = `Alert/ChangeAuthorization?fichaCRS=${fichaCrs}&ficha=${ficha}&isEnabled=${val.checked}`;
+            const respuesta = await fetch(url);
+            const resultado = await respuesta.json();
+        }  
+    </script>
+}

@@ -1,0 +1,317 @@
+﻿@model IEnumerable<TCS.EF.Entidades.CurrentProd>
+@{
+    ViewData["Title"] = SharedLocalizer["currentshift"].ToString();
+    ViewData["PageName"] = "weaving_loomlist";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + SharedLocalizer["currentshift"].ToString() + ": " + ViewBag.CurrentShift.Shift + "";
+    ViewData["PageDescription"] = String.Format("Fecha : {0}", ViewBag.CurrentShift.Date);
+}
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+}
+<head>
+</head>
+
+@{
+    string EffColorClass = "";
+    string PEffColorClass = "";
+    string LabelColor = "";
+}
+<div class="panel">
+    <div class="grid-container-header">
+        <div class="div-shift-supervisor">
+            <strong>
+                JEFE DE TURNO:
+            </strong>
+            <span>@ViewBag.ShiftSupervisor</span>
+        </div>
+        <button class="btn btn-primary p-2" id="button-export-excel">
+            @SharedLocalizer["exporttoexcel"]
+        </button>
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content" style="overflow-x: auto;">
+            <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100">
+                <thead class="bg-primary-500">
+                    <tr class="text-center" style="font-size: 16px;">
+                        @*<th width="1" data-orderable="false"></th>*@
+                        <th style="vertical-align:middle">@SharedLocalizer["status"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["loom"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["type"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["running"]%</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["standard"]%</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["designA"]</th>
+                        <th style="vertical-align:middle">PPC</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["meters"]</th>
+                        <th style="vertical-align:middle">Kpicks</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["speed"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["warpstops"]  <br /> (@SharedLocalizer["quantity"] / @SharedLocalizer["time"])</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["weftstops"]  <br /> (@SharedLocalizer["quantity"] / @SharedLocalizer["time"])</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["otherstops"] <br /> (@SharedLocalizer["quantity"] / @SharedLocalizer["time"])</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["weaver"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        switch (item.Status)
+                        {
+                            case "Running":
+                                LabelColor = "badge badge-success";
+                                break;
+                            case "Stopped":
+                                LabelColor = "badge badge-danger";
+                                break;
+                            case "Offline":
+                                LabelColor = "badge badge-warning";
+                                break;
+                            case "NR":
+                                LabelColor = "badge badge-warning";
+                                break;
+                        }
+
+                        if (item.ActualEff <= 30)
+                        {
+                            EffColorClass = "badge badge-danger";
+                        }
+                        else if (item.ActualEff > 30 && item.ActualEff < 70)
+                        {
+                            EffColorClass = "badge badge-warning";
+                        }
+                        else if (item.ActualEff >= 70)
+                        {
+                            EffColorClass = "badge badge-success";
+                        }
+
+                        if (item.StdEff <= 30)
+                        {
+                            PEffColorClass = "badge badge-danger";
+                        }
+                        else if (item.StdEff > 30 && item.StdEff < 70)
+                        {
+                            PEffColorClass = "badge badge-warning";
+                        }
+                        else if (item.StdEff >= 70)
+                        {
+                            PEffColorClass = "badge badge-success";
+                        }
+
+                        string WarpStopColorClass = "badge-info";
+                        string WeftStopColorClass = "badge-info";
+                        string OtherStopColorClass = "badge-info";
+
+                        if (item.CurrentStopType == 1)
+                        {
+                            WarpStopColorClass = "badge-danger";
+                        }
+                        if (item.CurrentStopType == 2)
+                        {
+                            WeftStopColorClass = "badge-danger";
+                        }
+                        if (item.CurrentStopType >= 3)
+                        {
+                            OtherStopColorClass = "badge-danger";
+                        }
+                    <tr style="font-size: 15px; cursor: pointer;">
+                        @*<td>
+                            <a data-toggle="tooltip" data-placement="top" title="@SharedLocalizer["go"] @SharedLocalizer["loommonitor"]" class="btn btn-outline-primary btn-sm btn-icon rounded-circle waves-effect waves-themed">
+                                <span onclick="GoMonitor(loomId = @item.LoomId)" class="text-info"><i class="@(Settings.Theme.IconPrefix) fa-arrow-alt-circle-right"></i></span>
+                            </a>
+                        </td>*@
+                        <td><span class="badge @LabelColor">@item.Status</span></td>
+                        <td onclick="GoMonitor(loomId = @item.LoomId)">@item.Loom.LoomNumber</td>
+                        <td onclick="GoMonitor(loomId = @item.LoomId)" ><strong> @item.Loom.LoomType.Description</strong></td>
+                        <td onclick="GoMonitor(loomId = @item.LoomId)" class="text-right"><span class="badge @EffColorClass">@string.Format("{0:N1}%", item.ActualEff)</span></td>
+                        <td onclick="GoMonitor(loomId = @item.LoomId)" class="text-right"><span class="badge @PEffColorClass">@string.Format("{0:N1}%", item.StdEff)</span></td>
+                        <td onclick="GoMonitor(loomId = @item.LoomId)">@item.Article</td>
+                        <td onclick="GoMonitor(loomId = @item.LoomId)" class="text-right">@item.Ppc</td>
+                        <td onclick="GoMonitor(loomId = @item.LoomId)" class="text-right">@string.Format("{0:N1}", Convert.ToDouble(item.Lenght) / 100) </td>
+                        <td onclick="GoMonitor(loomId = @item.LoomId)" class="text-right">@string.Format("{0:N1}", Convert.ToDouble(item.Picks) / 1000)</td>
+                        <td onclick="GoMonitor(loomId = @item.LoomId)" class="text-right">@item.ActualSpeed</td>
+                        <td onclick="GoMonitor(loomId = @item.LoomId)" class="text-center">
+                            <span class="badge @WarpStopColorClass">@item.WarpStops</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span>@TimeSpan.FromSeconds((double)item.WarpStopTime).ToString(@"hh\:mm")</span>
+                        </td>
+                        <td onclick="GoMonitor(loomId = @item.LoomId)" class="text-center">
+                            <span class="badge @WeftStopColorClass">@item.WeftStops</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span>@TimeSpan.FromSeconds((double)item.WeftStopTime).ToString(@"hh\:mm")</span>
+                        </td>
+                        <td onclick="GoMonitor(loomId = @item.LoomId)" class="text-center">
+                            <span class="badge @OtherStopColorClass">@item.OtherStops</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span>@TimeSpan.FromSeconds((double)item.OtherStopTime).ToString(@"hh\:mm")</span>
+                        </td>
+                        <td onclick="GoMonitor(loomId = @item.LoomId)" class="text-center">
+                            <span class="badge @OtherStopColorClass">@item.WeaverName</span>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<style>
+    .badge-danger {
+        background-color: red
+    }
+
+    .badge-success {
+        background-color: forestgreen
+    }
+
+    .grid-container-header {
+        display: grid;
+        grid-template-columns: 1fr 7.8rem 1.4rem;
+        padding: 0.7rem 1.1rem 0.7rem 1.1rem;
+        border-bottom: 0.1em solid lightgray;
+        grid-gap: 6px;
+    }
+
+    .grid-container-table {
+        display: grid;
+        grid-template-columns: 8% 8% 10% 8% 8% 8% 7% 7% 7% 7% 7% 7% 7%;
+        border: 0.1em solid lightgray;
+    }
+
+    .div-shift-supervisor {
+        padding-top: 0.8em;
+        font-size: 1.1em;
+    }
+
+    @@media screen and (max-width:864px) {
+
+        table {
+            border: 0;
+        }
+/*
+        table caption {
+            font-size: 1.3rem;
+        }*/
+
+        table thead {
+            border: none;
+            clip: rect(0 0 0 0);
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            width: 1px;
+        }
+
+        table tr {
+            border-bottom: 3px solid #ddd;
+            display: block;
+            margin-bottom: .625rem;
+        }
+
+            table td {
+                border-bottom: 1px solid #ddd;
+                display: block;
+                font-size: 1.05rem;
+                text-align: right;
+                min-height: 2rem;
+            }
+
+            table td::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: bold;
+                text-transform: uppercase;
+                font-size: 1rem;
+            }
+
+        table td:last-child {
+            border-bottom: 0;
+        }
+
+        td:nth-of-type(1):before {
+            content: "@SharedLocalizer["status"]";
+        }
+
+        td:nth-of-type(2):before {
+            content: "@SharedLocalizer["loom"]";
+        }
+
+        td:nth-of-type(3):before {
+            content: "@SharedLocalizer["type"]";
+        }
+
+        td:nth-of-type(4):before {
+            content: "@SharedLocalizer["running"]%";
+        }
+        td:nth-of-type(5):before {
+            content: "@SharedLocalizer["standard"]%";
+        }
+
+        td:nth-of-type(6):before {
+            content: "@SharedLocalizer["designA"]";
+        }
+
+        td:nth-of-type(7):before {
+            content: "PPC";
+        }
+        td:nth-of-type(8):before {
+            content: "@SharedLocalizer["meters"]";
+        }
+        td:nth-of-type(9):before {
+            content: "Kpicks";
+        }
+        td:nth-of-type(10):before {
+            content: "@SharedLocalizer["speed"]";
+        }
+        td:nth-of-type(11):before {
+            content: "@SharedLocalizer["warpstops"] (@SharedLocalizer["quantity"] / @SharedLocalizer["time"])";
+        }
+        td:nth-of-type(12):before {
+            content: "@SharedLocalizer["weftstops"] (@SharedLocalizer["quantity"] / @SharedLocalizer["time"])";
+        }
+        td:nth-of-type(13):before {
+            content: "@SharedLocalizer["otherstops"] (@SharedLocalizer["quantity"] / @SharedLocalizer["time"])";
+        }
+        td:nth-of-type(14):before {
+            content: "@SharedLocalizer["weaver"]";
+        }
+    }
+</style>
+@section ScriptsBlock
+{
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    @{ if (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "es")
+        {
+            <script src="~/js/datagrid/datatables/datatables.bundle.es.js"></script>
+        }
+    }
+    <script>
+        document.querySelector('#button-export-excel').addEventListener('click', ExportarExcel);
+        function ExportarExcel()
+        {
+            let url = `Weaving/LoomListToExcel`;
+            window.location.href = url;
+        }
+
+        function GoMonitor(loomId)
+        {
+            let url = `Weaving/LoomMonitor?loomId=${loomId}`;
+            window.location.href = url;
+        }
+
+        //$(document).ready(function () {
+        //    // initialize datatable
+        //    $('#dt-basic-example').dataTable({
+        //        responsive: true,
+        //        lengthChange: false,
+        //        fixedHeader: true,
+        //        ordering: false,
+        //        pageLength: 60,
+        //        paging: false,
+        //    });
+        //});
+    </script>
+}

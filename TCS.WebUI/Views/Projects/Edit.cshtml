@@ -1,0 +1,358 @@
+﻿@model DEVTOOLS.EF.Entidades.Project
+
+@{
+    ViewData["Title"] = "Edit";
+    List<DEVTOOLS.EF.Entidades.DatabaseSource> databaseSourceList =(Model.ProjectDatabaseSources!= null)?
+    Model.ProjectDatabaseSources.ToList(): 
+    new List<DEVTOOLS.EF.Entidades.DatabaseSource>();
+
+    List<DEVTOOLS.EF.Entidades.Entity> entityList =(Model.ProjectEntities!= null)?
+    Model.ProjectEntities.ToList(): 
+    new List<DEVTOOLS.EF.Entidades.Entity>();
+
+    List<DEVTOOLS.EF.Entidades.ProjectTemplate> entityTemplateList =(Model.ProjectTemplates!= null)?
+    Model.ProjectTemplates.ToList(): 
+    new List<DEVTOOLS.EF.Entidades.ProjectTemplate>();
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" href="~/css/notifications/sweetalert2/sweetalert2.min.css">
+}
+
+<h1>Edit</h1>
+
+<h4>Project</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ProjectId" />
+            <div class="form-group">
+                <label asp-for="ProjectName" class="control-label"></label>
+                <input asp-for="ProjectName" class="form-control" />
+                <span asp-validation-for="ProjectName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <h2 style="border-bottom:1px solid black">DatabaseSources</h2>
+    <button class="btn btn-primary" onclick="location.href='/DatabaseSources/Create?ProjectId=@Model.ProjectId'">Create New DatabaseSource</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    DatabaseSourceName
+                </th>
+                <th>
+                    Project
+                </th>
+                <th>
+                    DatabaseSurceType
+                </th>
+                <th>
+                    DatabaseSurceDNS
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in databaseSourceList) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DatabaseSourceName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Project.ProjectName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DatabaseSourceType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DatabaseSourceDNS)
+                </td>
+                <td>
+                    <a href="DatabaseSources/Edit?Id=@item.DatabaseSourceId">Edit</a> |
+                    <a href="DatabaseSources/Details?Id=@item.DatabaseSourceId">Details</a> |
+                    <a href="DatabaseSources/Delete?Id=@item.DatabaseSourceId">Delete</a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
+<div>
+    <h2 style="border-bottom:1px solid black">Entities</h2>
+     <button class="btn btn-primary" onclick="location.href='/Entities/Create?ProjectId=@Model.ProjectId'">Create New Entity</button>
+     <button class="btn btn-primary" id = "button-search">Search Entities</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Project
+                </th>
+                <th>
+                    EntityName
+                </th>
+                <th>
+                    EntityTableName
+                </th>
+                <th>
+                    EntityProjectDatabaseSource
+                </th>
+                <th>
+                    Active
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in entityList) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Project.ProjectName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EntityName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EntityTableName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EntityProjectDatabaseSource.DatabaseSourceName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Active)
+                </td>
+                <td>
+                    <a href="Entities/Edit?Id=@item.EntityId">Edit</a> |
+                    <a href="Entities/Details?Id=@item.EntityId">Details</a> |
+                    <a href="Entities/Delete?Id=@item.EntityId">Delete</a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
+<div>
+    <h2 style="border-bottom:1px solid black">Project Template</h2>
+    <button class="btn btn-primary" onclick="location.href='/ProjectTemplates/Create?ProjectId=@Model.ProjectId'">Create New Project Template</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    ProjectTemplateName
+                </th>
+                <th>
+                    ProjectTemplateObservations
+                </th>
+                <th>
+                    ProjectTemplateSourceCodeType
+                </th>
+                <th>
+                    ProjectTemplateContent
+                </th>
+                <th>
+                    Project
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in entityTemplateList) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProjectTemplateName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProjectTemplateObservations)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProjectTemplateSourceCodeType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProjectTemplateContent)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Project.ProjectId)
+                </td>
+                <td>
+                    <a href="ProjectTemplates/Edit?Id=@item.ProjectTemplateId">Edit</a> |
+                    <a href="ProjectTemplates/Details?Id=@item.ProjectTemplateId">Details</a> |
+                    <a href="ProjectTemplates/Delete?Id=@item.ProjectTemplateId">Delete</a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
+
+<div id="div-modal-cut" class="grid-container-button-input-cut">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th class="text-center">
+                    Check
+                </th>
+                <th class="text-center">
+                    Tabla
+                </th>
+            </tr>
+        </thead>
+        <tbody id="tdbody-table-list">
+            <template id="template-table-list">
+                <tr style="font-size: 15px;" cursor: pointer;">
+                    <td class="text-center">
+                        <input type="checkbox">
+                        </td>
+                    <td class="text-center"></td>
+                </tr>
+            </template>
+        </tbody>
+    </table>
+
+    <button id="button-select" class="btn btn-success">Seleccionar</button>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<style>
+    #div-modal-cut {
+    position: absolute;
+    top: 25vh;
+    left: 20%;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    cursor: pointer;
+    /*        visibility: hidden;
+        opacity: 0;*/
+    transition: all 0.35s ease-in;
+    width: 50rem;
+    background-color: white;
+    height:55vh;
+    overflow-y: auto;
+}
+
+.grid-container-button-input-cut {
+        border: 2px solid #167BBF;
+    border-radius: 0.3rem;
+}
+</style>
+
+@section ScriptsBlock {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        <script src="~/js/notifications/sweetalert2/sweetalert2.min.js"></script>
+    <script>
+        const buttonSearch = document.querySelector('#button-search');
+        const divModalCut = document.querySelector('#div-modal-cut');
+        const tbodyTableList = document.querySelector('#tdbody-table-list');
+        const templateTableList = document.querySelector('#template-table-list');
+        const fragmentTableList = document.createDocumentFragment();
+        const buttonSelect = document.querySelector('#button-select');
+
+        let selectDataSource = 0;
+
+        eventListeners();
+
+        function eventListeners()
+        {
+            LoadDataSources();
+            divModalCut.hidden = true;
+
+            buttonSelect.addEventListener('click', async () => {
+                const tr = tbodyTableList.querySelectorAll('tr');
+                let tablechecked = [];
+                tr.forEach(data => {
+                    const td0 = data.querySelectorAll('td')[0];
+                    const td1 = data.querySelectorAll('td')[1];
+                    if (td0.firstElementChild.checked == true)
+                    {
+                        tablechecked.push(td1.textContent);
+                    }
+                });
+                console.log(tablechecked);
+
+                let url = `Projects/InsertTableList?projectId=${@Model.ProjectId}&dataSourceId=${selectDataSource}`;
+                var jsonToSend = JSON.stringify(tablechecked);
+                const respuesta = await fetch(url, {
+                    method: 'POST', // or 'PUT'
+                    body: JSON.stringify(jsonToSend),
+                    headers: {
+                        'Accept': 'application/json; charset=utf-8',
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }
+                });
+            });
+        }
+
+        async function LoadDataSources()
+        {
+            let selectValue;
+
+            const datasources = `projects/GetDataSources?ProjectId=${@Model.ProjectId}`;
+            const respuesta = await fetch(datasources);
+            const resultado = await respuesta.json();
+            let option;
+
+            selectValue = document.createElement('select');
+            selectValue.setAttribute('id','select-value');
+            selectValue.innerHTML = "";
+
+            for (let i = 0; i < resultado.length; i++) {
+                option = document.createElement('option');
+                option.text = resultado[i].databaseSourceName;
+                option.value = resultado[i].databaseSourceId;
+                selectValue.add(option);
+            }
+
+            buttonSearch.addEventListener('click', () => {
+                Swal.fire({
+                    title: 'DataSources',
+                    text: "",
+                    width: 600,
+                    html: `<span class="span-tooltip">
+                                    ${selectValue.outerHTML}
+                                   </span>`,
+                    confirmButtonColor: '#038387',
+                    confirmButtonText: 'Ok',
+                })
+                .then((value) => {
+                  selectDataSource = document.querySelector('#select-value').value;
+
+                        console.log(selectDataSource);
+                  //Swal.fire(`The returned value is: ${document.querySelector('#select-value').value}`);
+                  GetDatabaseEntities(document.querySelector('#select-value').value);
+                });
+            });
+        }
+
+        async function GetDatabaseEntities(databaseSourceId)
+        {
+            const datasources = `projects/GetDatabaseEntities?DatabaseSourceId=${databaseSourceId}`;
+            const respuesta = await fetch(datasources);
+            const resultado = await respuesta.json();
+
+            resultado.forEach(data => {
+                const td = templateTableList.content.querySelectorAll('td');
+
+                td[1].textContent = data;
+
+                const clone = templateTableList.content.cloneNode(true);
+                fragmentTableList.appendChild(clone);
+            });
+
+            tbodyTableList.appendChild(fragmentTableList);
+
+            console.log(tbodyTableList);
+            divModalCut.hidden = false;
+        }
+    </script>
+}

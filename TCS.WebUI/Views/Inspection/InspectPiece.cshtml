@@ -1,0 +1,1625 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["inspection"].ToString();
+    ViewData["PageName"] = "inspection_inspectpiece";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i>" + SharedLocalizer["inspection"].ToString();
+    string culture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
+}
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+    <link rel="stylesheet" href="~/css/flatpickr/flatpickr.min.css">
+    <link rel="stylesheet" href="~/css/notifications/sweetalert2/sweetalert2.min.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/fa-regular.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/viewsCss/InspectedPiece.css">
+}
+<div class="panel">
+    <div class="grid-container-header">
+        <div>
+        </div>
+        <div class="panel-toolbar">
+            <button id="button-full-screen" class="btn btn-success">Pantalla Completa</button>
+        </div>
+    </div>
+    <div id="full-screen" class="grid-container-body">
+        <div class="button-container">
+            <button data-color class="button-item button-tooltip" value="V">
+                <div class="div-green-circle"></div>
+            </button>
+            <button data-color class="button-item button-tooltip" value="A">
+                <div class="div-yellow-circle"></div>
+            </button>
+            <button data-color class="button-item button-tooltip" value="B">
+                <div class="div-gray-circle"></div>
+            </button>
+            <button id="button-change-piece" class="button-item button-tooltip">
+                <span class="span-tooltip">Inspeccionar otra pieza</span>
+                <i class="far fa-file-plus"></i>
+            </button>
+            <button id="button-out-page" class="button-item button-tooltip">
+                <span class="span-tooltip">Ir al Inicio</span>
+                <i class="far fa-times-circle"></i>
+            </button>
+            <button data-number class="button-item button-tooltip">
+                1
+            </button>
+            <button data-number class="button-item button-tooltip">
+                2
+            </button>
+            <button data-number class="button-item button-tooltip">
+                3
+            </button>
+            <button data-quality class="button-item button-tooltip">
+                A
+            </button>
+            <button id="button-print-panel" class="button-item button-tooltip">
+                <span class="span-tooltip">Imprimir la tarjeta del Cliente</span>
+                <i class="far fa-print"></i>
+            </button>
+            <button data-number class="button-item button-tooltip">
+                4
+            </button>
+            <button data-number class="button-item button-tooltip">
+                5
+            </button>
+            <button data-number class="button-item button-tooltip">
+                6
+            </button>
+            <button data-quality class="button-item button-tooltip">
+                C
+            </button>
+            <button id="button-cut" class="button-item button-tooltip">
+                <span class="span-tooltip">Realizar Corte</span>
+                <i class="far fa-cut"></i>
+            </button>
+            <button data-number class="button-item button-tooltip">
+                7
+            </button>
+            <button data-number class="button-item button-tooltip">
+                8
+            </button>
+            <button data-number class="button-item button-tooltip">
+                9
+            </button>
+            <button class="button-item button-tooltip">
+                <i class="far fa-keyboard"></i>
+            </button>
+            <button id="button-clean-all" class="button-item button-tooltip">
+                <span class="span-tooltip">Borrar Cortes y Fallas</span>
+                <i class="far fa-repeat"></i>
+            </button>
+            <button data-number class="button-item button-tooltip">
+                .
+            </button>
+            <button data-number class="button-item button-tooltip">
+                0
+            </button>
+            <button id="button-delete" class="button-item button-tooltip">
+                <i class="far fa-long-arrow-left"></i>
+            </button>
+            <button id="button-enter" class="button-item button-tooltip">
+                Enter
+            </button>
+            <button id="button-save-changes" class="button-item button-tooltip">
+                <span class="span-tooltip">Guardar Cambios</span>
+                <i class="far fa-save"></i>
+            </button>
+            <button data-mapeo class="button-item button-tooltip" value="I">
+                Izquierda
+            </button>
+            <button data-mapeo class="button-item button-tooltip" value="D">
+                Derecha
+            </button>
+            <button data-mapeo class="button-item button-tooltip" value="C">
+                Centro
+            </button>
+            <button data-mapeo class="button-item button-tooltip" value="T">
+                Todo
+            </button>
+            <button id="button-agregar-falla" class="button-item button-tooltip">
+                <span class="span-tooltip">Agregar Falla</span>
+                <i class="far fa-comment-alt-medical"></i>
+            </button>
+        </div>
+        <div class="div-grid-element-print">
+            <div class="div-tab-buttons row m-1 mt-2">
+                <button data-tabs type="button" class="col-3">Tarjeta</button>
+                <button data-tabs type="button" class="col-3">Fallas</button>
+                <button data-tabs type="button" class="col-3">Cortes</button>
+                <button data-tabs type="button" class="col-3">Info</button>
+            </div>
+            <div class="div-tabs mr-1 ml-1 mb-2">
+                <div data-tabs-content id="div-table-content" class="div-tabs-content">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Metros
+                                </th>
+                                <th>
+                                    Color
+                                </th>
+                                <th>
+                                    Código
+                                </th>
+                                <th>
+                                    Izquierda
+                                </th>
+                                <th>
+                                    Centro
+                                </th>
+                                <th>
+                                    Derecha
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tdbody-card">
+                        </tbody>
+                    </table>
+                </div>
+                <div data-tabs-content class="div-tabs-content">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-center">
+                                    Falla
+                                </th>
+                                <th class="text-center">
+                                    Color
+                                </th>
+                                <th class="text-right">
+                                    Metro
+                                </th>
+                                <th class="text-right">
+                                    Bonificacón
+                                </th>
+                                <th class="text-right">
+                                    Mapeo
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tdbody-fails">
+                        </tbody>
+                    </table>
+                </div>
+                <div data-tabs-content class="div-tabs-content">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-center">
+                                    Calidad
+                                </th>
+                                <th class="text-right">
+                                    Inicial
+                                </th>
+                                <th class="text-right">
+                                    Final
+                                </th>
+                                <th class="text-right">
+                                    Ancho
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tdbody-cuts">
+                        </tbody>
+                    </table>
+                </div>
+                <div data-tabs-content class="div-tabs-content-final">
+                        <div class="row mr-1 ml-1">
+                            <label class="col-6">Total de Fallas</label>
+                            <label id="label-total-fallas" class="col-2">???</label>
+                            <label class=" col-4"></label>
+                        </div>
+                        <div class="row mr-1 ml-1">
+                            <label class="col-6">Fallas Verdes</label>
+                            <label id="label-fallas-verdes" class="col-2">???</label>
+                            <label class="col-4"><span class="div-green-circle"></span></label>
+                        </div>
+                        <div class="row mr-1 ml-1">
+                            <label class="col-6">Fallas Amarillas</label>
+                            <label id="label-fallas-amarillas" class="col-2"> ???</label>
+                            <label class="col-4"><span class="div-yellow-circle"></span></label>
+                        </div>
+                        <div class="row mr-1 ml-1">
+                            <label class="col-6">Fallas Blancas</label>
+                            <label id="label-fallas-blancas" class="col-2">???</label>
+                            <label class="col-4"><span class="div-gray-circle"></span></label>
+                        </div>
+                        <div class="row mr-1 ml-1">
+                            <label class="col-6">Total de Cortes</label>
+                            <label id="label-total-cortes" class="col-2">???</label>
+                            <label class="col-4 "> <i class="fa-3x far fa-cut" style="margin:0 auto"></i></label>
+                        </div>
+                        <div class="row mr-1 ml-1">
+                            <label class="col-5">Total mts. bonificación</label>
+                            <label id="label-total-mts-bon" class="col-7">??? mts.</label>
+                        </div>
+                        <div class="row mr-1 ml-1">
+                            <label class="col-5">Total mts. cortes</label>
+                            <label id="label-total-mts-cortes" class="col-7">??? mts.</label>
+                        </div>
+                        <div class="row mr-1 ml-1">
+                            <label class="col-5">Metros Netos</label>
+                            <label id="label-mts-netos" class="col-7">??? mts.</label>
+                        </div>
+                        <div class="row mr-1 ml-1">
+                            <label class="col-5">Retazos A</label>
+                            <label id="label-retazos-a" class="col-7">???</label>
+                        </div>
+                        <div class="row mr-1 ml-1">
+                            <label class="col-5">Retazos C</label>
+                            <label id="label-retazos-c" class="col-7">???</label>
+                        </div>
+                </div>
+            </div>
+            <div class="div-tab-footer row mr-1 ml-1 mb-2">
+                <label id="label-metro-lineal" class="col-8 font-weight-bold pl-6">??? grs. x Metro Lineal</label>
+                <button id="button-print-tab" class="btn btn-success col-4" style="height:90%"><i class="far fa-print"></i></button>
+            </div>
+        </div>
+        <div class="div-grid-element-data pt-1">
+            <div class="fila1 mr-1 ml-1">
+                <input id="input-loom-date" type="date" name="date">
+                <label>Pieza: </label>
+                <input id="input-piece-number" type="text">
+                <label><i id="input-piece-check">?</i></label>
+                <label>Cliente:</label>
+                <label id="label-client">???</label>
+            </div>
+            <div class="fila2 mr-1 ml-1">
+                <label id="label-design">Articulo:  ???</label>
+                <label id="label-shade">Color:  ???</label>
+                <label id="label-sp">SP: ???</label>
+                <label id="label-crude-meters">Metros Crudos: ???</label>
+            </div>
+            <div class="fila3 mr-1 ml-1">
+                <label>Metro: </label>
+                <input id="input-fail-meter" data-inputnumdec type="text">
+                <label>Bonificación:</label>
+                <input id="input-bonificacion" type="text">
+                <label>Falla:</label>
+                <input id="input-falla-descripcion" data-inputnum type="text">
+                <label id="label-falla-descripcion">???</label>
+            </div>
+            <div class="fila4 mr-1 ml-1">
+                <label>Tipo de Falla:</label>
+                <label id="label-color-simbol">?</label>
+                <label id="label-color-text">???</label>
+                <label>Mapeo: </label>
+                <label id="label-mapeo">???</label>
+            </div>
+            <div class="fila5 mr-1 ml-1 mb-1">
+                <label>Peso Final: </label>
+                <input id="input-final-weight" data-inputnumdec type="text">
+                <label>Metros Finales:</label>
+                <input id="input-final-meters" data-inputnumdec type="text">
+                <label>Ancho Final:</label>
+                <input id="input-final-width" data-inputnumdec type="text">
+                <label id="label-quality">Calidad: ???</label>
+            </div>
+        </div>
+        <div id="div-modal-cut" class="grid-container-button-input-cut">
+            <div class="button-container-cut-panel">
+                <button data-numbercut class="button-item-cut-panel btn btn-primary">
+                    1
+                </button>
+                <button data-numbercut class="button-item-cut-panel btn btn-primary">
+                    2
+                </button>
+                <button data-numbercut class="button-item-cut-panel btn btn-primary">
+                    3
+                </button>
+                <button data-numbercut class="button-item-cut-panel btn btn-primary">
+                    4
+                </button>
+                <button data-numbercut class="button-item-cut-panel btn btn-primary">
+                    5
+                </button>
+                <button data-numbercut class="button-item-cut-panel btn btn-primary">
+                    6
+                </button>
+                <button data-numbercut class="button-item-cut-panel btn btn-primary">
+                    7
+                </button>
+                <button data-numbercut class="button-item-cut-panel btn btn-primary">
+                    8
+                </button>
+                <button data-numbercut class="button-item-cut-panel btn btn-primary">
+                    9
+                </button>
+                <button data-numbercut class="button-item-cut-panel btn btn-primary">
+                    .
+                </button>
+                <button data-numbercut class="button-item-cut-panel btn btn-primary">
+                    0
+                </button>
+                <button id="button-delete-cut" class="button-item-cut-panel btn btn-primary">
+                    Borrar
+                </button>
+                <button data-qualitycut class="button-item-cut-panel btn btn-primary">
+                    A
+                </button>
+                <button data-qualitycut class="button-item-cut-panel btn btn-primary">
+                    C
+                </button>
+                <button id="button-enter-cut" class="button-item-cut-panel btn btn-primary">
+                    Enter
+                </button>
+            </div>
+            <div class="div-grid-element-input-cut">
+                <div class="text-center h2">
+                    Cortes
+                </div>
+                <div class="row mr-1 ml-1">
+                    <label class="col-5">Desde </label>
+                    <input id="input-since" data-inputnumdec type="text" class="col-7">
+                </div>
+                <div class="row mr-1 ml-1">
+                    <label class="col-5">Hasta </label>
+                    <input id="input-until" data-inputnumdec type="text" class="col-7">
+                </div>
+                <div class="row mr-1 ml-1">
+                    <label class="col-5">Calidad </label>
+                    <input id="input-quality-cut" type="text" class="col-7">
+                </div>
+                <div class="row mr-1 ml-1">
+                    <label class="col-5">Causa Principal </label>
+                    <input id="input-principal-cause" data-inputnum type="text" class="col-7">
+                </div>
+                <div class="row mr-1 ml-1 mt-2">
+                    <button id="button-accept-cut" class="btn btn-primary col-6">Aceptar</button>
+                    <button id="button-cancel-cut" class="btn btn-danger col-6">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock
+{
+    <script src="~/js/notifications/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/js/flatpickr/flatpickr.min.js"></script>
+    <script src="~/js/dependency/moment/moment.js"></script>
+    @{ if (culture == "es")
+        {
+            <script src="~/js/flatpickr/languaje/es.js"></script>
+        }
+    }
+    <script>
+        const buttonFullScreen = document.querySelector('#button-full-screen');
+        const buttonOutPage = document.querySelector('#button-out-page');
+        const buttonChangePiece = document.querySelector('#button-change-piece');
+        const inputDate = document.querySelector('#input-loom-date');
+        const inputPieceNumber = document.querySelector('#input-piece-number');
+        const inputPieceCheck = document.querySelector('#input-piece-check');
+        const inputFailMeter = document.querySelector('#input-fail-meter');
+        const labelMapeo = document.querySelector('#label-mapeo');
+        const inputFinalWeight = document.querySelector('#input-final-weight');
+        const inputFinalMeters = document.querySelector('#input-final-meters');
+        const inputFinalWidth = document.querySelector('#input-final-width');
+        const inputQuality = document.getElementById('input-quality-cut');
+        const labelShade = document.querySelector('#label-shade');
+        const labelQuality = document.querySelector('#label-quality');
+        const labelSp = document.querySelector('#label-sp');
+        const labelDesign = document.querySelector('#label-design');
+        const labelClient = document.querySelector('#label-client');
+        const inputFallaDescripcion = document.querySelector('#input-falla-descripcion');
+        const labelFallaDescripcion = document.querySelector('#label-falla-descripcion');
+        const inputBonificacion = document.querySelector('#input-bonificacion');
+        const labelCrudeMeters = document.querySelector('#label-crude-meters');
+        const labelColorSimbol = document.querySelector('#label-color-simbol');
+        const labelColorText = document.querySelector('#label-color-text');
+        const numberButtons = document.querySelectorAll('[data-number]');
+        const dataMapeo = document.querySelectorAll('[data-mapeo]');
+        const dataColor = document.querySelectorAll('[data-color]');
+        const dataQuality = document.querySelectorAll('[data-quality]');
+        const buttonAgregarFalla = document.querySelector('#button-agregar-falla');
+        const buttonPrintPanel = document.querySelector('#button-print-panel');
+        const buttonDelete = document.querySelector('#button-delete');
+        const buttonEnter = document.querySelector('#button-enter');
+        const tdbodyCard = document.querySelector('#tdbody-card');
+        const tdbodyFails = document.querySelector('#tdbody-fails');
+        const tdbodyCuts = document.querySelector('#tdbody-cuts');
+        const buttonSaveChanges = document.querySelector('#button-save-changes');
+        const buttonCleanAll = document.querySelector('#button-clean-all');
+        const divTableContent = document.querySelector('#div-table-content');
+
+        const numberButtonsCut = document.querySelectorAll('[data-numbercut]');
+        const buttonCut = document.querySelector('#button-cut');
+        const divModalCut = document.querySelector('#div-modal-cut');
+        const dataQualityCut = document.querySelectorAll('[data-qualitycut]');
+        const inputSince = document.querySelector('#input-since');
+        const inputUntil = document.querySelector('#input-until');
+        const inputPrincipalCause = document.querySelector('#input-principal-cause');
+        const buttonDeleteCut = document.querySelector('#button-delete-cut');
+        const buttonCancelCut = document.querySelector('#button-cancel-cut');
+        const buttonAcceptCut = document.querySelector('#button-accept-cut');
+
+        const dataTabs = document.querySelectorAll('[data-tabs]');
+        const dataTabsContent = document.querySelectorAll('[data-tabs-content]');
+
+        const labelTotalFallas = document.querySelector('#label-total-fallas');
+        const labelFallasVerdes = document.querySelector('#label-fallas-verdes');
+        const labelFallasAmarillas = document.querySelector('#label-fallas-amarillas');
+        const labelFallasBlancas = document.querySelector('#label-fallas-blancas');
+        const labelTotalCortes = document.querySelector('#label-total-cortes');
+
+        const labelTotalMtsBon = document.querySelector('#label-total-mts-bon');
+        const labelTotalMtsCortes = document.querySelector('#label-total-mts-cortes');
+        const labelMtsNetos = document.querySelector('#label-mts-netos');
+        const labelRetazosA = document.querySelector('#label-retazos-a');
+        const labelRetazosC = document.querySelector('#label-retazos-c');
+
+        const labelMetroLineal = document.querySelector('#label-metro-lineal');
+        const buttonPrintTab = document.querySelector('#button-print-tab');
+
+        const dataInputNum = document.querySelectorAll('[data-inputnum]');
+        const dataInputNumDec = document.querySelectorAll('[data-inputnumdec]');
+
+        const fullScreen = document.querySelector('#full-screen');
+
+        const colores = [{ codColor: 'A', Color: 'Amarillo', hexColor: '#FFC500' },
+        { codColor: 'B', Color: 'Blanco', hexColor: 'lightgray' },
+        { codColor: 'V', Color: 'Verde', hexColor: '#159900' }];
+
+        const mapeos = [{ mapping: 'C', TextMapping: 'Centro' },
+        { mapping: 'D', TextMapping: 'Derecha' },
+        { mapping: 'I', TextMapping: 'Izquierda' },
+        { mapping: 'T', TextMapping: 'Todo' }];
+
+        let setCutInput;
+        let setInput;
+        let isValidPiece = false;
+        let resultado;
+
+        eventListeners();
+
+        flatpickr(inputDate,
+            {
+                locale: "es",
+                altFormat: "d-m-Y",
+                altInput: true,
+                altInputClass: "flatpickr-custom2",
+            });
+
+        function eventListeners() {
+            inputDate.valueAsDate = new Date();
+            divModalCut.hidden = true;
+            setCutInput = inputSince;
+            setInput = inputPieceNumber;
+            inputBonificacion.disabled = true;
+            inputPrincipalCause.disabled = true;
+
+            dataTabsContent[0].hidden = false;
+            dataTabsContent[1].hidden = true;
+            dataTabsContent[2].hidden = true;
+            dataTabsContent[3].hidden = true;
+
+            buttonFullScreen.addEventListener('click', (event) => {
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                } else {
+                    fullScreen.requestFullscreen();
+                }
+            });
+
+            dataInputNumDec.forEach(input => {
+                input.addEventListener('input', () => {
+                    input.value = input.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+                    const arr = input.value.split('.');
+
+                    if (arr[1] != null) {
+                        if (arr[1].length > 1) {
+                            input.value = input.value.slice(0, -1);
+                        }
+                    }
+                });
+            });
+
+            dataInputNum.forEach(input => {
+                input.addEventListener('input', () => {
+                    input.value = input.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
+                });
+            });
+
+            //buttonChangePiece.addEventListener('mouseover', (event) => {
+            //    Swal.fire({
+            //        html: `<label class='label-alert'>asdfsa</label>`,
+            //    });
+            //});
+
+            inputPieceNumber.addEventListener('keyup', () => {
+                if (event.keyCode === 13) {
+                    GetPiece(inputPieceNumber.value, false);
+                    inputPieceNumber.disabled = true;
+                }
+            });
+
+            numberButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    setInput.value += button.innerText;
+                })
+            });
+
+            numberButtonsCut.forEach(button => {
+                button.addEventListener('click', () => {
+                    setCutInput.value += button.innerText;
+                })
+            });
+
+            buttonChangePiece.addEventListener('click', InspectNewPiece);
+
+            buttonPrintTab.addEventListener('click', PrintDiv);
+
+            buttonPrintPanel.addEventListener('click', PrintDiv);
+
+            buttonOutPage.addEventListener('click', () => {
+                let url = "Home/Index";
+                window.location.href = url;
+            });
+
+            inputPieceNumber.addEventListener('click', () => {
+                setInput = inputPieceNumber;
+            });
+
+            inputFailMeter.addEventListener('click', () => {
+                setInput = inputFailMeter;
+            });
+
+            inputFinalWeight.addEventListener('click', () => {
+                setInput = inputFinalWeight;
+            });
+
+            inputFinalMeters.addEventListener('click', () => {
+                setInput = inputFinalMeters;
+            });
+
+            inputFinalWidth.addEventListener('click', () => {
+                setInput = inputFinalWidth;
+            });
+
+            inputFallaDescripcion.addEventListener('click', () => {
+                setInput = inputFallaDescripcion;
+            });
+
+            inputSince.addEventListener('click', () => {
+                setCutInput = inputSince;
+            });
+
+            inputUntil.addEventListener('click', () => {
+                setCutInput = inputUntil;
+            });
+
+            inputPrincipalCause.addEventListener('click', () => {
+                setCutInput = inputPrincipalCause;
+            });
+
+            buttonDelete.addEventListener('click', () => {
+                inputPieceNumber.value = inputPieceNumber.value.slice(0, -1);
+            });
+
+            buttonDeleteCut.addEventListener('click', () => {
+                setCutInput.value = setCutInput.value.slice(0, -1);
+            });
+
+            buttonEnter.addEventListener('click', () => {
+                GetPiece(inputPieceNumber.value, false);
+                inputPieceNumber.disabled = true;
+            });
+
+            buttonCut.addEventListener('click', () => {
+                if (isValidPiece == true) {
+                    if (inputFinalMeters.value <= 0) {
+                        Swal.fire({
+                            html: `<label class='label-alert'>Ingrese los metros finales.</label>`,
+                            target: fullScreen
+                        });
+                    }
+                    else {
+                        divModalCut.hidden = false;
+                        inputQuality.value = 'A';
+                    }
+                }
+                else {
+                    Swal.fire({
+                        html: `<label class='label-alert'>Debe ingresar una pieza para realizar el corte.</label>`,
+                        target: fullScreen
+                    });
+                }
+            });
+
+            buttonCleanAll.addEventListener('click', CleanAll);
+
+            dataQuality.forEach(button => {
+                button.addEventListener('click', () => {
+                    labelQuality.textContent = `Calidad: ${button.innerText}`;
+                    labelQuality.value = button.innerText;
+                })
+            });
+
+            dataTabs[0].addEventListener('click', () => {
+                dataTabsContent[0].hidden = false;
+                dataTabsContent[1].hidden = true;
+                dataTabsContent[2].hidden = true;
+                dataTabsContent[3].hidden = true;
+                dataTabs[0].classList.add("checked-button");
+                dataTabs[1].classList.remove("checked-button");
+                dataTabs[2].classList.remove("checked-button");
+                dataTabs[3].classList.remove("checked-button");
+            });
+
+            dataTabs[1].addEventListener('click', () => {
+                dataTabsContent[0].hidden = true;
+                dataTabsContent[1].hidden = false;
+                dataTabsContent[2].hidden = true;
+                dataTabsContent[3].hidden = true;
+                dataTabs[0].classList.remove("checked-button");
+                dataTabs[1].classList.add("checked-button");
+                dataTabs[2].classList.remove("checked-button");
+                dataTabs[3].classList.remove("checked-button");
+            });
+
+            dataTabs[2].addEventListener('click', () => {
+                dataTabsContent[0].hidden = true;
+                dataTabsContent[1].hidden = true;
+                dataTabsContent[2].hidden = false;
+                dataTabsContent[3].hidden = true;
+                dataTabs[0].classList.remove("checked-button");
+                dataTabs[1].classList.remove("checked-button");
+                dataTabs[2].classList.add("checked-button");
+                dataTabs[3].classList.remove("checked-button");
+            });
+
+            dataTabs[3].addEventListener('click', () => {
+                dataTabsContent[0].hidden = true;
+                dataTabsContent[1].hidden = true;
+                dataTabsContent[2].hidden = true;
+                dataTabsContent[3].hidden = false;
+                dataTabs[0].classList.remove("checked-button");
+                dataTabs[1].classList.remove("checked-button");
+                dataTabs[2].classList.remove("checked-button");
+                dataTabs[3].classList.add("checked-button");
+            });
+
+            dataColor.forEach(button => {
+                button.addEventListener('click', () => {
+                    labelColorText.textContent = colores.find(x => x.codColor == button.value).Color;
+                    labelColorText.value = colores.find(x => x.codColor == button.value).codColor;
+                    switch (button.value) {
+                        case 'A':
+                            labelColorSimbol.innerHTML = `<div class="div-yellow-circle"></div>`;
+                            labelMapeo.textContent = 'Todo';
+                            labelMapeo.value = 'T';
+                            dataMapeo.forEach(button => {
+                                button.disabled = true;
+                            });
+                            inputBonificacion.value = '0.2';
+                            inputBonificacion.disabled = true;
+                            break;
+                        case 'V':
+                            labelColorSimbol.innerHTML = `<div class="div-green-circle"></div>`;
+                            labelMapeo.textContent = '???';
+                            labelMapeo.value = null;
+                            dataMapeo[0].disabled = false;
+                            dataMapeo[1].disabled = false;
+                            dataMapeo[2].disabled = false;
+                            dataMapeo[3].disabled = false;
+                            inputBonificacion.value = '0';
+                            inputBonificacion.disabled = false;
+                            break;
+                        case 'B':
+                            labelColorSimbol.innerHTML = `<div class="div-gray-circle"></div>`;
+                            labelMapeo.textContent = '???';
+                            labelMapeo.value = null;
+                            dataMapeo[0].disabled = false;
+                            dataMapeo[1].disabled = false;
+                            dataMapeo[2].disabled = false;
+                            dataMapeo[3].disabled = true;
+                            inputBonificacion.value = '0.1';
+                            inputBonificacion.disabled = true;
+                            break;
+                    }
+                    labelColorSimbol.children[0].style.height = '87%';
+                    labelColorSimbol.children[0].style.width = '60%';
+                })
+            });
+
+            dataMapeo.forEach(button => {
+                button.addEventListener('click', () => {
+                    labelMapeo.textContent = mapeos.find(x => x.mapping == button.value).TextMapping;
+                    labelMapeo.value = mapeos.find(x => x.mapping == button.value).mapping;
+                })
+            });
+
+            dataQualityCut.forEach(button => {
+                button.addEventListener('click', () => {
+                    inputQuality.value = button.innerText;
+                    if (button.innerText == 'C') {
+                        inputPrincipalCause.disabled = false;
+                    }
+                    else {
+                        inputPrincipalCause.disabled = true;
+                    }
+                })
+            });
+
+            buttonAcceptCut.addEventListener('click', AgregarCorte);
+
+            buttonCancelCut.addEventListener('click', () => {
+                divModalCut.hidden = true;
+
+                dataQualityCut.value = 'A';
+                inputSince.value = '';
+                inputUntil.value = '';
+                inputPrincipalCause.value = '';
+                inputPrincipalCause.disabled = true;
+            });
+
+            inputFallaDescripcion.addEventListener('input', () => {
+                console.log(inputFallaDescripcion.value);
+                GetFailure(inputFallaDescripcion.value);
+            });
+
+            inputFinalWeight.addEventListener('input', () => {
+                labelMetroLineal.textContent = `${(inputFinalWeight.value / inputFinalMeters.value).toFixed(3)} grs. x Metro Lineal`;
+            });
+
+            inputFinalMeters.addEventListener('input', () => {
+                labelMetroLineal.textContent = `${(inputFinalWeight.value / inputFinalMeters.value).toFixed(3)} grs. x Metro Lineal`;
+            });
+
+            buttonAgregarFalla.addEventListener('click', AgregarFalla);
+
+            buttonSaveChanges.addEventListener('click', GuardarCambios);
+        }
+
+        function PrintDiv() {
+            var iPhotoUrl = "/img/xvlogosmall.png";
+            var divContents = divTableContent.innerHTML;
+            var a = window.open('', '', 'height=1000, width=370');
+            a.document.write(`<img src="${iPhotoUrl}" height="33"> <span style='font-size:1.4rem; font-weight: bold;margin-bottom:10rem;'>${inputPieceNumber.value}</span>`);
+            a.document.write(divContents);
+            a.document.write(`</br> ${labelMetroLineal.textContent}`);
+            a.document.close();
+            a.print();
+        }
+
+        function InspectNewPiece() {
+            flatpickr(inputDate,
+                {
+                    locale: "es",
+                    altFormat: "d-m-Y",
+                    altInput: true,
+                    altInputClass: "flatpickr-custom2",
+                }).setDate(new Date());
+
+            inputPieceNumber.value = '';
+            inputFailMeter.value = '';
+            inputFinalWeight.value = '';
+            inputFinalMeters.value = '';
+            inputFinalWidth.value = '';
+            inputQuality.value = '';
+            inputFallaDescripcion.value = '';
+            labelFallaDescripcion.textContent = '???';
+
+            labelDesign.textContent = `Artículo: ???`;
+            labelShade.textContent = `Color: ???`;
+            labelSp.textContent = `SP: ???`;
+            labelCrudeMeters.textContent = `Metros Crudos: ???`;
+            labelClient.textContent = '???';
+
+            dataColor.forEach(button => {
+                labelColorSimbol.innerHTML = `<div class="div-gray-circle"></div>`;
+                labelMapeo.textContent = '???';
+                labelMapeo.value = null;
+                dataMapeo[0].disabled = false;
+                dataMapeo[1].disabled = false;
+                dataMapeo[2].disabled = false;
+                dataMapeo[3].disabled = false;
+                inputBonificacion.disabled = true;
+            });
+
+            labelQuality.textContent = `Calidad: ???`;
+            labelQuality.value = null;
+            inputBonificacion.value = '';
+            labelColorSimbol.textContent = '?';
+            labelColorText.textContent = '???';
+            labelColorText.value = null;
+            labelMapeo.textContent = '???';
+            labelMapeo.value = null;
+
+            inputPieceCheck.textContent = "?";
+            inputPieceCheck.classList.remove('far', 'fa-times-circle', 'fa-2x');
+            inputPieceCheck.style.color = 'black';
+
+            labelTotalFallas.textContent = '???';
+            labelFallasVerdes.textContent = '???';
+            labelFallasAmarillas.textContent = '???';
+            labelFallasBlancas.textContent = '???';
+            labelTotalCortes.textContent = '???';
+
+            labelTotalMtsBon.textContent = '??? mts.';
+            labelTotalMtsCortes.textContent = '??? mts.';
+            labelMtsNetos.textContent = '??? mts.';
+            labelRetazosA.textContent = '???';
+            labelRetazosC.textContent = '???';
+
+            labelMetroLineal.textContent = `??? grs. x Metro Lineal`;
+
+            resultado = [];
+
+            tdbodyCard.innerHTML = '';
+            tdbodyCuts.innerHTML = '';
+            tdbodyFails.innerHTML = '';
+
+            inputPieceNumber.disabled = false;
+        }
+
+        async function GetPiece(pieceid, isSave) {
+            let url = "Inspection/GetPiece?pieceid=" + pieceid;
+            const respuesta = await fetch(url);
+            resultado = await respuesta.json();
+            console.log(resultado);
+
+            inputFailMeter.value = '';
+            inputBonificacion.value = '';
+            inputFallaDescripcion.value = '';
+            labelColorSimbol.textContent = '?';
+            labelColorText.textContent = '???';
+            labelColorText.value = null;
+            labelMapeo.textContent = '???';
+            labelMapeo.value = null;
+
+            if (resultado != 'nodata') {
+                labelDesign.textContent = `Artículo: ${resultado.design}`;
+                labelShade.textContent = `Color: ${resultado.shade}`;
+                labelSp.textContent = `SP: ${resultado.sp}`;
+                labelCrudeMeters.textContent = `Metros Crudos: ${resultado.ecruMeters}`;
+                labelClient.textContent = resultado.nameCustomer;
+
+                isValidPiece = true;
+
+                let htmlCard = '';
+                let htmlFails = '';
+                let htmlCuts = '';
+
+                let isCut;
+
+                if (resultado.inspectedPiece != null) {
+                    labelQuality.textContent = `Calidad: ${resultado.inspectedPiece.pieceQuality}`;
+                    labelQuality.value = resultado.inspectedPiece.pieceQuality;
+                    inputFinalWeight.value = resultado.inspectedPiece.finalWeigth;
+                    inputFinalMeters.value = resultado.inspectedPiece.finalMeters;
+                    inputFinalWidth.value = resultado.inspectedPiece.finalWidth;
+                    if (isSave == false) {
+                        if (resultado.inspectedPiece.dispatch == true) {
+                            Swal.fire({
+                                html: `<label style='font-size:1.35rem'>La pieza <span style='font-weight: bold'>${pieceid}</span> ya fue procesada y despachada.</label>`,
+                                showConfirmButton: false,
+                                timer: 1500,
+                                target: fullScreen
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                html: `<label style='font-size:1.35rem'>La pieza <span style='font-weight: bold'>${pieceid}</span> ya fue procesada.</label>`,
+                                showConfirmButton: false,
+                                timer: 1500,
+                                target: fullScreen
+                            });
+                        }
+                    }
+                    else {
+                        Swal.fire({
+                            html: "<label style='font-size:1.35rem; font-weight: bold'> Los datos se guardaron correctamente</label>",
+                            showConfirmButton: false,
+                            timer: 1000,
+                            target: fullScreen
+                        });
+                    }
+
+                    const pieceFailures = resultado.inspectedPiece.pieceFailures;
+
+                    for (let i = 0; i <= resultado.inspectedPiece.finalMeters * 10; i++) {
+                        const item = i / 10;
+
+                        if (pieceFailures.find(x => x.initMeter == item) != null) {
+                            const pieceFail = pieceFailures.find(x => x.initMeter == item);
+                            htmlCard += `<tr style="background-color:${colores.find(x => x.codColor == pieceFail.colourBonus).hexColor}">
+                                                    <td>${pieceFail.initMeter}</td>
+                                                    <td>${colores.find(x => x.codColor == pieceFail.colourBonus).Color}</td>
+                                                    <td>${pieceFail.codeFailure}</td>
+                                                    <td class="text-center">${((pieceFail.mapping == 'I' || pieceFail.mapping == 'T')) ? "••" : ""}</td>
+                                                    <td class="text-center">${((pieceFail.mapping == 'C' || pieceFail.mapping == 'T')) ? "••" : ""}</td>
+                                                    <td class="text-center">${((pieceFail.mapping == 'D' || pieceFail.mapping == 'T')) ? "••" : ""}</td>
+                                                    </tr>`;
+                        }
+                        else if (resultado.inspectedPiece.cuts.find(x => x.initMeter == item) != null) {
+                            const cut = resultado.inspectedPiece.cuts.find(x => x.initMeter == item);
+                            htmlCard += `<tr style="background-color:red;color:white">
+                                                    <td>${cut.initMeter}</td>
+                                                    <td></td>
+                                                    <td>[${cut.quality}]</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                     </tr>`;
+                            isCut = true;
+                        }
+                        else if (resultado.inspectedPiece.cuts.find(x => x.finalMeter == item) != null) {
+                            const cut = resultado.inspectedPiece.cuts.find(x => x.finalMeter == item);
+                            htmlCard += `<tr style="background-color:red;color:white">
+                                                    <td>${cut.finalMeter}</td>
+                                                    <td></td>
+                                                    <td>[${cut.quality}]</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                 </tr>`;
+                            isCut = false;
+                        }
+                        else {
+                            if (i % 10 === 0) {
+                                htmlCard += `<tr style="background-color:${(isCut) ? "gray" : "white"}">
+                                                        <td>${item}</td>
+                                                        <td></td>
+                                                        <td ></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                </tr>`;
+                            }
+                        }
+                    }
+
+                    let countCuts = 0;
+                    resultado.inspectedPiece.cuts.forEach(data => {
+                        htmlCuts += `<tr>
+                                                <td class="text-center">${data.quality}</td>
+                                                <td class="text-right">${data.initMeter}</td>
+                                                <td class="text-right">${data.finalMeter}</td>
+                                                <td class="text-right">${data.width}</td>
+                                                <td class="text-center"><button onclick="EliminarCorte(${countCuts})" class="btn btn-danger">Eliminar</button></td>
+                                                 </tr>`;
+                        countCuts = countCuts + 1;
+                    });
+                    countCuts = 0;
+
+                    let countFail = 0;
+
+                    pieceFailures.sort(function (x, y) {
+                        return y.initMeter - x.initMeter;
+                    }).forEach(data => {
+                        htmlFails += `<tr style='background-color:${colores.find(x => x.codColor == data.colourBonus).hexColor}'>
+                                            <td class="text-center">${data.codeFailure}</td>
+                                            <td class="text-center">${colores.find(x => x.codColor == data.colourBonus).Color}</td>
+                                            <td class="text-right">${data.initMeter}</td>
+                                            <td class="text-right">${data.bonusQuantity}</td>
+                                            <td class="text-center">${mapeos.find(x => x.mapping == data.mapping).TextMapping}</td>
+                                            <td class="text-center"><button onclick="EliminarFalla(${countFail})" class="btn btn-danger">Eliminar</button></td>
+                                            </tr>`;
+
+                        countFail = countFail + 1;
+                    });
+
+                    countFail = 0;
+
+                    labelTotalFallas.textContent = pieceFailures.length;
+                    labelFallasVerdes.textContent = pieceFailures.filter(x => x.colourBonus == 'V').length;
+                    labelFallasAmarillas.textContent = pieceFailures.filter(x => x.colourBonus == 'A').length;
+                    labelFallasBlancas.textContent = pieceFailures.filter(x => x.colourBonus == 'B').length;
+                    labelTotalCortes.textContent = resultado.inspectedPiece.cuts.length;
+
+                    let bonusList = [];
+
+                    resultado.inspectedPiece.cuts.forEach(data => {
+                        pieceFailures.filter(x => x.initMeter >= data.initMeter && x.initMeter <= data.finalMeter).forEach(data2 => {
+                            bonusList.push(data2);
+                        });
+                    });
+
+                    const bonusDiff = pieceFailures.reduce((total, s) => total + s.bonusQuantity, 0) - bonusList.reduce((total, s) => total + s.bonusQuantity, 0);
+
+                    labelTotalMtsBon.textContent = `${bonusDiff.toFixed(1)} mts.`;
+                    labelTotalMtsCortes.textContent = `${(resultado.inspectedPiece.cuts.reduce((total, s) => total + s.finalMeter, 0)
+                        - resultado.inspectedPiece.cuts.reduce((total, s) => total + s.initMeter, 0)).toFixed(1)} mts.`;
+                    labelMtsNetos.textContent = `${(resultado.inspectedPiece.finalMeters
+                    - (resultado.inspectedPiece.cuts.reduce((total, s) => total + s.finalMeter, 0)
+                        - resultado.inspectedPiece.cuts.reduce((total, s) => total + s.initMeter, 0))
+                    - bonusDiff).toFixed(1)} mts.`;
+                    labelRetazosA.textContent = resultado.inspectedPiece.pieceSummaries.filter(x => x.quality == 'A').length;
+                    labelRetazosC.textContent = resultado.inspectedPiece.pieceSummaries.filter(x => x.quality == 'C').length;
+
+                    labelMetroLineal.textContent = `${(inputFinalWeight.value / inputFinalMeters.value).toFixed(3)} grs. x Metro Lineal`;
+                }
+                else {
+                    labelQuality.textContent = `Calidad: ???`;
+                    labelQuality.value = null;
+                    inputFinalWeight.value = 0;
+                    inputFinalMeters.value = 0;
+                    inputFinalWidth.value = 0;
+
+                    for (let i = 0; i <= resultado.ecruMeters; i++) {
+                        htmlCard += `<tr>
+                                    <td>${i}</td>
+                                    <td></td>
+                                    <td ></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    </tr>`;
+
+                        if (Math.floor(resultado.ecruMeters) == i) {
+                            htmlCard += `<tr>
+                                        <td>${resultado.ecruMeters}</td>
+                                        <td></td>
+                                        <td ></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        </tr>`;
+                        }
+                    }
+
+                    labelTotalFallas.textContent = '???';
+                    labelFallasVerdes.textContent = '???';
+                    labelFallasAmarillas.textContent = '???';
+                    labelFallasBlancas.textContent = '???';
+                    labelTotalCortes.textContent = '???';
+
+                    labelTotalMtsBon.textContent = `??? mts.`;
+                    labelTotalMtsCortes.textContent = `??? mts.`;
+                    labelMtsNetos.textContent = `${resultado.ecruMeters} mts.`;
+                    labelRetazosA.textContent = '???';
+                    labelRetazosC.textContent = '???';
+
+                    labelMetroLineal.textContent = `??? grs. x Metro Lineal`;
+                }
+
+                inputPieceCheck.textContent = "";
+                inputPieceCheck.classList.remove('far', 'fa-times-circle', 'fa-2x');
+                inputPieceCheck.classList.add('far', 'fa-check-circle', 'fa-2x');
+                inputPieceCheck.style.color = 'green';
+
+                flatpickr(inputDate,
+                    {
+                        locale: "es",
+                        altFormat: "d-m-Y",
+                        altInput: true,
+                        altInputClass: "flatpickr-custom2",
+                    }).setDate(resultado.loomDate);
+
+                tdbodyCard.innerHTML = htmlCard;
+                tdbodyCuts.innerHTML = htmlCuts;
+                tdbodyFails.innerHTML = htmlFails;
+            }
+            else {
+                Swal.fire({
+                    html: "<label style='font-size:1.35rem; font-weight: bold'> Pieza no Encontrada </label>",
+                    showConfirmButton: false,
+                    timer: 1000,
+                    target: fullScreen
+                });
+
+                isValidPiece = false;
+
+                inputPieceCheck.textContent = "";
+                inputPieceCheck.classList.remove('far', 'fa-check-circle', 'fa-2x');
+                inputPieceCheck.classList.add('far', 'fa-times-circle', 'fa-2x');
+                inputPieceCheck.style.color = 'red';
+            }
+        }
+
+        function EliminarFalla(index) {
+            resultado.inspectedPiece.pieceFailures.splice(index, 1);
+            console.log(resultado.inspectedPiece.pieceFailures);
+
+            ReloadTables();
+        }
+
+        function EliminarCorte(index) {
+            resultado.inspectedPiece.cuts.splice(index, 1);
+            console.log(resultado.inspectedPiece.cuts);
+
+            ReloadTables();
+        }
+
+        async function GetFailure(codefailure) {
+            let url = "Inspection/GetFailure?codefailure=" + codefailure;
+            const respuesta = await fetch(url);
+            if (respuesta.ok)
+            {
+                const resultado = await respuesta.json();
+                labelFallaDescripcion.textContent = resultado;
+            }
+            else
+            {
+                labelFallaDescripcion.textContent = '???';
+            }
+        }
+
+        function CleanAll() {
+            if (isValidPiece == true) {
+                resultado.inspectedPiece.cuts = [];
+                resultado.inspectedPiece.pieceFailures = [];
+
+                let htmlCard = '';
+                const pieceFailures = resultado.inspectedPiece.pieceFailures;
+                let isCut;
+
+                for (let i = 0; i <= resultado.inspectedPiece.finalMeters * 10; i++) {
+                    const item = i / 10;
+
+                    if (pieceFailures.find(x => x.initMeter == item) != null) {
+                        const pieceFail = pieceFailures.find(x => x.initMeter == item);
+                        htmlCard += `<tr style="background-color:${colores.find(x => x.codColor == pieceFail.colourBonus).hexColor}">
+                                                <td>${pieceFail.initMeter}</td>
+                                                <td>${colores.find(x => x.codColor == pieceFail.colourBonus).Color}</td>
+                                                <td>${pieceFail.codeFailure}</td>
+                                                <td class="text-center">${((pieceFail.mapping == 'I' || pieceFail.mapping == 'T')) ? "••" : ""}</td>
+                                                <td class="text-center">${((pieceFail.mapping == 'C' || pieceFail.mapping == 'T')) ? "••" : ""}</td>
+                                                <td class="text-center">${((pieceFail.mapping == 'D' || pieceFail.mapping == 'T')) ? "••" : ""}</td>
+                                                </tr>`;
+                    }
+                    else if (resultado.inspectedPiece.cuts.find(x => x.initMeter == item) != null) {
+                        const cut = resultado.inspectedPiece.cuts.find(x => x.initMeter == item);
+                        htmlCard += `<tr style="background-color:red;color:white">
+                                                <td>${cut.initMeter}</td>
+                                                <td></td>
+                                                <td>[${cut.quality}]</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                    </tr>`;
+                        isCut = true;
+                    }
+                    else if (resultado.inspectedPiece.cuts.find(x => x.finalMeter == item) != null) {
+                        const cut = resultado.inspectedPiece.cuts.find(x => x.finalMeter == item);
+                        htmlCard += `<tr style="background-color:red;color:white">
+                                                <td>${cut.finalMeter}</td>
+                                                <td></td>
+                                                <td>[${cut.quality}]</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                </tr>`;
+                        isCut = false;
+                    }
+                    else {
+                        if (i % 10 === 0) {
+                            htmlCard += `<tr style="background-color:${(isCut) ? "gray" : "white"}">
+                                                    <td>${item}</td>
+                                                    <td></td>
+                                                    <td ></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                            </tr>`;
+                        }
+                    }
+                }
+                tdbodyCard.innerHTML = htmlCard;
+
+                let htmlFails = '';
+                let count = 0;
+                pieceFailures.sort(function (x, y) {
+                    return y.initMeter - x.initMeter;
+                }).forEach(data => {
+                    htmlFails += `<tr style='background-color:${colores.find(x => x.codColor == data.colourBonus).hexColor}'>
+                                            <td class="text-center">${data.codeFailure}</td>
+                                            <td class="text-center">${colores.find(x => x.codColor == data.colourBonus).Color}</td>
+                                            <td class="text-right">${data.initMeter}</td>
+                                            <td class="text-right">${data.bonusQuantity}</td>
+                                            <td class="text-center">${mapeos.find(x => x.mapping == data.mapping).TextMapping}</td>
+                                            <td class="text-center"><button onclick="EliminarFalla(${count})" class="btn btn-danger">Eliminar</button></td>
+                                            </tr>`;
+                    count = count + 1;
+                });
+                count = 0;
+
+                tdbodyFails.innerHTML = htmlFails;
+
+                let htmlCuts = '';
+                let countCuts = 0;
+                resultado.inspectedPiece.cuts.forEach(data => {
+                    htmlCuts += `<tr>
+                                                <td class="text-center">${data.quality}</td>
+                                                <td class="text-right">${data.initMeter}</td>
+                                                <td class="text-right">${data.finalMeter}</td>
+                                                <td class="text-right">${data.width}</td>
+                                                <td class="text-center"><button onclick="EliminarCorte(${countCuts})" class="btn btn-danger">Eliminar</button></td>
+                                                 </tr>`;
+                    countCuts = countCuts + 1;
+                });
+                countCuts = 0;
+
+                tdbodyCuts.innerHTML = htmlCuts;
+            }
+        }
+
+        function AgregarFalla() {
+            if (isValidPiece == false) {
+                Swal.fire({
+                    html: `<label class='label-alert'>No hay ni una pieza seleccionada.</label>`,
+                    target: fullScreen
+                });
+            }
+            else if (inputFinalMeters.value == 0) {
+                Swal.fire({
+                    html: `<label class='label-alert'>Ingrese los metros finales.</label>`,
+                    target: fullScreen
+                });
+            }
+            else if (inputFailMeter.value == 0) {
+                Swal.fire({
+                    html: `<label class='label-alert'>Ingrese metro donde se encuentra la falla.</label>`,
+                    target: fullScreen
+                });
+            }
+            else if (parseFloat(inputFinalMeters.value) < parseFloat(inputFailMeter.value)) {
+                Swal.fire({
+                    html: `<label class='label-alert'>La falla no puede superar el largo de la pieza.</label>`,
+                    target: fullScreen
+                });
+            }
+            else if (inputFallaDescripcion.value.length == 0) {
+                Swal.fire({
+                    html: `<label style='font-size:1.35rem'>Ingrese el tipo de falla.</label>`,
+                    target: fullScreen
+                });
+            }
+            else if (labelColorText.value == null) {
+                Swal.fire({
+                    html: `<label style='font-size:1.35rem'>Elija el color que describe la falla.</label>`,
+                    target: fullScreen
+                });
+            }
+            else if ((labelColorText.value == 'V' && labelMapeo.value == null) || (labelColorText.value == 'B' && labelMapeo.value == null)) {
+                Swal.fire({
+                    html: `<label style='font-size:1.35rem'>La falla no esta mapeada, seleccione el mapeo apropiado.</label>`,
+                    target: fullScreen
+                });
+            }
+            else if (inputBonificacion.value == 0) {
+                Swal.fire({
+                    html: `<label style='font-size:1.35rem'>Ingrese la bonificación de la falla.</label>`,
+                    target: fullScreen
+                });
+            }
+            else {
+                const fail = {
+                    bonusQuantity: parseFloat(inputBonificacion.value),
+                    codeFailure: parseFloat(inputFallaDescripcion.value),
+                    codeFailureNavigation: null,
+                    codePieceFailure: 0,
+                    codeTmsPiece: resultado.codeTmsPiece,
+                    colourBonus: labelColorText.value,
+                    dateFailure: new Date(),
+                    initMeter: parseFloat(inputFailMeter.value),
+                    mapping: labelMapeo.value,
+                };
+                if (resultado.inspectedPiece != null) {
+                    resultado.inspectedPiece.pieceFailures.push(fail);
+                    console.log(resultado);
+                }
+                else {
+                    const inspected = {
+                        authorized: null,
+                        authorizedby: null,
+                        codeTmsPiece: resultado.codeTmsPiece,
+                        creason: null,
+                        cuts: [],
+                        dispatch: false,
+                        finalMeters: inputFinalMeters.value,
+                        finalWeigth: inputFinalWeight.value,
+                        finalWidth: inputFinalWidth.value,
+                        inspectedby: "CRS",
+                        inspectionDate: new Date(),
+                        mFails: 0,
+                        mGreen: 0,
+                        mWhite: 0,
+                        mYellow: 0,
+                        pieceFailures: [],
+                        pieceQuality: labelQuality.value,
+                        pieceSummaries: [],
+                        reinspected: true,
+                        reinspectedDate: new Date(),
+                        reinspectedby: "CRS",
+                    }
+                    resultado.inspectedPiece = inspected;
+                    console.log(inspected);
+                    resultado.inspectedPiece.pieceFailures.push(fail);
+                    console.log(resultado);
+                }
+
+                ReloadTables();
+            }
+        }
+
+        function AgregarCorte() {
+            if ((parseFloat(inputFinalMeters.value) < parseFloat(inputUntil.value)) || (parseFloat(inputSince.value) > parseFloat(inputUntil.value))) {
+                Swal.fire({
+                    html: `<label class='label-alert'>No se puede realizar este corte, mire el mapeo.</label>`,
+                    target: fullScreen
+                });
+                console.log(inputFinalMeters.value);
+                console.log(inputSince.value);
+                console.log(inputUntil.value);
+            }
+            else if (inputQuality.value.toUpperCase() == 'C' && inputPrincipalCause.value == '') {
+                Swal.fire({
+                    html: `<label class='label-alert'>Para los cortes tipo C necesita colocar la causa.</label>`,
+                    target: fullScreen
+                });
+            }
+            else {
+                const cut = {
+                    cause: inputPrincipalCause.value,
+                    codeCut: 0,
+                    codeTmsPiece: resultado.codeTmsPiece,
+                    finalMeter: inputUntil.value,
+                    initMeter: inputSince.value,
+                    quality: inputQuality.value,
+                    width: 0
+                };
+
+                if (resultado.inspectedPiece != null) {
+                    resultado.inspectedPiece.cuts.push(cut);
+                    console.log(resultado);
+                }
+                else {
+                    const inspected = {
+                        authorized: null,
+                        authorizedby: null,
+                        codeTmsPiece: resultado.codeTmsPiece,
+                        creason: null,
+                        cuts: [],
+                        dispatch: false,
+                        finalMeters: inputFinalMeters.value,
+                        finalWeigth: inputFinalWeight.value,
+                        finalWidth: inputFinalWidth.value,
+                        inspectedby: "CRS",
+                        inspectionDate: new Date(),
+                        mFails: 0,
+                        mGreen: 0,
+                        mWhite: 0,
+                        mYellow: 0,
+                        pieceFailures: [],
+                        pieceQuality: labelQuality.value,
+                        pieceSummaries: [],
+                        reinspected: true,
+                        reinspectedDate: new Date(),
+                        reinspectedby: "CRS",
+                    }
+                    console.log(inspected);
+                    resultado.inspectedPiece = inspected;
+                    resultado.inspectedPiece.cuts.push(cut);
+                    console.log(resultado);
+                }
+
+                ReloadTables();
+            }
+        }
+
+        async function GuardarCambios() {
+            if (isValidPiece == false) {
+                Swal.fire({
+                    html: "<label style='font-size:1.35rem; font-weight: bold'> Seleccione una pieza valida</label>",
+                    showConfirmButton: false,
+                    timer: 1000,
+                    target: fullScreen
+                });
+            }
+            else if (inputFinalMeters.value == 0) {
+                Swal.fire({
+                    html: "<label style='font-size:1.35rem; font-weight: bold'> Ingrese los metros finales</label>",
+                    showConfirmButton: false,
+                    timer: 1000,
+                    target: fullScreen
+                });
+            }
+            else if (inputFinalWeight.value == 0) {
+                Swal.fire({
+                    html: "<label style='font-size:1.35rem; font-weight: bold'> Ingrese el peso final</label>",
+                    showConfirmButton: false,
+                    timer: 1000,
+                    target: fullScreen
+                });
+            }
+            else if (inputFinalWidth.value == 0) {
+                Swal.fire({
+                    html: "<label style='font-size:1.35rem; font-weight: bold'> Ingrese el ancho final</label>",
+                    showConfirmButton: false,
+                    timer: 1000,
+                    target: fullScreen
+                });
+            }
+            else if (labelQuality.value == null) {
+                Swal.fire({
+                    html: "<label style='font-size:1.35rem; font-weight: bold'> Elija la calidad de la pieza</label>",
+                    showConfirmButton: false,
+                    timer: 1000,
+                    target: fullScreen
+                });
+            }
+            else {
+                if (resultado.inspectedPiece == null) {
+                    const inspected = {
+                        authorized: null,
+                        authorizedby: null,
+                        codeTmsPiece: resultado.codeTmsPiece,
+                        creason: null,
+                        cuts: [],
+                        dispatch: false,
+                        finalMeters: inputFinalMeters.value,
+                        finalWeigth: inputFinalWeight.value,
+                        finalWidth: inputFinalWidth.value,
+                        inspectedby: "CRS",
+                        inspectionDate: new Date(),
+                        mFails: 0,
+                        mGreen: 0,
+                        mWhite: 0,
+                        mYellow: 0,
+                        pieceFailures: [],
+                        pieceQuality: labelQuality.value,
+                        pieceSummaries: [],
+                        reinspected: true,
+                        reinspectedDate: new Date(),
+                        reinspectedby: "CRS",
+                    }
+
+                    resultado.inspectedPiece = inspected;
+                }
+                let url = 'Inspection/SaveChanges';
+                //const respuesta = await fetch(url);
+                //correct = await respuesta.json();
+                var jsonToSend = JSON.stringify(resultado);
+                const respuesta = await fetch(url, {
+                    method: 'POST', // or 'PUT'
+                    body: JSON.stringify(jsonToSend),
+                    headers: {
+                        'Accept': 'application/json; charset=utf-8',
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }
+                });
+                GetPiece(inputPieceNumber.value, true);
+            }
+        }
+
+        //Swal.fire({
+        //    html: "<label style='font-size:1.35rem; font-weight: bold'> Ingrese los metros finales</label>",
+        //    showConfirmButton: false,
+        //    timer: 1000,
+        //    target: fullScreen
+        //});
+
+        function ReloadTables() {
+            let htmlCard = '';
+            const pieceFailures = resultado.inspectedPiece.pieceFailures;
+            let isCut;
+
+            for (let i = 0; i <= resultado.inspectedPiece.finalMeters * 10; i++) {
+                const item = i / 10;
+                if (pieceFailures.find(x => x.initMeter == item) != null) {
+                    const pieceFail = pieceFailures.find(x => x.initMeter == item);
+                    htmlCard += `<tr style="background-color:${colores.find(x => x.codColor == pieceFail.colourBonus).hexColor}">
+                                                <td>${pieceFail.initMeter}</td>
+                                                <td>${colores.find(x => x.codColor == pieceFail.colourBonus).Color}</td>
+                                                <td>${pieceFail.codeFailure}</td>
+                                                <td class="text-center">${((pieceFail.mapping == 'I' || pieceFail.mapping == 'T')) ? "••" : ""}</td>
+                                                <td class="text-center">${((pieceFail.mapping == 'C' || pieceFail.mapping == 'T')) ? "••" : ""}</td>
+                                                <td class="text-center">${((pieceFail.mapping == 'D' || pieceFail.mapping == 'T')) ? "••" : ""}</td>
+                                                </tr>`;
+                }
+                else if (resultado.inspectedPiece.cuts.find(x => x.initMeter == item) != null) {
+                    const cut = resultado.inspectedPiece.cuts.find(x => x.initMeter == item);
+                    htmlCard += `<tr style="background-color:red;color:white">
+                                                <td>${cut.initMeter}</td>
+                                                <td></td>
+                                                <td>[${cut.quality}]</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                    </tr>`;
+                    isCut = true;
+                }
+                else if (resultado.inspectedPiece.cuts.find(x => x.finalMeter == item) != null) {
+                    const cut = resultado.inspectedPiece.cuts.find(x => x.finalMeter == item);
+                    htmlCard += `<tr style="background-color:red;color:white">
+                                                <td>${cut.finalMeter}</td>
+                                                <td></td>
+                                                <td>[${cut.quality}]</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                </tr>`;
+                    isCut = false;
+                }
+                else {
+                    if (i % 10 === 0) {
+                        htmlCard += `<tr style="background-color:${(isCut) ? 'gray' : 'white'}">
+                                                    <td>${item}</td>
+                                                    <td></td>
+                                                    <td ></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                            </tr>`;
+                    }
+                }
+            }
+            tdbodyCard.innerHTML = htmlCard;
+
+            dataQualityCut.value = 'A';
+            inputSince.value = '';
+            inputUntil.value = '';
+            inputPrincipalCause.value = '';
+
+            divModalCut.hidden = true;
+
+            let htmlCuts = '';
+            let countCuts = 0;
+            resultado.inspectedPiece.cuts.forEach(data => {
+                htmlCuts += `<tr>
+                                                <td class="text-center">${data.quality}</td>
+                                                <td class="text-right">${data.initMeter}</td>
+                                                <td class="text-right">${data.finalMeter}</td>
+                                                <td class="text-right">${data.width}</td>
+                                                <td class="text-center"><button onclick="EliminarCorte(${countCuts})" class="btn btn-danger">Eliminar</button></td>
+                                                 </tr>`;
+                countCuts = countCuts + 1;
+            });
+            countCuts = 0;
+
+            tdbodyCuts.innerHTML = htmlCuts;
+
+            let htmlFails = '';
+            let count = 0;
+            pieceFailures.sort(function (x, y) {
+                return y.initMeter - x.initMeter;
+            }).forEach(data => {
+                htmlFails += `<tr style='background-color:${colores.find(x => x.codColor == data.colourBonus).hexColor}'>
+                                            <td class="text-center">${data.codeFailure}</td>
+                                            <td class="text-center">${colores.find(x => x.codColor == data.colourBonus).Color}</td>
+                                            <td class="text-right">${data.initMeter}</td>
+                                            <td class="text-right">${data.bonusQuantity}</td>
+                                            <td class="text-center">${mapeos.find(x => x.mapping == data.mapping).TextMapping}</td>
+                                            <td class="text-center"><button onclick="EliminarFalla(${count})" class="btn btn-danger">Eliminar</button></td>
+                                            </tr>`;
+                count = count + 1;
+            });
+            count = 0;
+
+            tdbodyFails.innerHTML = htmlFails;
+
+            labelTotalFallas.textContent = pieceFailures.length;
+            labelFallasVerdes.textContent = pieceFailures.filter(x => x.colourBonus == 'V').length;
+            labelFallasAmarillas.textContent = pieceFailures.filter(x => x.colourBonus == 'A').length;
+            labelFallasBlancas.textContent = pieceFailures.filter(x => x.colourBonus == 'B').length;
+            labelTotalCortes.textContent = resultado.inspectedPiece.cuts.length;
+
+            let bonusList = [];
+
+            resultado.inspectedPiece.cuts.forEach(data => {
+                pieceFailures.filter(x => x.initMeter >= data.initMeter && x.initMeter <= data.finalMeter).forEach(data2 => {
+                    bonusList.push(data2);
+                });
+            });
+
+            const bonusDiff = pieceFailures.reduce((total, s) => total + s.bonusQuantity, 0) - bonusList.reduce((total, s) => total + s.bonusQuantity, 0);
+
+            labelTotalMtsBon.textContent = `${bonusDiff.toFixed(1)} mts.`;
+            labelTotalMtsCortes.textContent = `${(resultado.inspectedPiece.cuts.reduce((total, s) => total + s.finalMeter, 0)
+                - resultado.inspectedPiece.cuts.reduce((total, s) => total + s.initMeter, 0)).toFixed(1)} mts.`;
+            labelMtsNetos.textContent = `${resultado.inspectedPiece.finalMeters
+                - (resultado.inspectedPiece.cuts.reduce((total, s) => total + s.finalMeter, 0)
+                    - resultado.inspectedPiece.cuts.reduce((total, s) => total + s.initMeter, 0)).toFixed(1)
+                - bonusDiff.toFixed(1)} mts.`;
+            labelRetazosA.textContent = resultado.inspectedPiece.pieceSummaries.filter(x => x.quality == 'A').length;
+            labelRetazosC.textContent = resultado.inspectedPiece.pieceSummaries.filter(x => x.quality == 'C').length;
+
+            labelMetroLineal.textContent = `${(inputFinalWeight.value / inputFinalMeters.value).toFixed(3)} grs. x Metro Lineal`;
+        }
+    </script>
+}

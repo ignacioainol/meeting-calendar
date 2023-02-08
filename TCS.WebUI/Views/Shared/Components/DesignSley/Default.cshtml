@@ -1,0 +1,270 @@
+﻿@model TCS.WebUI.Models.DesignDrawSley
+@using System.Globalization
+
+
+@{
+    int r = Model.Rows;
+    int? x = ViewBag.delete;
+    int xs = 1;
+    MatrizSley matrizSley = ViewBag.matrizSley;
+    int l = matrizSley.Rows;
+}
+<div class="div-container">
+    <table id="design-table">
+        <thead>
+            <tr>
+                @for (int i = 0; i < Model.Cols + 1; i++)
+                {
+                    @if (Model.Cols > 0)
+                    {
+                        if (i == 0)
+                        {
+                            <th class="cube-size"></th>
+
+                        }
+                        else
+                        {
+                            <th class="cube-size">@i</th>
+                        }
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 1; i < Model.Rows + 1; i++)
+            {
+                <tr class="cube-size">
+
+                    @{
+                        <th>@r</th>
+                        r = r - 1;
+                    }
+                    @for (int j = 1; j < Model.Cols + 1; j++)
+                    {
+
+                        if (Model.PointDataSley.Where(p => p.row == i && p.col == j).FirstOrDefault() != null)
+                        {
+
+                            <td name="@i;@j" class="cube-size" style="background-color:#0000ff;" onClick="toggleColor(this);"></td>
+                        }
+                        else if (Model.PointDataSley2.Where(p => p.row == i && p.col == j).FirstOrDefault() != null)
+                        {
+                            <td name="@i;@j" class="cube-size" style="background-color:#ffd800;" onClick="toggleColor(this);"></td>
+
+                        }
+                        else if (Model.PointDataSley4.Where(p => p.row == i && p.col == j).FirstOrDefault() != null)
+                        {
+                            <td name="@i;@j" class="cube-size" style="background-color:#ffd800;" onClick="toggleColor(this);"></td>
+
+                        }
+                        else
+                        {
+                            if (x > 0)
+                            {
+                                <td name="@i;@j" class="cube-size"></td>
+
+                            }
+                            else
+                            {
+                                <td name="@i;@j" class="cube-size" onClick="toggleColor(this);"></td>
+
+                            }
+                        }
+
+                    }
+
+                </tr>
+            }
+
+            @foreach (var item in Model.Repeats)
+            {
+                <tr class="cube-size">
+                    <td class="cube-size" style="background-color:#FF0000;color:white">R</td>
+                    @for (int j = 1; j < Model.Cols + 1; j++)
+                    {
+                        @if (item.inicio <= j && item.fin >= j)
+                        {
+                            <td class="cube-size" style="background-color:#FF0000;color:white">@item.cantidad</td>
+                        }
+                        else
+                        {
+                            <td class="cube-size"></td>
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <table id="sley-table">
+        <thead>
+            @if (Model.Rows > 0)
+            {
+                @for (int i = 1; i < 2 + 1; i++)
+                {
+                    <tr class="cube-size">
+
+                        @{
+
+                            <td class="cube-size">@xs</td>
+                            xs = xs + 1;
+
+                        }
+                        @for (int j = 1; j < Model.Cols + 1; j++)
+                        {
+
+                            if (xs > 1)
+                            {
+                                if (Model.PointDataSley3.Where(p => p.row == i && p.col == j).FirstOrDefault() != null)
+                                {
+
+                                    string color = "";
+                                    switch (Model.PointDataSley3.Where(p => p.row == i && p.col == j).FirstOrDefault().color)
+                                    {
+
+                                        case 1:
+                                            color = "rgb(255, 0, 0)";
+                                            break;
+                                        case 2:
+                                            color = "rgb(0, 255, 0)";
+                                            break;
+                                        case 3:
+                                            color = "rgb(0, 0, 255)";
+                                            break;
+                                        case 4:
+                                            color = "rgb(255, 233, 0)";
+                                            break;
+                                    }
+
+
+                                    <td name="@i;@j" style="background-color:@color;" onClick="toggleColor2(this);"></td>
+                                }
+                                else
+                                {
+                                    <td name="@i;@j" class="cube-size" onClick="toggleColor2(this);"></td>
+                                }
+                            }
+                            else
+                            {
+                                if (x > 0)
+                                {
+                                    <td name="@i;@j" class="cube-size"></td>
+
+                                }
+                                else
+                                {
+                                    <td name="@i;@j" class="cube-size" onClick="toggleColor2(this);"></td>
+
+                                }
+                            }
+
+
+                        }
+                    </tr>
+                }
+            }
+        </thead>
+    </table>
+</div>
+<style>
+    .div-container {
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    table, th, td {
+        padding-right: 0.2rem;
+        border: 0.05rem solid black;
+        border-collapse: collapse;
+    }
+    td:hover {
+        background-color: rgb(250,250,250);
+    }
+
+    .cube-size {
+        width: 29px;
+        min-width: 29px;
+        height: 29px;
+        font-size: 0.85rem;
+        text-align: end;
+    }
+</style>
+
+<script type="text/javascript">
+
+    function toggleColor(obj) {
+        var bgColor = obj.style.backgroundColor;
+        if (bgColor == "rgb(0, 0, 255)") {
+            obj.style.backgroundColor = "";
+        }
+        else {
+            obj.style.backgroundColor = "#0000ff";
+        }
+        $("#PlanCode").val(getData())
+        $("#SleyCode").val(getData2())
+
+
+    };
+    function toggleColor2(obj) {
+
+        var color = $('#colorPicker').val();
+
+        var bgColor = obj.style.backgroundColor;
+        if (bgColor == color) {
+            obj.style.backgroundColor = "";
+        }
+        else {
+            obj.style.backgroundColor = color;
+        }
+        $("#PlanCode").val(getData())
+        $("#SleyCode").val(getData2())
+
+
+    };
+    function getData() {
+        var table = document.getElementById("design-table");
+        var data = '';
+        for (var i = 0, row; row = table.rows[i]; i++) {
+            for (var j = 0, col; col = row.cells[j]; j++) {
+                var bgColor = col.style.backgroundColor;
+                if (bgColor == "rgb(0, 0, 255)") {
+                    data = data + col.getAttribute("name") + "|";
+                }
+            }
+        }
+        console.log(data.slice(0, -1));
+
+        return data.slice(0, -1);
+    };
+
+    function getData2() {
+        var table = document.getElementById("sley-table");
+        var color = $('#colorPicker').val();
+
+        var sley = '';
+        for (var i = 0, row; row = table.rows[i]; i++) {
+            for (var j = 0, col; col = row.cells[j]; j++) {
+                var bgColor = col.style.backgroundColor;
+                var x = 0;
+                if (bgColor == 'rgb(255, 0, 0)') {
+                    x = 1;
+                }
+                if (bgColor == 'rgb(0, 255, 0)') {
+                    x = 2;
+                }
+                if (bgColor == 'rgb(0, 0, 255)') {
+                    x = 3;
+                }
+                if (bgColor == 'rgb(255, 233, 0)') {
+                    x = 4;
+                }
+                if (bgColor != '') {
+                    sley = sley + col.getAttribute("name") + ';' + x + "|";
+                }
+            }
+        }
+        console.log(sley.slice(0, -1));
+
+        return sley.slice(0, -1);
+    };
+</script>

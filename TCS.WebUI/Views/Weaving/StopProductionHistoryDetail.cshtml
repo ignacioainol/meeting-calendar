@@ -1,0 +1,149 @@
+﻿@model IEnumerable<TCS.EF.Entidades.Loom>
+@{
+    ViewData["Title"] = SharedLocalizer["stopdetail"].ToString();
+    ViewData["PageName"] = "weaving_stopproductionhistorydetail";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i>" + SharedLocalizer["stopdetail"].ToString();
+
+    List<TCS.EF.Entidades.StopType> stopType = ViewBag.stoptypelist;
+    stopType.Add(new TCS.EF.Entidades.StopType() { StopTypeId = 0, Description = "Funcionando" });
+    List<TCS.EF.Entidades.CurrentProd> curProdList = ViewBag.currentprodlist;
+    TCS.EF.Entidades.CurrentShift cur = ViewBag.curreshift;
+}
+
+<head>
+
+</head>
+
+<body>
+    <div id="panel-1" class="panel">
+        <div class="panel-hdr">
+            <h2>
+                <span class="fw-300"><i></i></span>
+            </h2>
+            <div class="panel-toolbar">
+                <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="div-general-data">
+                <p class="h2 text-white align-content-center">
+                    Fecha del Turno: @cur.Date.Value.ToString("dd-MM-yyyy")  Turno Actual : @cur.Shift<br>
+                    Desde : @cur.Date.Value.ToString("HH:mm") - Hasta : @DateTime.Now.ToString("HH:mm")
+                </p>
+            </div>
+        </div>
+        @foreach (var item in Model)
+        {
+            TCS.EF.Entidades.CurrentProd curProd = new TCS.EF.Entidades.CurrentProd();
+            curProd = curProdList.FirstOrDefault(x => x.LoomId == item.LoomId);
+            //  string EffData = string.Format("Runnig Efficiency : {0}% {2} Standard Efficiency : {1}%", curProd.ActualEff, curProd.StdEff, Environment.NewLine);
+            string ColorString = "";
+            if (curProd.Status == "Running")
+            {
+                ColorString = "forestgreen";
+            }
+            else if (curProd.Status == "Stopped")
+            {
+                ColorString = "red";
+            }
+            else if (curProd.Status == "Offline")
+            {
+                ColorString = "orange";
+            }
+
+            <div class="container-fluid">
+                <div class="row no-gutters">
+                    <div class="col-md-2 col-lg-2">
+                        <div style="background-color :@ColorString; border: solid 1px black;height: 78px;padding-left :7px">
+                            <h4 class="text-white">Telar @curProd.Loom.LoomNumber - @curProd.Status</h4>
+                            <p class="h5 text-white">
+                                Runnig Efficiency : @curProd.ActualEff%<br>
+                                Standard Efficiency : @curProd.StdEff%
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-10 col-lg-10">
+                        <div class="progress">
+                            @{foreach (var item2 in item.CurrentShiftStop)
+                                {
+                                    string TitleTooltip = string.Format("{0} - {1} <br> Tiempo {4} : <br> {3} minutos <br> {2}"
+                                                         , item2.StopHour.Value.ToString("HH:mm")
+                                                         , item2.StartHour.Value.ToString("HH:mm")
+                                                         , @stopType.FirstOrDefault(x => x.StopTypeId == @item2.StopTypeId).Description
+                                                         , item2.StoppedTime / 60
+                                                         , @item2.StopTypeId == 0 ? "Funcionando" : "Detenido");
+                                    string ColorProg = "";
+                                    if (item2.StopTypeId == 0)
+                                    {
+                                        ColorProg = "forestgreen";
+                                    }
+                                    else if (item2.StopTypeId == 8)
+                                    {
+                                        ColorProg = "red";
+                                    }
+                                    else if (item2.StopTypeId == 9)
+                                    {
+                                        ColorProg = "blue";
+                                    }
+                                    else
+                                    {
+                                        ColorProg = "darkorange";
+                                    }
+                                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow=@item2.Percent
+                                         aria-valuemin="0" aria-valuemax="100" style="width: @item2.Percent%; background-color:@ColorProg !important;">
+                                        <p class="h3 text-center text-white" data-toggle="tooltip" data-html="true" data-placement="left"
+                                           title="@TitleTooltip">
+                                            @item2.Percent%
+                                        </p>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</body>
+
+<style>
+    .div-general-data {
+        height: 70px;
+        background-color: dodgerblue;
+        padding-left: 7px;
+        border: solid 1px black;
+    }
+
+    .progress-bar {
+        border: solid 1px black;
+        border-radius: 0px
+    }
+
+    .progress {
+        border-radius: 0px;
+        height: 78px;
+    }
+
+    .tooltip {
+        font-size: 1.5rem;
+    }
+
+    .tooltip-inner {
+        max-width: 350px;
+    }
+</style>
+
+@section ScriptsBlock
+{
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+    </script>
+}
+

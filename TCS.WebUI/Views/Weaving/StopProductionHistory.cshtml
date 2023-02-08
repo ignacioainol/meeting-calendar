@@ -1,0 +1,270 @@
+﻿@model IEnumerable<TCS.EF.Entidades.StopHistory>
+@{
+    ViewData["Title"] = SharedLocalizer["stoppagehistory"].ToString();
+    ViewData["PageName"] = "weaving_stopproductionhistory";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i>" + SharedLocalizer["stoppagehistory"].ToString();
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+    <link rel="stylesheet" href="~/css/flatpickr/flatpickr.min.css">
+}
+<head>
+</head>
+
+@{
+}
+
+<div class="flex-container">
+    <div class="flex-item">
+        <label class="control-label">@SharedLocalizer["shift"] :</label>
+        <select id="select-shift" class="form-control select-custom-filter" asp-items="ViewBag.ShiftLetter"></select>
+    </div>
+    <div class="flex-item">
+        <label class="control-label">@SharedLocalizer["stoptype"] :</label>
+        <select id="select-stoptype" class="form-control select-custom-filter" asp-items="ViewBag.StopType"></select>
+    </div>
+    <div class="flex-item">
+        <label class="control-label">@SharedLocalizer["startdate"] :</label>
+        <input id="input-date-since" type="date" class="form-control" name="date" value="@ViewBag.Since">
+    </div>
+    <div class="flex-item">
+        <label class="control-label">@SharedLocalizer["enddate"] :</label>
+        <input id="input-date-until" type="date" class="form-control" name="date" value="@ViewBag.Until">
+    </div>
+</div>
+
+<div class="panel">
+    <div class="grid-container-header">
+        <div>
+        </div>
+        <div>
+            <button class="btn btn-primary p-2" id="button-export-excel">
+                @SharedLocalizer["exporttoexcel"]
+            </button>
+        </div>
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100">
+                <thead class="bg-primary-500">
+                    <tr class="text-center">
+                        <th style="vertical-align:middle">@SharedLocalizer["loom"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["shift"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["stops"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["minutes"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["stoptype"]</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-stop-production-history">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<style>
+    .grid-container-header {
+        display: grid;
+        grid-template-columns: 1fr 7.8rem 1.4rem;
+        padding: 0.7rem 1.1rem 0.7rem 1.1rem;
+        border-bottom: 0.1em solid lightgray;
+        grid-gap: 6px;
+    }
+
+    .badge-danger {
+        background-color: red
+    }
+
+    .badge-success {
+        background-color: forestgreen
+    }
+
+    .flex-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        background : white;
+        margin-bottom : 0.5rem;
+    }
+
+    .flex-item {
+        margin: 0.5rem;
+        width: 35rem;
+        flex-shrink: 1;
+        flex-grow: 1;
+        font-size:1.15rem;
+    }
+</style>
+@section ScriptsBlock
+{
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.es.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/dependency/moment/moment.js"></script>
+    <script src="~/js/flatpickr/flatpickr.min.js"></script>
+    @{ if (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "es")
+        {
+            <script src="~/js/datagrid/datatables/datatables.bundle.es.js"></script>
+            <script src="~/js/flatpickr/languaje/es.js"></script>
+        }
+    }
+
+<script>
+    const selectShift = document.querySelector('#select-shift');
+    const selectStopType = document.querySelector('#select-stoptype');
+    const inputDateSince = document.querySelector('#input-date-since');
+    const inputDateUntil = document.querySelector('#input-date-until');
+    const datosBusqueda =
+    {
+        fechaSince: '',
+        fechaUntil: '',
+        turno: '',
+        tipoparo: ''
+    }
+
+    eventListeners();
+
+    flatpickr(inputDateSince, {
+        locale: "es",
+        altFormat: "d-m-Y",
+        altInput: true,
+        altInputClass: "flatpickr-custom form-control",
+    });
+
+    flatpickr(inputDateUntil, {
+        locale: "es",
+        altFormat: "d-m-Y",
+        altInput: true,
+        altInputClass: "flatpickr-custom form-control",
+    });
+
+    function eventListeners() {
+        inputDateSince.valueAsDate = new Date('@Html.Raw(ViewBag.Since)');
+        inputDateUntil.valueAsDate = new Date('@Html.Raw(ViewBag.Until)');
+        selectShift.value ='@Html.Raw(ViewBag.Shift)';
+        datosBusqueda.turno = selectShift.value;
+        datosBusqueda.fechaSince = inputDateSince.value;
+        datosBusqueda.fechaUntil = inputDateUntil.value;
+        selectShift.addEventListener('input', buscarTurno);
+        selectStopType.addEventListener('input', buscarTipoParo);
+        inputDateSince.addEventListener('input', buscarFechaSince);
+        inputDateUntil.addEventListener('input', buscarFechaUntil);
+        document.addEventListener('DOMContentLoaded', busquedaInicial);
+        document.querySelector('#button-export-excel').addEventListener('click', ExportarExcel);
+    }
+
+    function buscarTurno(e) {
+        datosBusqueda.turno = e.target.value;
+        cargarTabla();
+    }
+
+    function buscarTipoParo(e) {
+        datosBusqueda.tipoparo = e.target.value;
+        cargarTabla();
+    }
+
+    function buscarFechaSince(e) {
+        datosBusqueda.fechaSince = e.target.value;
+        cargarTabla();
+    }
+
+    function buscarFechaUntil(e) {
+        datosBusqueda.fechaUntil = e.target.value;
+        cargarTabla();
+    }
+
+    function busquedaInicial(e) {
+        cargarTabla();
+    }
+
+    async function cargarTabla(data) {
+        const tbodyShiftProduction = document.querySelector('#tbody-stop-production-history');
+        let url = `Weaving/StopProductionHistoryJson?since=${datosBusqueda.fechaSince}&until=${datosBusqueda.fechaUntil}&shift=${datosBusqueda.turno}&stopType=${datosBusqueda.tipoparo}`;
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+        let html = '';
+        resultado.forEach(data => {
+
+            html += `<tr">
+                            <td class="text-center">${data.productionHistory.loom.loomNumber}</td >
+                            <td class="text-center">${data.shift}</td>
+                            <td class="text-center">${data.stops}</td>
+                            <td class="text-center">${(data.stoppedTime / 60).toFixed(1)}</td>
+                            <td class="text-center">${data.stopType.description}</td>
+                        </tr > `;
+
+        });
+
+        tbodyShiftProduction.innerHTML = html;
+    }
+
+    function ExportarExcel() {
+        let url = `Weaving/StopProductionHistoryToExcel?since=${datosBusqueda.fechaSince}&until=${datosBusqueda.fechaUntil}&shift=${datosBusqueda.turno}&stopType=${datosBusqueda.tipoparo}`;
+        window.location.href = url;
+    }
+
+    function secondsToHoursMin(seconds) {
+        const hours = Math.floor(seconds / 60 / 60);
+
+        const minutes = Math.floor(seconds / 60) - (hours * 60);
+
+        return `${hours.toString().padStart(2, '0')}: ${minutes.toString().padStart(2, '0')} `;
+    }
+</script>
+
+    @*<script>
+            $(document).ready(function () {
+                // initialize datatable
+                $('#dt-basic-example').dataTable({
+                    responsive: true,
+                    lengthChange: false,
+                    fixedHeader: true,
+                    ordering: true,
+                    pageLength: 60,
+                    searching: false,
+                    dom:
+                        "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>>" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                    buttons: [
+                        {
+                            extend: 'pdfHtml5',
+                            text: 'PDF',
+                            titleAttr: 'Generate PDF',
+                            className: 'btn-outline-danger btn-sm mr-1'
+                        },
+                        {
+                            extend: 'excelHtml5',
+                            text: 'Excel',
+                            titleAttr: 'Generate Excel',
+                            className: 'btn-outline-success btn-sm mr-1'
+                        },
+                        {
+                            extend: 'print',
+                            text: 'Print',
+                            titleAttr: 'Print Table',
+                            className: 'btn-outline-primary btn-sm'
+                        }
+                    ]
+                });
+            });
+
+                var controls = {
+                leftArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-left" style="font-size: 1.25rem"></i>',
+                rightArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-right" style="font-size: 1.25rem"></i>'
+            }
+
+            $('#datepicker-2').datepicker({
+                todayHighlight: true,
+                orientation: "bottom left",
+                templates: controls,
+                format: '@System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern.ToLower()',
+                language: '@System.Threading.Thread.CurrentThread.CurrentCulture.Name'
+            });
+        </script>*@
+}

@@ -1,0 +1,69 @@
+﻿@model TCS.EF.Entidades.Permission
+
+@{
+    ViewData["Title"] = SharedLocalizer["permissions"].ToString();
+    ViewData["PageName"] = "permissions_index";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + SharedLocalizer["permissions"].ToString();
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label">@SharedLocalizer["description"]</label>
+                <input id="input-permission-description" asp-for="Description" class="form-control" />
+                <span id="span-permission-description-alert" asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <button id="button-description-save" type="submit" value="Create" class="btn btn-primary mb-3">@SharedLocalizer["save"]</button>
+                <a asp-action="Index" class="btn btn-primary mb-3">
+                    @SharedLocalizer["goback"]
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section ScriptsBlock
+{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @*@{ if (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "es")
+        {
+            <script src="~/js/languajes/languaje.es.json"></script>
+        }
+    }*@
+<script type="module">
+        import { languaje } from './js/languajes/languaje.es.js';
+        const inputPermissionDescription = document.querySelector('#input-permission-description');
+        const spanPermissionDescriptionAlert = document.querySelector('#span-permission-description-alert');
+        const buttonDescriptionSave = document.querySelector('#button-description-save');
+        eventListeners();
+    function eventListeners()
+    {
+        inputPermissionDescription.addEventListener('input', validarFormulario);
+        buttonDescriptionSave.addEventListener('click', validarFormulario);
+        //Load();
+    }
+
+    @*async function Load() {
+        const url = "./js/languajes/languaje.es.json";
+
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+        console.log('@Html.Raw(SharedLocalizer["descriptionisrequired"])');
+    }*@
+
+    function validarFormulario()
+    {
+        if (inputPermissionDescription.value.trim() === "") {
+            spanPermissionDescriptionAlert.textContent = '@Html.Raw(SharedLocalizer["descriptionisrequired"])';
+            buttonDescriptionSave.disabled = true;
+        }
+        else {
+            spanPermissionDescriptionAlert.textContent = "";
+            buttonDescriptionSave.disabled = false;
+        }
+    }
+</script>
+}

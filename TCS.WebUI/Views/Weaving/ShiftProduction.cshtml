@@ -1,0 +1,216 @@
+﻿@model IEnumerable<TCS.EF.Entidades.ProductionHistory>
+@{
+    ViewData["Title"] = SharedLocalizer["shiftproduction"].ToString();
+    ViewData["PageName"] = "weaving_shiftproduction";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i>" + SharedLocalizer["shiftproduction"].ToString();
+    DateTime selectedDate = ViewBag.selectedDate;
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+    <link rel="stylesheet" href="~/css/flatpickr/flatpickr.min.css">
+}
+<head>
+</head>
+<div class="panel">
+    <div class="panel-hdr">
+        <form asp-action="ShiftProduction" style=" width:100%">
+            <div class="form-group row pt-3 align-items-center" style="height:60px;">
+                <label style="font-size: 20px;" class="control-label col-1">@SharedLocalizer["shift"] :</label>
+                <select id="select-shift" name="shift" class="form-control select-custom-filter col-3" asp-items="ViewBag.ShiftLetter"></select>
+
+                <label style="font-size: 20px;" class="control-label col-2">@SharedLocalizer["select"] @SharedLocalizer["date"] :</label>
+                <input id="datepicker" type="date" class="form-control col-4" value="@selectedDate" name="date">
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="grid-container-header">
+        <div>
+        </div>
+        <div>
+            <button class="btn btn-primary p-2" id="button-export-excel">
+                @SharedLocalizer["exporttoexcel"]
+            </button>
+        </div>
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content" style="overflow-x: auto">
+            <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100">
+                <thead class="bg-primary-500">
+                    <tr class="text-center" style="font-size: 16px;">
+                        <th style="vertical-align:middle">@SharedLocalizer["loom"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["type"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["running"]%</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["standard"]%</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["designA"]</th>
+                        <th style="vertical-align:middle">PPC</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["meters"]</th>
+                        <th style="vertical-align:middle">Kpicks</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["speed"]</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["warpstops"]  <br /> (@SharedLocalizer["quantity"] / @SharedLocalizer["time"])</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["weftstops"]  <br /> (@SharedLocalizer["quantity"] / @SharedLocalizer["time"])</th>
+                        <th style="vertical-align:middle">@SharedLocalizer["otherstops"] <br /> (@SharedLocalizer["quantity"] / @SharedLocalizer["time"])</th>
+                        @*<th style="vertical-align:middle">Tejedor</th>*@
+                    </tr>
+                </thead>
+                <tbody id="tbody-shift-production">
+                </tbody>
+            </table>
+        </div>
+        @*<div id="wrapper"></div>*@
+    </div>
+</div>
+<style>
+    .grid-container-header {
+        display: grid;
+        grid-template-columns: 1fr 7.8rem 1.4rem;
+        padding: 0.7rem 1.1rem 0.7rem 1.1rem;
+        border-bottom: 0.1em solid lightgray;
+        grid-gap: 6px;
+    }
+
+    .badge-danger {
+        background-color: red
+    }
+
+    .badge-success {
+        background-color: forestgreen
+    }
+
+    #tbody-shift-production {
+        font-size: 1.1em;
+    }
+</style>
+@section ScriptsBlock
+{
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.es.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/flatpickr/flatpickr.min.js"></script>
+    @{ if (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "es")
+        {
+            <script src="~/js/datagrid/datatables/datatables.bundle.es.js"></script>
+            <script src="~/js/flatpickr/languaje/es.js"></script>
+        }
+    }
+<script>
+    const selectShift = document.querySelector('#select-shift');
+    const inputDate = document.querySelector('#datepicker');
+    const datosBusqueda =
+    {
+        fecha: '',
+        turno: ''
+    }
+
+    eventListeners();
+
+    flatpickr(inputDate,
+        {
+            locale: "es",
+            altFormat: "d-m-Y",
+            altInput: true,
+            altInputClass: "flatpickr-custom form-control col-4",
+        });
+
+    function eventListeners() {
+        inputDate.valueAsDate = new Date();
+        datosBusqueda.turno = selectShift.value;
+        datosBusqueda.fecha = inputDate.value;
+        selectShift.addEventListener('input', buscarTurno);
+        inputDate.addEventListener('input', buscarFecha);
+        document.addEventListener('DOMContentLoaded', busquedaInicial);
+        document.querySelector('#button-export-excel').addEventListener('click', ExportarExcel);
+    }
+
+    function buscarTurno(e) {
+        datosBusqueda.turno = e.target.value;
+        cargarTabla();
+    }
+
+    function buscarFecha(e) {
+        datosBusqueda.fecha = e.target.value;
+        cargarTabla();
+    }
+
+    function busquedaInicial(e) {
+        cargarTabla();
+    }
+
+    function ExportarExcel() {
+        let url = `Weaving/ShiftProductionToExcel?selectedDate=${datosBusqueda.fecha}&shift=${datosBusqueda.turno}`;
+        window.location.href = url;
+    }
+
+    async function cargarTabla(data) {
+        const tbodyShiftProduction = document.querySelector('#tbody-shift-production');
+        let url = "Weaving/ShiftProductionJson?date=" + datosBusqueda.fecha + "&shift=" + datosBusqueda.turno;
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+        let html = '';
+
+        let effColorClass = "";
+        let pEffColorClass = "";
+
+        resultado.forEach(data => {
+
+            if (data.actualEff <= 30) {
+                effColorClass = "badge badge-danger";
+            }
+            else if (data.actualEff > 30 && data.actualEff < 70) {
+                effColorClass = "badge badge-warning";
+            }
+            else if (data.actualEff >= 70) {
+                effColorClass = "badge badge-success";
+            }
+
+            if (data.stdEff <= 30) {
+                pEffColorClass = "badge badge-danger";
+            }
+            else if (data.stdEff > 30 && data.stdEff < 70) {
+                pEffColorClass = "badge badge-warning";
+            }
+            else if (data.stdEff >= 70) {
+                pEffColorClass = "badge badge-success";
+            }
+
+            html += `<tr style="font-size: 15px; cursor: pointer;" onclick="GoMonitor(loomId = ${data.loomId})">
+                                        <td> ${data.loom.loomNumber}</td>
+                                        <td class="text-center" style="width:11%;"><strong>${data.loom.loomType.description}</strong></td>
+                                        <td class="text-right"><span class="badge ${effColorClass}">${data.actualEff.toFixed(1)}%</span></td>
+                                        <td class="text-right"><span class="badge ${pEffColorClass}">${data.stdEff.toFixed(1)}%</span></td>
+                                        <td class="text-center">${(data.article) ? data.article : ""}</td>
+                                        <td class="text-right">${data.ppc}</td>
+                                        <td class="text-right">${data.lenght/100}</td>
+                                        <td class="text-right">${(data.picks / 1000).toFixed(1)}</td>
+                                        <td class="text-right">${data.speed}</td>
+                                        <td class="text-center"><span class="badge badge-info">${data.warpStops}</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${secondsToHoursMin(data.warpStopTime)}</td>
+                                        <td class="text-center"><span class="badge badge-info">${data.weftStops}</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${secondsToHoursMin(data.weftStopTime)}</td>
+                                        <td class="text-center"><span class="badge badge-info">${data.otherStops}</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${secondsToHoursMin(data.otherStopTime)}</td>
+                                    </tr>`;
+
+        });
+        tbodyShiftProduction.innerHTML = html;
+    }
+
+    function GoMonitor(loomId) {
+        let url = `Weaving/LoomMonitor?loomId=${loomId}`;
+        window.location.href = url;
+    }
+
+    function secondsToHoursMin(seconds) {
+        const hours = Math.floor(seconds / 60 / 60);
+
+        const minutes = Math.floor(seconds / 60) - (hours * 60);
+
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    }
+</script>
+}

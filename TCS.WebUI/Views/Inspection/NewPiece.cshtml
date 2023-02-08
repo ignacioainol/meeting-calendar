@@ -1,0 +1,8 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["newpiece"].ToString();
+    ViewData["PageName"] = "inspection_newpiece";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i>" + SharedLocalizer["newpiece"].ToString();
+    string culture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
+}

@@ -1,0 +1,120 @@
+﻿@model TCS.EF.Entidades.Design
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Design</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.QualityId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.QualityId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DraftId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DraftId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PegPlanId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PegPlanId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Article)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Article)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Healds)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Healds)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NoOfWarps)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NoOfWarps)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ShadesperWarp)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ShadesperWarp)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EndsPerRepeat)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EndsPerRepeat)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Extras)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Extras)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Castouts)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Castouts)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NoOfWefts)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NoOfWefts)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ShadesperWeft)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ShadesperWeft)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PicksPerRepeat)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PicksPerRepeat)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.WarpPlan)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.WarpPlan)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.WeftPlan)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.WeftPlan)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PegPlan)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PegPlan.Code)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Draft)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Draft.Code)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.DesignId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

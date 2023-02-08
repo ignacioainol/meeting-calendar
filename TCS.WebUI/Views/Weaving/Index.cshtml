@@ -1,0 +1,725 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@{
+    ViewData["Title"] = SharedLocalizer["dashboard"].ToString();
+    ViewData["PageName"] = "weaving_index";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i>" + SharedLocalizer["dashboard"].ToString();
+    string StdEffColorClass = "";
+    IEnumerable<TCS.EF.Entidades.CurrentProd> GetStandardEfficiencyCurrentShiftTop5Best = ViewBag.GetStandardEfficiencyCurrentShiftTop5Best;
+    IEnumerable<TCS.EF.Entidades.CurrentProd> GetStandardEfficiencyCurrentShiftTop5Worst = ViewBag.GetStandardEfficiencyCurrentShiftTop5Worst;
+    IEnumerable<TCS.EF.Entidades.ProductionHistory> GetStandardEfficiencyLastShiftTop5Best = ViewBag.GetStandardEfficiencyLastShiftTop5Best;
+    IEnumerable<TCS.EF.Entidades.ProductionHistory> GetStandardEfficiencyLastShiftTop5Worst = ViewBag.GetStandardEfficiencyLastShiftTop5Worst;
+    IEnumerable<TCS.WebUI.Controllers.TopProd> GetStandardEfficiencyLast24Top5Best = ViewBag.GetStandardEfficiencyLast24Top5Best;
+    IEnumerable<TCS.WebUI.Controllers.TopProd > GetStandardEfficiencyLast24Top5Worst = ViewBag.GetStandardEfficiencyLast24Top5Worst;
+    IEnumerable<TCS.WebUI.Controllers.TopProd> GetStandardEfficiencyCurrentMonthTop5Best = ViewBag.GetStandardEfficiencyCurrentMonthTop5Best;
+    IEnumerable<TCS.WebUI.Controllers.TopProd> GetStandardEfficiencyCurrentMonthTop5Worst = ViewBag.GetStandardEfficiencyCurrentMonthTop5Worst;
+
+    IEnumerable<TCS.EF.Entidades.CurrentShiftStop> GetCurrentStopTop5Best = ViewBag.GetCurrentStopTop5Best;
+    IEnumerable<TCS.EF.Entidades.CurrentShiftStop> GetCurrentStopTop5Worst = ViewBag.GetCurrentStopTop5Worst;
+    IEnumerable<TCS.EF.Entidades.StopHistory> GetLastShiftStopTop5Best = ViewBag.GetLastShiftStopTop5Best;
+    IEnumerable<TCS.EF.Entidades.StopHistory> GetLastShiftStopTop5Worst = ViewBag.GetLastShiftStopTop5Worst;
+    IEnumerable<TCS.EF.Entidades.StopHistory> GetLast24StopTop5Best = ViewBag.GetLast24StopTop5Best;
+    IEnumerable<TCS.EF.Entidades.StopHistory> GetLast24StopTop5Worst = ViewBag.GetLast24StopTop5Worst;
+    IEnumerable<TCS.EF.Entidades.StopHistory> GetMonthStopTop5Best = ViewBag.GetMonthStopTop5Best;
+    IEnumerable<TCS.EF.Entidades.StopHistory> GetMonthStopTop5Worst = ViewBag.GetMonthStopTop5Worst;
+
+    IEnumerable<TCS.EF.Entidades.Loom> GetLooms = ViewBag.Loom;
+}
+
+<h1>
+</h1>
+
+<div class="flex-container">
+    @* CURRENT SHIFT *@
+    <div class="flex-item">
+        <a href="@Url.Action("Loomlist", "Weaving")">
+            <div class="card-body_prod" style="background: #038387">
+                <i class="fal fa-chart-pie fa-5x p-2"></i>
+                <h3>@string.Format("{0:0.#}%", ViewBag.GetRunningEfficiencyCurrentShiftAvg)</h3>
+                <h3>@SharedLocalizer["currentshift"]</h3>
+            </div>
+            <div class="card-footer_custom">
+                <p><strong>@SharedLocalizer["standardefficiency"]: @string.Format("{0:0.#}%", ViewBag.GetStandardEfficiencyCurrentShiftAvg)</strong></p>
+            </div>
+        </a>
+        <button class="button_custom" style="background: #038387" data-toggle="collapse" data-target="#collapseCurrentBest" aria-expanded="false" aria-controls="collapseExample">
+            <span><strong>5 @SharedLocalizer["bestlooms"]</strong></span>
+        </button>
+        <div class="collapse" id="collapseCurrentBest">
+            <table class="table  table-hover">
+                <thead style="background: #038387">
+                    <tr>
+                        <th class="column-loom" width="1"><strong>@SharedLocalizer["loom"]</strong></th>
+                        <th class="column-type"><strong>@SharedLocalizer["type"]</strong></th>
+                        <th class="column-std"><strong>@SharedLocalizer["standard"] %</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in GetStandardEfficiencyCurrentShiftTop5Best)
+                    {
+                        if (item.StdEff <= 30)
+                        {
+                            StdEffColorClass = "badge badge-danger";
+                        }
+                        else if (item.StdEff > 30 && item.StdEff < 70)
+                        {
+                            StdEffColorClass = "badge badge-warning";
+                        }
+                        else if (item.StdEff >= 70)
+                        {
+                            StdEffColorClass = "badge badge-success";
+                        }
+                        <tr>
+                            <td class="column-loom_data">@item.Loom.LoomNumber</td>
+                            <td class="column-type_data">@item.Loom.LoomType.Description</td>
+                            <td class="column-std_data"><span class="badge @StdEffColorClass">@string.Format("{0:N1}%", item.StdEff)</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+            <button class="button_custom" style="background:#038387" data-toggle="collapse" data-target="#collapseCurrentWorst" aria-expanded="false" aria-controls="collapseExample">
+                <span><strong>5 @SharedLocalizer["worstlooms"]</strong></span>
+            </button>
+            <div class="collapse" id="collapseCurrentWorst">
+                <table class="table table-hover">
+                    <thead style="background:#038387">
+                        <tr>
+                            <th class="column-loom" width="1"><strong>@SharedLocalizer["loom"]</strong></th>
+                            <th class="column-type"><strong>@SharedLocalizer["type"]</strong></th>
+                            <th class="column-std"><strong>@SharedLocalizer["standard"] %</strong></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in GetStandardEfficiencyCurrentShiftTop5Worst)
+                        {
+                            if (item.StdEff <= 30)
+                            {
+                                StdEffColorClass = "badge badge-danger";
+                            }
+                            else if (item.StdEff > 30 && item.StdEff < 70)
+                            {
+                                StdEffColorClass = "badge badge-warning";
+                            }
+                            else if (item.StdEff >= 70)
+                            {
+                                StdEffColorClass = "badge badge-success";
+                            }
+                            <tr>
+                                <td class="column-loom_data">@item.Loom.LoomNumber</td>
+                                <td class="column-type_data">@item.Loom.LoomType.Description</td>
+                                <td class="column-std_data"><span class="badge @StdEffColorClass">@string.Format("{0:N1}%", item.StdEff)</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+        </div>
+
+    </div>
+    @* LAST SHIFT *@
+<div class="flex-item">
+    <a href="@Url.Action("GeneralProduction", "Weaving", new { since = ViewBag.LastShiftDate , until = ViewBag.LastShiftDate, shift = ViewBag.LastShiftLetter})">
+        <div class="card-body_prod" style="background:#6a55aa">
+            <i class="fal fa-chart-pie fa-5x p-2"></i>
+            <h3>@string.Format("{0:0.#}%", ViewBag.GetRunningEfficiencyLastShiftAvg)</h3>
+            <h3>@SharedLocalizer["lastshift"]</h3>
+        </div>
+        <div class="card-footer_custom">
+            <p style="text-align:center;font-size:16px"><strong>@SharedLocalizer["standardefficiency"]: @string.Format("{0:0.#}%", ViewBag.GetStandardEfficiencyLastShiftAvg)</strong></p>
+        </div>
+    </a>
+    <button class="button_custom" style="background:#6a55aa" data-toggle="collapse" data-target="#collapseLastShiftBest" aria-expanded="false" aria-controls="collapseExample">
+        <span><strong>5 @SharedLocalizer["bestlooms"]</strong></span>
+    </button>
+    <div class="collapse" id="collapseLastShiftBest">
+        <table class="table table-hover">
+            <thead style="background:#6a55aa">
+                <tr>
+                    <th class="column-loom"><strong>@SharedLocalizer["loom"]</strong></th>
+                    <th class="column-type"><strong>@SharedLocalizer["type"]</strong></th>
+                    <th class="column-std"><strong>@SharedLocalizer["standard"] %</strong></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in GetStandardEfficiencyLastShiftTop5Best)
+                {
+                    if (item.StdEff <= 30)
+                    {
+                        StdEffColorClass = "badge badge-danger";
+                    }
+                    else if (item.StdEff > 30 && item.StdEff < 70)
+                    {
+                        StdEffColorClass = "badge badge-warning";
+                    }
+                    else if (item.StdEff >= 70)
+                    {
+                        StdEffColorClass = "badge badge-success";
+                    }
+                    <tr>
+                        <td class="column-loom_data">@item.Loom.LoomNumber</td>
+                        <td class="column-type_data">@item.Loom.LoomType.Description</td>
+                        <td class="column-std_data"><span class="badge @StdEffColorClass">@string.Format("{0:N1}%", item.StdEff)</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <button class="button_custom" style="background:#6a55aa" data-toggle="collapse" data-target="#collapseLastShiftWorst" aria-expanded="false" aria-controls="collapseExample">
+        <span><strong>5 @SharedLocalizer["worstlooms"]</strong></span>
+    </button>
+    <div class="collapse" id="collapseLastShiftWorst">
+        <table class="table table-hover">
+            <thead style="background:#6a55aa">
+                <tr class="tr-head">
+                    <th class="column-loom"><strong>@SharedLocalizer["loom"]</strong></th>
+                    <th class="column-type"><strong>@SharedLocalizer["type"]</strong></th>
+                    <th class="column-std"><strong>@SharedLocalizer["standard"] %</strong></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in GetStandardEfficiencyLastShiftTop5Worst)
+                {
+                    if (item.StdEff <= 30)
+                    {
+                        StdEffColorClass = "badge badge-danger";
+                    }
+                    else if (item.StdEff > 30 && item.StdEff < 70)
+                    {
+                        StdEffColorClass = "badge badge-warning";
+                    }
+                    else if (item.StdEff >= 70)
+                    {
+                        StdEffColorClass = "badge badge-success";
+                    }
+                    <tr>
+                        <td class="column-loom_data">@item.Loom.LoomNumber</td>
+                        <td class="column-type_data">@item.Loom.LoomType.Description</td>
+                        <td class="column-std_data"><span class="badge @StdEffColorClass">@string.Format("{0:N1}%", item.StdEff)</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+    @* LAST 24 HOURS *@
+    <div class="flex-item">
+        <a href="@Url.Action("Last24Hours", "Weaving")">
+            <div class="card-body_prod" style="background:#0b4a7a">
+                <i class="fal fa-chart-pie fa-5x p-2"></i>
+                <h3>@string.Format("{0:0.#}%", ViewBag.GetRunningEfficiencyLast24Avg)</h3>
+                <h3>@SharedLocalizer["last24hours"]</h3>
+            </div>
+            <div class="card-footer_custom">
+                <p><strong>@SharedLocalizer["standardefficiency"]: @string.Format("{0:0.#}%", ViewBag.GetStandardEfficiencyLast24Avg)</strong></p>
+            </div>
+        </a>
+    <button class="button_custom" style="background:#0b4a7a" data-toggle="collapse" data-target="#collapseLast24Best" aria-expanded="false" aria-controls="collapseExample">
+        <span><strong>5 @SharedLocalizer["bestlooms"]</strong></span>
+    </button>
+    <div class="collapse" id="collapseLast24Best">
+        <table class="table table-hover">
+            <thead style="background:#0b4a7a">
+                <tr>
+                    <th class="column-loom"><strong>@SharedLocalizer["loom"]</strong></th>
+                    <th class="column-type"><strong>@SharedLocalizer["type"]</strong></th>
+                    <th class="column-std"><strong>@SharedLocalizer["standard"] %</strong></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in GetStandardEfficiencyLast24Top5Best)
+                {
+                    if (item.StdEff <= 30)
+                    {
+                        StdEffColorClass = "badge badge-danger";
+                    }
+                    else if (item.StdEff > 30 && item.StdEff < 70)
+                    {
+                        StdEffColorClass = "badge badge-warning";
+                    }
+                    else if (item.StdEff >= 70)
+                    {
+                        StdEffColorClass = "badge badge-success";
+                    }
+                    <tr>
+                        <td class="column-loom_data">@item.LoomNumber</td>
+                        <td class="column-type_data">@item.LoomType</td>
+                        <td class="column-std_data"><span class="badge @StdEffColorClass">@string.Format("{0:N1}%", item.StdEff)</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+        <div class="button_custom" style="background:#0b4a7a" data-toggle="collapse" data-target="#collapseLast24Worst" aria-expanded="false" aria-controls="collapseExample">
+            <span><strong>5 @SharedLocalizer["worstlooms"]</strong></span>
+        </div>
+    <div class="collapse" id="collapseLast24Worst">
+        <table class="table table-hover">
+            <thead style="background:#0b4a7a">
+                <tr>
+                    <th class="column-loom"><strong>@SharedLocalizer["loom"]</strong></th>
+                    <th class="column-type"><strong>@SharedLocalizer["type"]</strong></th>
+                    <th class="column-std"><strong>@SharedLocalizer["standard"] %</strong></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in GetStandardEfficiencyLast24Top5Worst)
+                {
+                    if (item.StdEff <= 30)
+                    {
+                        StdEffColorClass = "badge badge-danger";
+                    }
+                    else if (item.StdEff > 30 && item.StdEff < 70)
+                    {
+                        StdEffColorClass = "badge badge-warning";
+                    }
+                    else if (item.StdEff >= 70)
+                    {
+                        StdEffColorClass = "badge badge-success";
+                    }
+                    <tr>
+                        <td class="column-loom_data">@item.LoomNumber</td>
+                        <td class="column-type_data">@item.LoomType</td>
+                        <td class="column-std_data"><span class="badge @StdEffColorClass">@string.Format("{0:N1}%", item.StdEff)</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+    @* CURRENT MONTH *@
+    <div class="flex-item">
+        <a href="@Url.Action("GeneralProduction", "Weaving", new { since = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1) , until = DateTime.Now.Date, shift = "T"})">
+            <div class="card-body_prod" style="background:#0073b7">
+                <i class="fal fa-chart-pie fa-5x p-2"></i>
+                <h3>@string.Format("{0:0.#}%", ViewBag.GetRunningEfficiencyCurrentMonthAvg)</h3>
+                <h3>@TCS.WebUI.Helpers.UsefulFunctions.ToTitleCase(@DateTime.Now.ToString("MMMM yyyy")) </h3>
+            </div>
+            <div class="card-footer_custom">
+                <p><strong>@SharedLocalizer["standardefficiency"]: @string.Format("{0:0.#}%", ViewBag.GetStandardEfficiencyCurrentMonthAvg)</strong></p>
+            </div>
+        </a>
+        <button class="button_custom" style="background:#0073b7" data-toggle="collapse" data-target="#collapseCurrentMonthBest" aria-expanded="false" aria-controls="collapseExample">
+            <span><strong>5 @SharedLocalizer["bestlooms"]</strong></span>
+        </button>
+        <div class="collapse" id="collapseCurrentMonthBest">
+            <table class="table table-hover">
+                <thead style="background:#0073b7">
+                    <tr>
+                        <th class="column-loom"><strong>@SharedLocalizer["loom"]</strong></th>
+                        <th class="column-type"><strong>@SharedLocalizer["type"]</strong></th>
+                        <th class="column-std"><strong>@SharedLocalizer["standard"] %</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in GetStandardEfficiencyCurrentMonthTop5Best)
+                    {
+                        if (item.StdEff <= 30)
+                        {
+                            StdEffColorClass = "badge badge-danger";
+                        }
+                        else if (item.StdEff > 30 && item.StdEff < 70)
+                        {
+                            StdEffColorClass = "badge badge-warning";
+                        }
+                        else if (item.StdEff >= 70)
+                        {
+                            StdEffColorClass = "badge badge-success";
+                        }
+                        <tr>
+                            <td class="column-loom_data">@item.LoomNumber</td>
+                            <td class="column-type_data">@item.LoomType</td>
+                            <td class="column-std_data"><span class="badge @StdEffColorClass">@string.Format("{0:N1}%", item.StdEff)</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <button class="button_custom" style="background:#0073b7" data-toggle="collapse" data-target="#collapseCurrentMonthWorst" aria-expanded="false" aria-controls="collapseExample">
+            <span><strong>5 @SharedLocalizer["worstlooms"]</strong></span>
+        </button>
+        <div class="collapse" id="collapseCurrentMonthWorst">
+            <table class="table table-hover">
+                <thead style="background:#0073b7">
+                    <tr>
+                        <th class="column-loom"><strong>@SharedLocalizer["loom"]</strong></th>
+                        <th class="column-type"><strong>@SharedLocalizer["type"]</strong></th>
+                        <th class="column-std"><strong>@SharedLocalizer["standard"] %</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in GetStandardEfficiencyCurrentMonthTop5Worst)
+                    {
+                        if (item.StdEff <= 30)
+                        {
+                            StdEffColorClass = "badge badge-danger";
+                        }
+                        else if (item.StdEff > 30 && item.StdEff < 70)
+                        {
+                            StdEffColorClass = "badge badge-warning";
+                        }
+                        else if (item.StdEff >= 70)
+                        {
+                            StdEffColorClass = "badge badge-success";
+                        }
+                        <tr>
+                            <td class="column-loom_data">@item.LoomNumber</td>
+                            <td class="column-type_data">@item.LoomType</td>
+                            <td class="column-std_data"><span class="badge @StdEffColorClass">@string.Format("{0:N1}%", item.StdEff)</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @* CURRENT SHIFT *@
+    <div class="flex-item">
+        <a href="@Url.Action("ShiftStop", "Weaving")">
+            <div class="card-body_stop" style="background:#038387">
+                <i class="fal fa-chart-pie fa-5x p-2"></i>
+                <h3>@string.Format("{0:0.#}", @ViewBag.GetCurrentStopAvg /60) min</h3>
+                <h3>@SharedLocalizer["stops"] @SharedLocalizer["currentshift"]</h3>
+            </div>
+        </a>
+        <button class="button_custom" style="background:#038387" data-toggle="collapse" data-target="#collapseCurrentStopBest" aria-expanded="false" aria-controls="collapseExample">
+            <span><strong>5 @SharedLocalizer["bestlooms"]</strong></span>
+        </button>
+        <div class="collapse" id="collapseCurrentStopBest">
+            <table class="table table-hover">
+                <thead style="background:#038387">
+                    <tr>
+                        <th class="column-loom"><strong>@SharedLocalizer["loom"]</strong></th>
+                        <th class="column-type"><strong>@SharedLocalizer["type"]</strong></th>
+                        <th class="column-std"><strong>@SharedLocalizer["minutes"]</strong></th>
+                    </tr>
+                </thead>
+                <tbody class="thead-themed">
+                    @foreach (var item in GetCurrentStopTop5Best)
+                    {
+                        string stopTime = string.Format("{0} {1}", @item.StoppedTime / 60,"min");
+                        <tr>
+                            <td class="column-loom_data">@item.Loom.LoomNumber</td>
+                            <td class="column-type_data">@item.Loom.LoomType.Description</td>
+                            <td class="column-std_data">@stopTime</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+         </div>
+        <button class="button_custom" style="background:#038387" data-toggle="collapse" data-target="#collapseCurrentStopWorst" aria-expanded="false" aria-controls="collapseExample">
+            <span><strong>5 @SharedLocalizer["worstlooms"]</strong></span>
+        </button>
+        <div class="collapse" id="collapseCurrentStopWorst">
+            <table class="table table-hover">
+                <thead style="background:#038387">
+                    <tr>
+                        <th class="column-loom"><strong>@SharedLocalizer["loom"]</strong></th>
+                        <th class="column-type"><strong>@SharedLocalizer["type"]</strong></th>
+                        <th class="column-std"><strong>@SharedLocalizer["minutes"]</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in GetCurrentStopTop5Worst)
+                    {
+                        string stopTime = string.Format("{0} {1}", @item.StoppedTime / 60, "min");
+                        <tr>
+                            <td class="column-loom_data">@item.Loom.LoomNumber</td>
+                            <td class="column-type_data">@item.Loom.LoomType.Description</td>
+                            <td class="column-std_data">@stopTime</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @* LAST SHIFT *@
+    <div class="flex-item">
+        <a href="@Url.Action("StopProductionHistory", "Weaving", new { since = ViewBag.LastShiftDate , until = ViewBag.LastShiftDate, shift = ViewBag.LastShiftLetter})">
+            <div class="card-body_stop" style="background:#6a55aa">
+                <i class="fal fa-chart-pie fa-5x p-2"></i>
+                <h3>@string.Format("{0:0.#}", @ViewBag.GetLastShiftStopAvg / 60) min</h3>
+                <h3>@SharedLocalizer["stops"] @SharedLocalizer["lastshift"]</h3>
+            </div>
+        </a>
+        <button class="button_custom" style="background:#6a55aa" data-toggle="collapse" data-target="#collapseLastShiftStopBest" aria-expanded="false" aria-controls="collapseExample">
+            <span><strong>5 @SharedLocalizer["bestlooms"]</strong></span>
+        </button>
+        <div class="collapse" id="collapseLastShiftStopBest">
+            <table class="table table-hover">
+                <thead style="background:#6a55aa">
+                    <tr>
+                        <th class="column-loom"><strong>@SharedLocalizer["loom"]</strong></th>
+                        <th class="column-type"><strong>@SharedLocalizer["type"]</strong></th>
+                        <th class="column-std"><strong>@SharedLocalizer["minutes"]</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in GetLastShiftStopTop5Best)
+                    {
+                        string stopTime = string.Format("{0} {1}", @item.StoppedTime / 60, "min");
+                        string loomNumber = GetLooms.FirstOrDefault(x=>x.LoomId == item.LoomId).LoomNumber;
+                        string loomType = GetLooms.FirstOrDefault(x => x.LoomId == item.LoomId).LoomType.Description;
+                        <tr>
+                            <td class="column-loom_data">@loomNumber</td>
+                            <td class="column-type_data">@loomType</td>
+                            <td class="column-std_data">@stopTime</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <button class="button_custom" style="background:#6a55aa" data-toggle="collapse" data-target="#collapseLastShiftStopWorst" aria-expanded="false" aria-controls="collapseExample">
+            <span><strong>5 @SharedLocalizer["worstlooms"]</strong></span>
+        </button>
+         <div class="collapse" id="collapseLastShiftStopWorst">
+            <table class="table table-hover">
+                <thead style="background:#6a55aa">
+                    <tr>
+                        <th class="column-loom"><strong>@SharedLocalizer["loom"]</strong></th>
+                        <th class="column-type"><strong>@SharedLocalizer["type"]</strong></th>
+                        <th class="column-std"><strong>@SharedLocalizer["minutes"]</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in GetLastShiftStopTop5Worst)
+                    {
+                        string stopTime = string.Format("{0} {1}", @item.StoppedTime / 60, "min");
+                        string loomNumber = GetLooms.FirstOrDefault(x => x.LoomId == item.LoomId).LoomNumber;
+                        string loomType = GetLooms.FirstOrDefault(x => x.LoomId == item.LoomId).LoomType.Description;
+                        <tr>
+                            <td class="column-loom_data">@loomNumber</td>
+                            <td class="column-type_data">@loomType</td>
+                            <td class="column-loom_data">@stopTime</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @* LAST 24 HOURS *@
+    <div class="flex-item">
+        <a href="@Url.Action("StopProductionHistory", "Weaving", new { since = DateTime.Now.AddHours(-24), until = DateTime.Now, shift = "T"})">
+            <div class="card-body_stop" style="background:#0b4a7a">
+                <i class="fal fa-chart-pie fa-5x p-2"></i>
+                <h3>@string.Format("{0:0.#}", @ViewBag.GetLast24StopAvg / 60) min</h3>
+                <h3>@SharedLocalizer["stops"] @SharedLocalizer["last24hours"]</h3>
+            </div>
+        </a>
+        <button class="button_custom" style="background:#0b4a7a" data-toggle="collapse" data-target="#collapseLast24StopBest" aria-expanded="false" aria-controls="collapseExample">
+            <span><strong>5 @SharedLocalizer["bestlooms"]</strong></span>
+        </button>
+        <div class="collapse" id="collapseLast24StopBest">
+            <table class="table table-hover">
+                <thead style="background:#0b4a7a">
+                    <tr>
+                        <th class="column-loom"><strong>@SharedLocalizer["loom"]</strong></th>
+                        <th class="column-type"><strong>@SharedLocalizer["type"]</strong></th>
+                        <th class="column-std"><strong>@SharedLocalizer["minutes"]</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in GetLast24StopTop5Best)
+                    {
+                        string stopTime = string.Format("{0} {1}", @item.StoppedTime / 60, "min");
+                        string loomNumber = GetLooms.FirstOrDefault(x => x.LoomId == item.LoomId).LoomNumber;
+                        string loomType = GetLooms.FirstOrDefault(x => x.LoomId == item.LoomId).LoomType.Description;
+                        <tr>
+                            <td class="column-loom_data">@loomNumber</td>
+                            <td class="column-type_data">@loomType</td>
+                            <td class="column-std_data">@stopTime</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <button class="button_custom" style="background:#0b4a7a" data-toggle="collapse" data-target="#collapseLast24StopWorst" aria-expanded="false" aria-controls="collapseExample">
+            <span><strong>5 @SharedLocalizer["worstlooms"]</strong></span>
+        </button>
+        <div class="collapse" id="collapseLast24StopWorst">
+            <table class="table table-hover">
+                <thead style="background:#0b4a7a">
+                    <tr>
+                        <th class="column-loom"><strong>@SharedLocalizer["loom"]</strong></th>
+                        <th class="column-type"><strong>@SharedLocalizer["type"]</strong></th>
+                        <th class="column-std"><strong>@SharedLocalizer["minutes"]</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in GetLast24StopTop5Worst)
+                    {
+                        string stopTime = string.Format("{0} {1}", @item.StoppedTime / 60, "min");
+                        string loomNumber = GetLooms.FirstOrDefault(x => x.LoomId == item.LoomId).LoomNumber;
+                        string loomType = GetLooms.FirstOrDefault(x => x.LoomId == item.LoomId).LoomType.Description;
+                        <tr>
+                            <td class="column-loom_data">@loomNumber</td>
+                            <td class="column-type_data">@loomType</td>
+                            <td class="column-std_data">@stopTime</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @* CURRENT MONTH *@
+<div class="flex-item">
+    <a href="@Url.Action("StopProductionHistory", "Weaving", new { since = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1) , until = DateTime.Now.Date, shift = "T"})">
+        <div class="card-body_stop" style="background:#0073b7">
+            <i class="fal fa-chart-pie fa-5x p-2"></i>
+            <h3>@string.Format("{0:0.#}", @ViewBag.GetMonthStopAvg / 60) min</h3>
+            <h3>@SharedLocalizer["stops"] @TCS.WebUI.Helpers.UsefulFunctions.ToTitleCase(@DateTime.Now.ToString("MMMM yyyy")) </h3>
+        </div>
+    </a>
+    <button class="button_custom" style="background:#0073b7" data-toggle="collapse" data-target="#collapseMonthStopBest" aria-expanded="false" aria-controls="collapseExample">
+        <span><strong>5 @SharedLocalizer["bestlooms"]</strong></span>
+    </button>
+    <div class="collapse" id="collapseMonthStopBest">
+        <table class="table table-hover">
+            <thead style="background:#0073b7">
+                <tr>
+                    <th class="column-loom"><strong>@SharedLocalizer["loom"]</strong></th>
+                    <th class="column-type"><strong>@SharedLocalizer["type"]</strong></th>
+                    <th class="column-std"><strong>@SharedLocalizer["minutes"]</strong></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in GetMonthStopTop5Best)
+                {
+                    string stopTime = string.Format("{0} {1}", @item.StoppedTime / 60, "min");
+                    string loomNumber = GetLooms.FirstOrDefault(x => x.LoomId == item.LoomId).LoomNumber;
+                    string loomType = GetLooms.FirstOrDefault(x => x.LoomId == item.LoomId).LoomType.Description;
+                    <tr>
+                        <td class="column-loom_data">@loomNumber</td>
+                        <td class="column-type_data">@loomType</td>
+                        <td class="column-std_data">@stopTime</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="button_custom" style="background:#0073b7" data-toggle="collapse" data-target="#collapseMonthStopWorst" aria-expanded="false" aria-controls="collapseExample">
+        <span><strong>5 @SharedLocalizer["worstlooms"]</strong></span>
+    </div>
+    <div class="collapse" id="collapseMonthStopWorst">
+        <table class="table table-hover">
+            <thead style="background:#0073b7">
+                <tr>
+                    <th class="column-loom"><strong>@SharedLocalizer["loom"]</strong></th>
+                    <th class="column-type"><strong>@SharedLocalizer["type"]</strong></th>
+                    <th class="column-std"><strong>@SharedLocalizer["minutes"]</strong></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in GetMonthStopTop5Worst)
+                {
+                    string stopTime = string.Format("{0} {1}", @item.StoppedTime / 60, "min");
+                    string loomNumber = GetLooms.FirstOrDefault(x => x.LoomId == item.LoomId).LoomNumber;
+                    string loomType = GetLooms.FirstOrDefault(x => x.LoomId == item.LoomId).LoomType.Description;
+                    <tr>
+                        <td class="column-loom_data">@loomNumber</td>
+                        <td class="column-type_data">@loomType</td>
+                        <td class="column-std_data">@stopTime</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+<style>
+    .badge-danger {
+        background-color: red
+    }
+
+    .badge-success {
+        background-color: forestgreen
+    }
+    .tr-head {
+        color: #fff;
+    }
+    .flex-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .flex-item {
+        width: 30em;
+        margin: 0.5em;
+        flex-shrink: 1;
+        flex-grow: 1;
+    }
+
+    .card-body_prod {
+        text-align: center;
+        font-size: 1.4em;
+        padding: 10px;
+        border-radius: 5px 5px 0px 0px;
+        color: white;
+    }
+
+    .card-body_stop {
+        text-align: center;
+        font-size: 1.4em;
+        padding: 10px;
+        border-radius: 5px 5px 5px 5px;
+        color: white;
+        margin-bottom: 10px;
+    }
+
+    .card-footer_custom {
+        text-align: center;
+        font-size: 1.3em;
+        color: white;
+        background: #2864a0;
+        padding-bottom: 10px;
+        padding-top: 15px;
+        border-radius: 0px 0px 5px 5px;
+        margin-bottom : 10px;
+    }
+
+    .button_custom {
+        font-size: 1.2em;
+        text-align: center;
+        color: white;
+        padding: 10px;
+        border: 0px;
+        border-radius: 5px 5px 5px 5px;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    table {
+        border-collapse: unset;
+        border-radius: 5px 5px 5px 5px;
+        margin-bottom : 10px;
+    }
+
+    .column-loom {
+        font-size: 1.1em;
+        text-align: center;
+        color: white;
+    }
+
+    .column-loom_data {
+        font-size: 1.1em;
+        text-align: center;
+    }
+    .column-type {
+        font-size: 1.1em;
+        text-align: left;
+        color: white;
+    }
+
+    .column-type_data {
+        font-size: 1.1em;
+        text-align: left;
+    }
+    .column-std {
+        font-size: 1.1em;
+        text-align: right;
+        color: white;
+    }
+
+    .column-std_data {
+        font-size: 1.1em;
+        text-align: right;
+    }
+</style>

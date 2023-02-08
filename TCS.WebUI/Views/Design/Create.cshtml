@@ -1,0 +1,1750 @@
+﻿@model TCS.EF.Entidades.Design
+
+@{
+    ViewData["Title"] = "Create";
+    ViewData["PageName"] = "design_index";
+    ViewData["Category1"] = "Design";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> Design";
+    string puntos = ViewBag.coordMalas;
+    string coordMalas2 = ViewBag.coordMalas2;
+    //int shade = 0;
+    //char letra = 'A';
+
+
+}
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/summernote/summernote.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+    <link rel="stylesheet" media="screen, print" href="css/formplugins/bootstrap-colorpicker/bootstrap-colorpicker.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+}
+
+
+<!-- Modal shades per warp -->
+<div class="modal fade" id="deletepropi" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Warp</h5>
+            </div>
+            <div class="modal-body">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div id="loadingSpinner" style="width:100%; display:none">
+                            <div class="card-body">
+                                <div class="w-100 text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="sr-only">Cargando...</span>
+                                    </div><br />
+                                    <span class="text-big text-primary">Cargando <strong></strong> ´ssss.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div id="load-table">
+                                <div>
+                                    <div class="card-header">
+                                        <ul class="nav nav-tabs" role="tablist" id="myTab">
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <div class="tab-content" id="myTabContent">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @*<button type="button" id="save-warp" class="btn btn-primary">Save</button>*@
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer ">
+                <button type="button" id="save-warp" class="btn btn-success"><span class="glyphicon glyphicon-ok-sign"></span> Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- Modal plan warp -->
+<div class="modal fade " id="plan-warpingplan" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Warp</h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="panel-container show">
+                    <div class="panel-content pl-2">
+                        <div id="loadingSpinner" style="width:100%; display:none">
+                            <div class="card-body">
+                                <div class="w-100 text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="sr-only">Cargando...</span>
+                                    </div><br />
+                                    <span class="text-big text-primary">Cargando <strong></strong></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="draw">
+                                    @await Component.InvokeAsync("WarpingDraw")
+                                </div>
+                            </div>
+
+                        </div>
+                        &nbsp
+
+                        <div class="form-row">
+                            <div class="col-md-4" style="display:none" id="re">
+                                <label class="control-label form-label">Repeats</label>
+                                <select id="RepeatId" class="select2-demo form-control">
+                                    
+                                </select>
+                            </div>
+
+                            <div class="col-md-3 mb-3" style="display:none" id="botonElminar">
+                                <label class="control-label">&nbsp</label>
+                                <button id="guat" type="button" class="btn btn-warning  btn-block waves-effect waves-themed">Eliminar repeat</button>
+                            </div>
+                        </div>
+
+                        @*<button type="button" id="save-warp" class="btn btn-primary">Save</button>*@
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer ">
+                <button type="button" id="save-warpPlan" class="btn btn-success"><span class="glyphicon glyphicon-ok-sign"></span> Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+                <button type="button" id="button-repeat" class="btn btn-warning"> Repeat</button>
+                <button id="SubmitBtn3" hidden type="button" class="btn"></button>
+                <button type="button" id="checked" class="btn btn-warning"> Check</button>
+
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- Modal repeat warp -->
+
+<div class="modal fade" id="repeats" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Repeats</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row">
+                <div class="col-md-4 mb-3">
+                    <label class="control-label">Inicio</label>
+                    <input id="inicio" type="text"
+                           data-inputmask="'alias': 'integer'" class="form-control" required />
+                    <label class="text-danger" id="ini_val" style="display:none"></label>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="control-label">Fin</label>
+                    <input id="fin" type="text"
+                           data-inputmask="'alias': 'integer'" class="form-control" required />
+                    <span class="text-danger" id="fin_val" style="display:none"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="control-label">Cantidad</label>
+                    <input id="cantidad" type="text"
+                           data-inputmask="'alias': 'integer'" class="form-control" />
+                    <span class="text-danger" id="canti" style="display:none"></span>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="cerrar" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="repeat" class="btn btn-primary">Save</button>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<!-- Modal shades per weft -->
+<div class="modal fade" id="modal-weft" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Weft</h5>
+            </div>
+            <div class="modal-body">
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div id="loadingSpinner" style="width:100%; display:none">
+                            <div class="card-body">
+                                <div class="w-100 text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="sr-only">Cargando...</span>
+                                    </div><br />
+                                    <span class="text-big text-primary">Cargando <strong></strong> ´ssss.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div id="load-table">
+                                <div>
+                                    <div class="card-header">
+                                        <ul class="nav nav-tabs" role="tablist" id="myTabWeft">
+                                        </ul>
+                                    </div>
+                                    <div class="tab-content" id="myTabContentWeft">
+                                        <br />
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        @*<button type="button" id="save-warp" class="btn btn-primary">Save</button>*@
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer ">
+                <button type="button" id="save-weft" class="btn btn-success"><span class="glyphicon glyphicon-ok-sign"></span> Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<!-- Modal plan weft -->
+<div class="modal fade " id="plan-weftingplan" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Weft</h5>
+            </div>
+            <div class="modal-body">
+                <div class="panel-container show">
+                    <div class="panel-content pl-2">
+                        <div id="loadingSpinner" style="width:100%; display:none">
+                            <div class="card-body">
+                                <div class="w-100 text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="sr-only">Cargando...</span>
+                                    </div><br />
+                                    <span class="text-big text-primary">Cargando <strong></strong></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div id="draw2">
+                                    @await Component.InvokeAsync("WeftingDraw")
+                                </div>
+                            </div>
+                        </div>
+                        &nbsp
+
+
+
+                        <div class="form-row">
+                            <div class="col-md-4" style="display:none" id="re2">
+                                <label class="control-label form-label">Repeats</label>
+                                <select id="RepeatId2" class="select2-demo form-control">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3" style="display:none" id="botonElminar2">
+                                <label class="control-label">&nbsp</label>
+                                <button id="guat2" type="button" class="btn btn-warning  btn-block waves-effect waves-themed">Eliminar repeat</button>
+
+                            </div>
+                        </div>
+
+                        @*<button type="button" id="save-warp" class="btn btn-primary">Save</button>*@
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer ">
+                <button type="button" id="save-weftPlan" class="btn btn-success"><span class="glyphicon glyphicon-ok-sign"></span> Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+                <button type="button" id="button-repeat2" class="btn btn-warning"> Repeat</button>
+                <button id="SubmitBtnWeft" hidden type="button" class="btn"></button>
+
+
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- Modal repeat weft -->
+<div class="modal fade" id="repeatsWeft" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModal2Label">Repeats</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row">
+                <div class="col-md-4 mb-3">
+                    <label class="control-label">Inicio</label>
+                    <input id="inicio2" type="text"
+                           data-inputmask="'alias': 'integer'" class="form-control" required />
+                    <label class="text-danger" id="ini_val2" style="display:none"></label>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="control-label">Fin</label>
+                    <input id="fin2" type="text"
+                           data-inputmask="'alias': 'integer'" class="form-control" required />
+                    <span class="text-danger" id="fin_val2" style="display:none"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="control-label">Cantidad</label>
+                    <input id="cantidad2" type="text"
+                           data-inputmask="'alias': 'integer'" class="form-control" />
+                    <span class="text-danger" id="canti2" style="display:none"></span>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="cerrar2" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="repeat2" class="btn btn-primary">Save</button>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<form action="" method="post">
+    <div class="row ">
+        <div class="col-lg-12 ">
+            <div id="panel-1" class="panel panel-sortable">
+                <div class="panel-hdr" role="heading">
+                    <h2>
+                        Design
+                    </h2>
+                </div>
+                <div class="col-md-12">
+                    <div class="panel-container show">
+                        <div class="panel-content p-0">
+
+                            <input hidden asp-for="WarpPlan" />
+                            <input hidden asp-for="WeftPlan" />
+                            <input hidden asp-for="RepeatsWarp" />
+                            <input hidden asp-for="RepeatsWeft" />
+                            @*<input hidden id="Repeats" />*@
+                            <input hidden id="yarnWarp" name="yarnWarp" />
+                            <input hidden id="yarnWeft" name="yarnWeft" />
+                            <div class="panel-content">
+                                <div class="form-row">
+                                    <div class="col-md-3 mb-3">
+                                        <label class="control-label">Quality</label>
+                                        <input asp-for="QualityId" class="form-control" />
+                                        <span asp-validation-for="QualityId" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label class="control-label">Article/design</label>
+                                        <input asp-for="Article" class="form-control" />
+                                        <span asp-validation-for="Article" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <label class="control-label">Healds</label>
+                                        <input asp-for="Healds" class="form-control" />
+                                        <span asp-validation-for="Healds" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <label class="control-label form-label">PegPlan</label>
+                                        <select class="select2 form-control" asp-for="PegPlanId" asp-items="ViewBag.PegPlanId">
+                                            <option disabled selected>Selected PegPlan</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <label class="control-label form-label">Draft</label>
+                                        <select class="select2 form-control" asp-for="DraftId" asp-items="ViewBag.DraftId">
+                                            <option disabled selected>Selected Draft</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" style="display:none" id="error-warp-shade">
+                <strong>Debes  ingresar datos en el shades del warp</strong>
+            </div>
+            <div id="panel-3" class="panel panel-sortable">
+                <div class="panel-hdr" role="heading">
+                    <h2>
+                        Warping
+                    </h2>
+                </div>
+                <div class="col-md-12">
+                    <div class="panel-container show">
+                        <div class="panel-content p-0">
+                            <div class="panel-content">
+                                <div class="form-row">
+                                    <div class="col-md-3 mb-3">
+                                        <label class="control-label">N° of warps</label>
+                                        <input asp-for="NoOfWarps" class="form-control" />
+                                        <span asp-validation-for="NoOfWarps" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label class="control-label">Shades per warp</label>
+                                        <input asp-for="ShadesperWarp" class="form-control" />
+                                        <span asp-validation-for="ShadesperWarp" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label class="control-label">Ends per repeat</label>
+                                        <input asp-for="EndsPerRepeat" class="form-control" />
+                                        <span asp-validation-for="EndsPerRepeat" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label class="control-label">Extras</label>
+                                        <input asp-for="Extras" class="form-control" />
+                                        <span asp-validation-for="Extras" class="text-danger"></span>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-3 text-center">
+                    <div class="text-center">
+                        <button class="btn btn-warning ml-auto mb-3 btn-sm-block" style="visibility:hidden" id="shadesModal" data-toggle="modal" data-target="#deletepropi" type="button">Shades</button>
+                        <button class="btn btn-primary ml-auto mb-3 btn-sm-block" style="visibility:hidden" id="warpingPlan" type="button">Plan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12 ">
+
+            <div id="panel-3" class="panel panel-sortable">
+                <div class="panel-hdr" role="heading">
+                    <h2>
+                        Wefting
+                    </h2>
+
+                </div>
+                <div class="col-md-12">
+                    <div class="panel-container show">
+                        <div class="panel-content p-0">
+                            <div class="panel-content">
+                                <div class="form-row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="control-label">N° of wefts</label>
+                                        <input asp-for="NoOfWefts" class="form-control" />
+                                        <span asp-validation-for="NoOfWefts" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="control-label">Shades per weft</label>
+                                        <input asp-for="ShadesperWeft" class="form-control" />
+                                        <span asp-validation-for="ShadesperWeft" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="control-label">Picks per repeat</label>
+                                        <input asp-for="PicksPerRepeat" class="form-control" />
+                                        <span asp-validation-for="PicksPerRepeat" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-3 text-center">
+                    <div class="text-center">
+                        <button class="btn btn-warning ml-auto mb-3 btn-sm-block" style="visibility:hidden" id="shadesModalWeft" data-toggle="modal" data-target="#modal-weft" type="button">Shades</button>
+                        <button class="btn btn-primary ml-auto mb-3 btn-sm-block" style="visibility:hidden" id="weftingPlan" type="button">Plan</button>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 mb-3 text-right">
+        <a asp-action="Index" class="btn btn-warning ml-auto mb-3 btn-sm-block">Cancelar</a>
+        <button id="save" hidden class="btn btn-primary ml-auto mb-3 btn-sm-block" type="submit">Guardar</button>
+        <button id="save2" class="btn btn-primary ml-auto mb-3 btn-sm-block" type="button">Guardar</button>
+
+    </div>
+</form>
+@section ScriptsBlock {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script src="~/js/formplugins/inputmask/inputmask.bundle.js"></script>
+    <script src="~/js/numeros.js"></script>
+    <script src="~/js/formplugins/summernote/summernote.js"></script>
+    <script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+    <script src="js/formplugins/bootstrap-colorpicker/bootstrap-colorpicker.js"></script>
+    <script src="~/js/formplugins/select2/select2.bundle.js"></script>
+    <script src="~/js/notifications/toastr/toastr.js"></script>
+    <script>
+
+
+
+        $(document).ready(function () {
+            customInputmask.init();
+            $(".select2").select2({
+                placeholder: 'Todas',
+                allowClear: true,
+                language: {
+                    noResults: function () {
+                        return "No hay resultados.";
+                    }
+                }
+            });
+
+        });
+
+        const buttonRepeat = document.querySelector('#button-repeat');
+
+        eventListeners();
+        function eventListeners() {
+            buttonRepeat.addEventListener('click', ShowModal);
+        }
+
+        function ShowModal() {
+            $('#repeats').modal('show');
+        }
+
+
+         const buttonRepeat2 = document.querySelector('#button-repeat2');
+
+        eventListeners2();
+        function eventListeners2() {
+            buttonRepeat2.addEventListener('click', ShowModal2);
+        }
+
+        function ShowModal2() {
+            $('#repeatsWeft').modal('show');
+        }
+
+
+
+
+
+        document.getElementById("warpingPlan").onclick = function () { PlanWarp() };
+
+        function PlanWarp() {
+            var input = document.getElementById("NoOfWarps").value
+            var input2 = document.getElementById("ShadesperWarp").value
+
+            if (input != '' && input2 != '') { }
+
+            $("#plan-warpingplan").modal()
+
+
+        }
+
+        document.getElementById("save-warp").onclick = function () { SaveWarp() };
+        document.getElementById("save-warpPlan").onclick = function () { SaveWarpPlan() };
+
+        document.getElementById("shadesModal").onclick = function () { select2() };
+
+        function select2() {
+
+            $(".select2-yarn").select2({
+                placeholder: 'Todas',
+                allowClear: true,
+                language: {
+                    noResults: function () {
+                        return "No hay resultados.";
+                    }
+                }
+            });
+            $(".select2-yarn").select2({
+                dropdownParent: $("#deletepropi")
+            });
+
+        }
+
+        document.getElementById("NoOfWarps").oninput = function () { NoOfWarps() };
+        function NoOfWarps() {
+            debugger
+            var input = document.getElementById("NoOfWarps").value
+            var input2 = document.getElementById("ShadesperWarp").value
+            var endsRepeat = document.getElementById("EndsPerRepeat").value
+
+            let modal = document.getElementById("shadesModal")
+            if (input != '' && input2 != '' && endsRepeat != '') {
+                modal.style.visibility = 'visible'
+            } else {
+
+                modal.style.visibility = 'hidden'
+            }
+            abc = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,Ñ,O,P,Q,R,S,T,U,V,W,X,Y,Z'
+            aABC = abc.split(',')
+            var x = $('.navwarp').length;
+            console.log(x);
+
+            if (input < x) {
+                for (var i = x; i > input - 1; i--) {
+                    $("#warp" + i).remove();
+                }
+            } else if (input > x) {
+                for (var i = x; i < input; i++) {
+                    var node = document.createElement("li");
+                    node.className = "navwarp nav-item";
+                    node.id = id = "warp" + i + "";
+
+                    if (i == 0) {
+                        node.innerHTML = '<a class="nav-link active"  data-toggle="tab" href="#warping' + i + '" role="tab" aria-controls="home" aria-selected="true"> Shade N° ' + aABC[i] + "</a>";
+
+                    } else {
+                        node.innerHTML = '<a class="nav-link"  data-toggle="tab" href="#warping' + i + '" role="tab" aria-controls="home" aria-selected="false"> Shade N° ' + aABC[i] + "</a>";
+                    }
+                    document.getElementById("myTab").appendChild(node);
+
+                    var node2 = document.createElement('div');
+                    if (i == 0) {
+                        node2.className = 'tab-pane fade active show'
+
+                    } else {
+                        node2.className = 'tab-pane fade'
+
+                    }
+
+                    node2.id = 'warping' + i + ''
+                    node2.innerHTML = ' <div id="panel-2" class="panel"><div class="col-md-12"><div class="panel-content p-5"><div class="panel-content"><div class="tab-content"><div id="container' + i +'"></div></div></div></div></div></div>'
+                    document.getElementById("myTabContent").appendChild(node2);
+                }
+
+            } else {
+                for (var i = 0; i < input; i++) {
+                    var node = document.createElement("li");
+                    node2.className = 'tab-pane fade'
+                    node.id = id = "warp" + i + "";
+                    node.innerHTML = '<a class="nav-link"  data-toggle="tab" href="#warping' + i + '" role="tab" aria-controls="home" aria-selected="false">' + aABC[i] + "</a>"
+                    document.getElementById("myTab").appendChild(node);
+                }
+            }
+
+            if (input != x) {
+                NoOfYarn2(x);
+            }
+
+        }
+
+        function NoOfYarn2(x) {
+
+            var input = document.getElementById("ShadesperWarp").value
+            var input2 = document.getElementById("NoOfWarps").value
+            let modal = document.getElementById("shadesModal")
+            let modal2 = document.getElementById("warpingPlan")
+            let count = x
+            if (count == undefined) {
+                count = 0
+            }
+
+
+                if (input > 0) {
+                    modal2.style.visibility = 'visible'
+                } else {
+
+                    modal2.style.visibility = 'hidden'
+                }
+
+            if (input > 0) {
+                    if (input != '' && input2 != '') {
+                    modal.style.visibility = 'visible'
+                } else {
+
+                    modal.style.visibility = 'hidden'
+                }
+
+                  $.ajax({
+					    type: 'GET',
+					    url: '@Url.Action("GetYarn", "Yarns")',
+                          success: function (result) {
+
+                              var s = '<option value ="" selected>Selecciona un yarn</option>';
+
+                              for (var h = 0; h < result.length; h++) {
+
+                                    s += '<option value = "' + result[h].yarnId + '">' + result[h].yarnShade + ' </option>';
+
+                                }
+
+                              if (input2 < count) {
+                                  for (var j = count; j > input2 - 1; j--) {
+                                      $('#warping' + j).remove();
+                                  }
+                              } else if (input2 > count) {
+                                  for (var i = count; i < input2; i++) {
+                                      for (var j = 0; j < input; j++) {
+
+                                          var node = document.createElement('div');
+                                          node.innerHTML = '<div id="formu' + j + '" class="clonedInput form-row"><div class="col-md-12"><label class="control-label form-label">Count - Shade</label><select class="select2-yarn form-control" id="count' + i + '-' + j + '">' + s + '</select><label class="text-danger" id="yarn' + i + '-' + j + '" style="display:none"></label></div>';
+                                          document.getElementById('container' + i + '').appendChild(node);
+
+                                      }
+                                  }
+                              } else {
+
+
+                                  for (var i = 0; i < input2; i++) {
+                                      for (var j = count; j < input; j++) {
+
+                                          var node = document.createElement('div');
+                                          node.innerHTML = '<div id="formu' + j + '" class="clonedInput form-row"><div class="col-md-12"><label class="control-label form-label">Count - Shade</label><select required class="select2-yarn form-control" id="count' + i + '-' + j + '">' + s + '</select><label class="text-danger" id="yarn' + i + '-' + j + '" style="display:none"></label></div>';
+                                          document.getElementById('container' + i + '').appendChild(node);
+
+                                      }
+                                  }
+                              }
+					        }
+                  })
+                }
+
+        }
+
+        document.getElementById("ShadesperWarp").oninput = function () { NoOfYarn() };
+        function NoOfYarn() {
+            var input = document.getElementById("ShadesperWarp").value
+            var input2 = document.getElementById("NoOfWarps").value
+            var endsRepeat = document.getElementById("EndsPerRepeat").value
+            let modal = document.getElementById("shadesModal")
+            let modal2 = document.getElementById("warpingPlan")
+
+
+            if (input > 0 && endsRepeat != '') {
+                modal2.style.visibility = 'visible'
+            } else {
+
+                modal2.style.visibility = 'hidden'
+            }
+            if (input > 0) {
+                if (input != '' && input2 != '') {
+                    modal.style.visibility = 'visible'
+                } else {
+                    modal.style.visibility = 'hidden'
+                }
+
+
+            var _Shafts = 20
+            var _Ends = document.getElementById("ShadesperWarp").value
+            var _Repeats = $('#RepeatsWarp').val();
+            var _data = $('#data').val();
+            var container = $("#draw");
+            $.get('@Url.Action("GetColsDraws", "Design")',
+                { Shafts: _Shafts, Ends: _Ends, data: _data, Repeats: _Repeats,},
+                function (data) { container.html(data); }
+            );
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetYarn", "Yarns")',
+                    success: function (result) {
+
+                        var s = '<option value ="">Selecciona un yarn</option>';
+                        for (var h = 0; h < result.length; h++) {
+
+                            s += '<option value = "' + result[h].yarnId + '">' + result[h].yarnShade + ' </option>'
+                        }
+                        var x = $('.clonedInput').length
+                        let contador = 0
+                        for (var l = 0; l < 1; l++) {
+                            for (var k = 0; k < x; k++) {
+                                var a = $('#count' + l + '-' + k).val();
+                                if (a == '' || a != null) {
+                                    contador++
+                                }
+                            }
+                        }
+                        if (input < contador) {
+                            for (var i = 0; i < input2; i++) {
+                                for (var j = contador; j >= input; j--) {
+                                    $('#formu' + j).remove();
+                                }
+                            }
+                        } else if (input > contador) {
+                                for (var i = 0; i < input2; i++) {
+                                    for (var j = contador; j < input; j++) {
+                                        var node = document.createElement('div');
+                                        node.innerHTML = '<div id="formu' + j + '" class="clonedInput form-row"><div class="col-md-12"><label class="control-label form-label">Count - Shade</label><select class="select2-yarn form-control" id="count' + i + '-' + j + '">' + s + '</select><label class="text-danger" id="yarn' + i + '-' + j + '" style="display:none"></label></div>';
+                                        document.getElementById('container' + i + '').appendChild(node)
+                                    }
+                                }
+                        } else {
+                            for (var i = 0; i < input2; i++) {
+                                for (var j = count; j < input; j++) {
+                                    var node = document.createElement('div');
+                                    node.innerHTML = '<div id="formu' + j + '" class="clonedInput form-row"><div class="col-md-12"><label class="control-label form-label">Count - Shade</label><select required class="select2-yarn form-control" id="count' + i + '-' + j + '">' + s + '</select><label class="text-danger" id="yarn' + i + '-' + j + '" style="display:none"></label></div>';
+                                    document.getElementById('container' + i + '').appendChild(node)
+                                }
+                            }
+                        }
+                    }
+                })
+            }
+        }
+
+
+
+        document.getElementById("EndsPerRepeat").oninput = function () { EndsRepeat() };
+
+        function EndsRepeat() {
+            var endsRepeat = document.getElementById("EndsPerRepeat").value
+
+            let modalWarpingPlan = document.getElementById("warpingPlan")
+
+
+            if (endsRepeat != '') {
+                modalWarpingPlan.style.visibility = 'visible'
+            } else {
+
+                modalWarpingPlan.style.visibility = 'hidden'
+            }
+        }
+
+
+        function eliminar(i) {
+
+            $('#formu' + i).remove();
+        }
+
+        function SaveWarp() {
+            debugger
+            let resultado = ''
+            let contador = 0
+            let x = $('.clonedInput').length;
+            let input = $("#NoOfWarps").val();
+            let input2 = $("#ShadesperWarp").val();
+            for (var i = 0; i < input; i++) {
+                for (var j = 0; j < input2; j++) {
+                    //var count = $('#count' + i + '-' + j).val();
+                    var count = $('#count' + i + '-' + j).val();
+                    resultado += count + '|'
+                    if (count == '' || count == null) {
+                        contador++
+                        $('#yarn' + i + '-' + j).show();
+                        $('#yarn' + i + '-' + j).text('Debes ingresar un dato');
+                    } else {
+                        $('#yarn' + i + '-' + j).hide();
+                        document.getElementById('yarn' + i + '-' + j).value = "";
+
+                    }
+                }
+            }
+
+            if (contador == 0) {
+                // acá hacer la funcion para mandarlos en un input hidden
+                $('#deletepropi').modal('toggle');
+                debugger
+                document.getElementById("yarnWarp").value = resultado;
+
+            } else {
+
+
+            }
+
+
+        }
+        function SaveWarpPlan() {
+            debugger
+            var resultado = $('#WarpPlan').val();
+
+            if (resultado != '') {
+                console.log(resultado)
+                $('#plan-warpingplan').modal('toggle');
+            }
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        document.getElementById("weftingPlan").onclick = function () { PlanWeft() };
+
+        function PlanWeft() {
+            var input = document.getElementById("NoOfWefts").value
+            var input2 = document.getElementById("ShadesperWeft").value
+            if (input != '' && input2 != '') { }
+
+            $("#plan-weftingplan").modal()
+
+        }
+
+        document.getElementById("save-weft").onclick = function () { SaveWeft() };
+        document.getElementById("save-weftPlan").onclick = function () { SaveWeftPlan() };
+
+        document.getElementById("shadesModalWeft").onclick = function () { select2Weft() };
+
+        function select2Weft() {
+
+            $(".select2-yarnWeft").select2({
+                placeholder: 'Todas',
+                allowClear: true,
+                language: {
+                    noResults: function () {
+                        return "No hay resultados.";
+                    }
+                }
+            });
+            $(".select2-yarnWeft").select2({
+                dropdownParent: $("#modal-weft")
+            });
+
+        }
+        document.getElementById("NoOfWefts").oninput = function () { NoOfWefts() };
+        function NoOfWefts() {
+
+            var input = document.getElementById("NoOfWefts").value
+            var input2 = document.getElementById("ShadesperWeft").value
+            let modal = document.getElementById("shadesModalWeft")
+            if (input != '' && input2 != '') {
+                modal.style.visibility = 'visible'
+            } else {
+
+                modal.style.visibility = 'hidden'
+            }
+            abc = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,Ñ,O,P,Q,R,S,T,U,V,W,X,Y,Z'
+            aABC = abc.split(',')
+            var x = $('.navweft').length;
+            console.log(x);
+
+            if (input < x) {
+                for (var i = x; i > input - 1; i--) {
+                    $("#weft" + i).remove();
+                }
+            } else if (input > x) {
+                for (var i = x; i < input; i++) {
+                    var node = document.createElement("li");
+                    node.className = "navweft nav-item";
+                    node.id = id = "weft" + i + "";
+
+                    if (i == 0) {
+                        node.innerHTML = '<a class="nav-link active"  data-toggle="tab" href="#wefting' + i + '" role="tab" aria-controls="home" aria-selected="true"> Shade N° ' + aABC[i] + "</a>";
+
+                    } else {
+                        node.innerHTML = '<a class="nav-link"  data-toggle="tab" href="#wefting' + i + '" role="tab" aria-controls="home" aria-selected="false"> Shade N° ' + aABC[i] + "</a>";
+                    }
+                    document.getElementById("myTabWeft").appendChild(node);
+
+                    var node2 = document.createElement('div');
+                    if (i == 0) {
+                        node2.className = 'tab-pane fade active show'
+
+                    } else {
+                        node2.className = 'tab-pane fade'
+
+                    }
+
+                    node2.id = 'wefting' + i + ''
+                    node2.innerHTML = ' <div id="panel-2" class="panel"><div class="col-md-12"><div class="panel-content p-5"><div class="panel-content"><div class="tab-content"><div id="Weftcontainer'+i+'"></div></div></div></div></div></div>'
+                    document.getElementById("myTabContentWeft").appendChild(node2);
+                }
+
+            } else {
+                for (var i = 0; i < input; i++) {
+                    var node = document.createElement("li");
+                    node2.className = 'tab-pane fade'
+                    node.id = id = "weft" + i + "";
+                    node.innerHTML = '<a class="nav-link"  data-toggle="tab" href="#wefting' + i + '" role="tab" aria-controls="home" aria-selected="false">' + aABC[i] + "</a>"
+                    document.getElementById("myTabWeft").appendChild(node);
+                }
+            }
+
+            if (input != x) {
+                NoOfYarn2Weft(x);
+            }
+
+        }
+
+        function NoOfYarn2Weft(x) {
+
+            var input = document.getElementById("ShadesperWeft").value
+            var input2 = document.getElementById("NoOfWefts").value
+            let modal = document.getElementById("shadesModalWeft")
+            let modal2 = document.getElementById("weftingPlan")
+            let count = x
+            if (count == undefined) {
+                count = 0
+            }
+
+
+                if (input > 0) {
+                    modal2.style.visibility = 'visible'
+                } else {
+
+                    modal2.style.visibility = 'hidden'
+                }
+
+            if (input > 0) {
+                    if (input != '' && input2 != '') {
+                    modal.style.visibility = 'visible'
+                } else {
+
+                    modal.style.visibility = 'hidden'
+                }
+
+                  $.ajax({
+					    type: 'GET',
+					    url: '@Url.Action("GetYarn", "Yarns")',
+                          success: function (result) {
+
+                                var w = '<option value ="">Selecciona un yarn</option>';
+
+                              for (var h = 0; h < result.length; h++) {
+
+                                    w += '<option value = "' + result[h].yarnId + '">' + result[h].yarnShade + ' </option>';
+
+                                }
+
+
+                              if (input2 < count) {
+                                  for (var j = count; j > input2 - 1; j--) {
+                                      $('#wefting' + j).remove();
+                                  }
+                              } else if (input2 > count) {
+                                  for (var i = count; i < input2; i++) {
+                                      for (var j = 0; j < input; j++) {
+
+                                          var node = document.createElement('div');
+                                          node.innerHTML = '<div id="Weftformu' + j + '" class="clonedInputWeft form-row"><div class="col-md-12"><label class="control-label form-label">Yarn Id</label><select class="select2-yarnWeft form-control" id="countWeft' + i + '-' + j + '">' + w + '</select><label class="text-danger" id="yarn' + i + '-' + j + '" style="display:none"></label></div>';
+                                          document.getElementById('Weftcontainer' + i + '').appendChild(node);
+
+                                      }
+                                  }
+                              } else {
+
+
+                                  for (var i = 0; i < input2; i++) {
+                                      for (var j = count; j < input; j++) {
+
+                                          var node = document.createElement('div');
+                                          node.innerHTML = '<div id="Weftformu' + j + '" class="clonedInputWeft form-row"><div class="col-md-12"><label class="control-label form-label">Yarn Id</label><select required class="select2-yarnWeft form-control" id="countWeft' + i + '-' + j + '">' + w + '</select><label class="text-danger" id="yarn' + i + '-' + j + '" style="display:none"></label></div>';
+                                          document.getElementById('Weftcontainer' + i + '').appendChild(node);
+
+                                      }
+                                  }
+                              }
+					        }
+                  })
+                }
+
+        }
+
+
+
+        document.getElementById("ShadesperWeft").oninput = function () { NoOfYarnWeft() };
+        function NoOfYarnWeft() {
+
+            var input = document.getElementById("ShadesperWeft").value
+            var input2 = document.getElementById("NoOfWefts").value
+            let modal = document.getElementById("shadesModalWeft")
+            let modal2 = document.getElementById("weftingPlan")
+
+
+            if (input > 0) {
+                modal2.style.visibility = 'visible'
+            } else {
+
+                modal2.style.visibility = 'hidden'
+            }
+            if (input > 0) {
+                if (input != '' && input2 != '') {
+                    modal.style.visibility = 'visible'
+                } else {
+                    modal.style.visibility = 'hidden'
+                }
+
+            var _Shafts = 20
+            var _Ends = document.getElementById("ShadesperWeft").value
+            var _data = $('#data2').val();
+            var container = $("#draw2");
+            $.get('@Url.Action("GetColsDrawsWeft", "Design")',
+                { Shafts: _Shafts, Ends: _Ends, data: _data },
+                function (data) { container.html(data); }
+            );
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetYarn", "Yarns")',
+                    success: function (result) {
+
+                        var s = '<option value ="">Selecciona un yarn</option>';
+                        for (var h = 0; h < result.length; h++) {
+
+                            s += '<option value = "' + result[h].yarnId + '">' + result[h].yarnShade + ' </option>'
+                        }
+
+                        var x = $('.clonedInputWeft').length
+                        let contador = 0
+                        for (var l = 0; l < 1; l++) {
+                            for (var k = 0; k < x; k++) {
+                                var a = $('#countWeft' + l + '-' + k).val();
+                                if(a == '' || a != null) {
+                                    contador++
+                                }
+                            }
+                        }
+                        if (input < contador) {
+                            for (var i = 0; i < input2; i++) {
+                                for (var j = contador; j >= input; j--) {
+                                    $('#formuWeft' + j).remove();
+                                }
+                            }
+                        } else if (input > contador) {
+                                for (var i = 0; i < input2; i++) {
+                                    for (var j = contador; j < input; j++) {
+                                        var node = document.createElement('div');
+                                        node.innerHTML = '<div id="formuWeft' + j + '" class="clonedInputWeft form-row"><div class="col-md-12"><label class="control-label form-label">Yarn Id</label><select class="select2-yarnWeft form-control" id="countWeft' + i + '-' + j + '">' + s + '</select><label class="text-danger" id="yarn' + i + '-' + j + '" style="display:none"></label></div>';
+                                        document.getElementById('Weftcontainer' + i + '').appendChild(node)
+                                    }
+                                }
+                        } else {
+                            for (var i = 0; i < input2; i++) {
+                                for (var j = count; j < input; j++) {
+                                    var node = document.createElement('div');
+                                    node.innerHTML = '<div id="formuWeft' + j + '" class="clonedInputWeft form-row"><div class="col-md-12"><label class="control-label form-label">Yarn Id</label><select required class="select2-yarnWeft form-control" id="countWeft' + i + '-' + j + '">' + s + '</select><label class="text-danger" id="yarn' + i + '-' + j + '" style="display:none"></label></div>';
+                                    document.getElementById('Weftcontainer' + i + '').appendChild(node)
+                                }
+                            }
+                        }
+                    }
+                })
+            }
+        }
+
+        function eliminar(i) {
+
+            $('#formuWeft' + i).remove();
+        }
+        function SaveWeft() {
+
+            let resultado = ''
+            let contador = 0
+            let x = $('.clonedInputWeft').length;
+            let input = $("#NoOfWefts").val();
+            let input2 = $("#ShadesperWeft").val();
+            for (var i = 0; i < input; i++) {
+                for (var j = 0; j < input2; j++) {
+                    //var count = $('#count' + i + '-' + j).val();
+                    var count = $('#countWeft' + i + '-' + j).val();
+                    resultado += count + '|'
+                    if (count == '') {
+                        contador++
+                        $('#yarn' + i + '-' + j).show();
+                        $('#yarn' + i + '-' + j).text('Debes ingresar un dato');
+                    } else {
+                        $('#yarn' + i + '-' + j).hide();
+                        document.getElementById('yarn' + i + '-' + j).value = "";
+
+                    }
+                }
+            }
+            if (contador == 0) {
+                // acá hacer la funcion para mandarlos en un input hidden
+                $('#modal-weft').modal('toggle');
+                debugger
+                document.getElementById("yarnWeft").value = resultado;
+                console.log(resultado)
+            }
+
+        }
+
+        function SaveWeftPlan() {
+            debugger
+            var resultado = $('#WeftPlan').val();
+
+            console.log(resultado)
+
+        }
+
+    </script>
+
+
+
+    <script>
+
+        ///WARP
+        $('#repeat').on('click', function () {
+            debugger
+            $('#ini_val').text('');
+            $('#fin_val').text('');
+            $('#canti').text('');
+            let repeat = $('#RepeatsWarp').val();
+            var inicio = parseInt($('#inicio').val());
+            var fin = parseInt($('#fin').val());
+            var cantidad = parseInt($('#cantidad').val());
+            var lenght = 20;
+            if (isNaN(inicio) || inicio < 1) {
+                $('#ini_val').show();
+                $('#ini_val').text('Debes ingresar un inicio');
+            }
+            else {
+                $('#ini_val').hide();
+                document.getElementById("ini_val").value = "";
+            }
+            if (isNaN(fin) || fin < 1) {
+                $('#fin_val').show();
+                $('#fin_val').text('Debes ingresar un fin');
+            }
+            else {
+                $('#fin_val').hide();
+                document.getElementById("fin_val").value = "";
+            }
+
+            if (isNaN(cantidad) || cantidad < 1 /*|| inicio >= fin*/) {
+
+
+                if (isNaN(cantidad) || cantidad < 1) {
+                    $('#canti').show();
+                    $('#canti').text('La cantidad debe ser superior a 0');
+                }
+                //if (inicio > fin) {
+                //    $('#ini_val').show();
+                //    $('#ini_val').text('El inicio debe ser menor');
+
+                //}
+                //else if (inicio == fin) {
+                //    $('#fin_val').show();
+                //    $('#fin_val').text('El fin no puede ser igual al inicio');
+
+                //}
+            }
+            else {
+                document.getElementById("canti").value = "";
+                $('#canti').hide();
+
+                if (inicio <= lenght && fin <= lenght) {
+
+                    if (inicio != '' && fin != '' && cantidad != '') {
+
+                        if (repeat == '') {
+                            var result = '' + inicio + ',' + fin + ',' + cantidad + '';
+                        }
+                        else {
+                            var result = '|' + inicio + ',' + fin + ',' + cantidad + '';
+                        }
+
+                        $('#RepeatsWarp').val(repeat + result);
+                        document.getElementById("inicio").value = "";
+                        document.getElementById("fin").value = "";
+                        document.getElementById("cantidad").value = "";
+                        $('#ini_val').hide();
+                        $('#fin_val').hide();
+                        $('#canti').hide();
+                        $('#exampleModal').modal('hide');
+                        var hola = $('#RepeatsWarp').val();
+                        var array = hola.split('|');
+                        var s = '';
+                        for (var i = 0; i < array.length; i++) {
+                            s += '<option value = "' + array[i] + '"> Inicio: ' + array[i].split(',')[0] + ', Fin: ' + array[i].split(',')[1] + ', Repeticiones: ' + array[i].split(',')[2] + ' </option>';
+                        }
+                        $('#RepeatId').html(s);
+                        $('#botonElminar').show();
+                        $('#re').show();
+                        document.getElementById("ini_val").value = "";
+                        document.getElementById("fin_val").value = "";
+                        document.getElementById("canti").value = "";
+
+
+                       $('#repeats').modal('toggle');
+
+                        $("#SubmitBtn3").click();
+
+
+                    }
+                }
+                else {
+                    if (inicio > lenght) {
+                        document.getElementById("ini_val").value = "";
+                        $('#ini_val').show();
+                        $('#ini_val').text('Debes ingresar un inicio el porte de la matriz');
+                    }
+                    if (fin > lenght) {
+                        document.getElementById("fin_val").value = "";
+                        $('#fin_val').show();
+                        $('#fin_val').text('Debes ingresar un fin el porte de la matriz');
+                    }
+
+                }
+
+
+            }
+
+
+        });
+
+
+        $("#guat").click(function () {
+
+            debugger
+            var RepeatId = $('#RepeatId option:selected').val();
+            var hola = $('#RepeatsWarp').val();
+            var array = hola.split('|');
+
+            array = array.filter(function (item) {
+                return item !== RepeatId
+            })
+
+            //console.log("valores originales :", hola);
+            //console.log("valores filtrados :", array);
+
+            var s = '';
+            for (var i = 0; i < array.length; i++) {
+                s += '<option value = "' + array[i] + '"> Inicio: ' + array[i].split(',')[0] + ', Fin: ' + array[i].split(',')[1] + ', Repeticiones: ' + array[i].split(',')[2] + ' </option>';
+            }
+            $('#RepeatId').html(s);
+
+            var x = '';
+
+            for (var i = 0; i < array.length; i++) {
+                if (i == array.length - 1) {
+                    x = x + array[i]
+                }
+                else {
+
+                    x = x + array[i] + '|'
+                }
+
+            }
+            document.getElementById("RepeatsWarp").value = "";
+            $('#RepeatsWarp').val(x);
+            if (x.length > 2) {
+                $('#botonElminar').show();
+                $('#re').show();
+            }
+            else {
+                $('#botonElminar').hide();
+                $('#re').hide();
+            }
+            $("#SubmitBtn3").click();
+        });
+
+
+        $('#SubmitBtn3').on('click', function () {
+            debugger
+            var _Shafts = 20
+            var _Ends = document.getElementById("ShadesperWarp").value
+            var _Repeats = $('#RepeatsWarp').val();
+            var _data = $('#WarpPlan').val();
+            var container = $("#draw");
+            $.get('@Url.Action("GetColsDraws", "Design")',
+                { Shafts: _Shafts, Ends: _Ends, data: _data, Repeats: _Repeats,},
+                function (data) { container.html(data); }
+            );
+         });
+
+        ///WEFT
+
+        $('#repeat2').on('click', function () {
+
+            $('#ini_val2').text('');
+            $('#fin_val2').text('');
+            $('#canti2').text('');
+            let repeat = $('#RepeatsWeft').val();
+            var inicio = parseInt($('#inicio2').val());
+            var fin = parseInt($('#fin2').val());
+            var cantidad = parseInt($('#cantidad2').val());
+            var lenght = 20;
+            if (isNaN(inicio) || inicio < 1) {
+                $('#ini_val2').show();
+                $('#ini_val2').text('Debes ingresar un inicio');
+            }
+            else {
+                $('#ini_val2').hide();
+                document.getElementById("ini_val2").value = "";
+            }
+            if (isNaN(fin) || fin < 1) {
+                $('#fin_val2').show();
+                $('#fin_val2').text('Debes ingresar un fin');
+            }
+            else {
+                $('#fin_val2').hide();
+                document.getElementById("fin_val2").value = "";
+            }
+
+            if (isNaN(cantidad) || cantidad < 1 ) {
+
+
+                if (isNaN(cantidad) || cantidad < 1) {
+                    $('#canti2').show();
+                    $('#canti2').text('La cantidad debe ser superior a 0');
+                }
+                //if (inicio > fin) {
+                //    $('#ini_val').show();
+                //    $('#ini_val').text('El inicio debe ser menor');
+
+                //}
+                //else if (inicio == fin) {
+                //    $('#fin_val').show();
+                //    $('#fin_val').text('El fin no puede ser igual al inicio');
+
+                //}
+            }
+            else {
+                document.getElementById("canti2").value = "";
+                $('#canti2').hide();
+
+                if (inicio <= lenght && fin <= lenght) {
+
+                    if (inicio != '' && fin != '' && cantidad != '') {
+
+                        if (repeat == '') {
+                            var result = '' + inicio + ',' + fin + ',' + cantidad + '';
+                        }
+                        else {
+                            var result = '|' + inicio + ',' + fin + ',' + cantidad + '';
+                        }
+
+                        $('#RepeatsWeft').val(repeat + result);
+                        document.getElementById("inicio2").value = "";
+                        document.getElementById("fin2").value = "";
+                        document.getElementById("cantidad2").value = "";
+                        $('#ini_val2').hide();
+                        $('#fin_val2').hide();
+                        $('#canti2').hide();
+                        $('#exampleModal2').modal('hide');
+                        var hola = $('#RepeatsWeft').val();
+                        var array = hola.split('|');
+                        var s = '';
+                        for (var i = 0; i < array.length; i++) {
+                            s += '<option value = "' + array[i] + '"> Inicio: ' + array[i].split(',')[0] + ', Fin: ' + array[i].split(',')[1] + ', Repeticiones: ' + array[i].split(',')[2] + ' </option>';
+                        }
+                        $('#RepeatId2').html(s);
+                        $('#botonElminar2').show();
+                        $('#re2').show();
+                        document.getElementById("ini_val2").value = "";
+                        document.getElementById("fin_val2").value = "";
+                        document.getElementById("canti2").value = "";
+
+
+                        $('#repeatsWeft').modal('toggle');
+
+                        $("#SubmitBtnWeft").click();
+
+
+                    }
+                }
+                else {
+                    if (inicio > lenght) {
+                        document.getElementById("ini_val").value = "";
+                        $('#ini_val').show();
+                        $('#ini_val').text('Debes ingresar un inicio el porte de la matriz');
+                    }
+                    if (fin > lenght) {
+                        document.getElementById("fin_val").value = "";
+                        $('#fin_val').show();
+                        $('#fin_val').text('Debes ingresar un fin el porte de la matriz');
+                    }
+
+                }
+
+
+            }
+
+
+        });
+
+
+        $("#guat2").click(function () {
+
+            debugger
+            var RepeatId = $('#RepeatId2 option:selected').val();
+            var hola = $('#RepeatsWeft').val();
+            var array = hola.split('|');
+
+            array = array.filter(function (item) {
+                return item !== RepeatId
+            })
+
+            //console.log("valores originales :", hola);
+            //console.log("valores filtrados :", array);
+
+            var s = '<option value ="" disabled> Seleccione </option>';
+            for (var i = 0; i < array.length; i++) {
+                s += '<option value = "' + array[i] + '"> Inicio: ' + array[i].split(',')[0] + ', Fin: ' + array[i].split(',')[1] + ', Repeticiones: ' + array[i].split(',')[2] + ' </option>';
+            }
+            $('#RepeatId2').html(s);
+
+            var x = '';
+
+            for (var i = 0; i < array.length; i++) {
+                if (i == array.length - 1) {
+                    x = x + array[i]
+                }
+                else {
+
+                    x = x + array[i] + '|'
+                }
+
+            }
+            document.getElementById("RepeatsWeft").value = "";
+            $('#RepeatsWeft').val(x);
+            if (x.length > 2) {
+                $('#botonElminar2').show();
+                $('#re2').show();
+            }
+            else {
+                $('#botonElminar2').hide();
+                $('#re2').hide();
+            }
+            $("#SubmitBtnWeft").click();
+        });
+
+
+        $('#SubmitBtnWeft').on('click', function () {
+            debugger
+            var _Shafts = 20
+            var _Ends = document.getElementById("ShadesperWeft").value
+            var _Repeats = $('#RepeatsWeft').val();
+            var _data = $('#WeftPlan').val();
+            var container = $("#draw2");
+            $.get('@Url.Action("GetColsDrawsWeft", "Design")',
+                { Shafts: _Shafts, Ends: _Ends, data: _data, Repeats: _Repeats,},
+                function (data) { container.html(data); }
+            );
+         });
+
+        //BOTON SAVE
+        function AlertaErrorShadeWarp() {
+
+            toastr.options = {
+                "closeButton": true,
+                "debug": true,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": true,
+                "onclick": null,
+                "showDuration": 300,
+                "hideDuration": 100,
+                "timeOut": 5000,
+                "extendedTimeOut": 1000,
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+            toastr["error"]("Debes ingresar datos en Shade Warp");
+        }
+
+        function AlertaErrorWarp() {
+
+            toastr.options = {
+                "closeButton": true,
+                "debug": true,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": true,
+                "onclick": null,
+                "showDuration": 300,
+                "hideDuration": 100,
+                "timeOut": 5000,
+                "extendedTimeOut": 1000,
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+            toastr["error"]("Debes ingresar datos en Warp Plan ");
+        }
+
+
+        function AlertaErrorShadeWeft() {
+
+            toastr.options = {
+                "closeButton": true,
+                "debug": true,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": true,
+                "onclick": null,
+                "showDuration": 300,
+                "hideDuration": 100,
+                "timeOut": 5000,
+                "extendedTimeOut": 1000,
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+            toastr["error"]("Debes ingresar datos en Shade Weft");
+        }
+
+        function AlertaErrorWeft() {
+
+            toastr.options = {
+                "closeButton": true,
+                "debug": true,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": true,
+                "onclick": null,
+                "showDuration": 300,
+                "hideDuration": 100,
+                "timeOut": 5000,
+                "extendedTimeOut": 1000,
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+            toastr["error"]("Debes ingresar datos en Weft Plan ");
+        }
+
+
+
+        document.getElementById("save2").onclick = function () { Save2() };
+        function Save2() {
+            debugger
+            let warpPlan = $('#WarpPlan').val();
+            let weftPlan = $('#WeftPlan').val();
+            let contador = 0
+            let input = $("#NoOfWarps").val();
+            let input2 = $("#ShadesperWarp").val();
+            for (var i = 0; i < input; i++) {
+                for (var j = 0; j < input2; j++) {
+                    //var count = $('#count' + i + '-' + j).val();
+                    var count = $('#count' + i + '-' + j).val();
+
+                    if (count == '' || count == null) {
+                        contador++
+                        $('#yarn' + i + '-' + j).show();
+                        $('#yarn' + i + '-' + j).text('Debes ingresar un dato');
+                    } else {
+                        $('#yarn' + i + '-' + j).hide();
+                        document.getElementById('yarn' + i + '-' + j).value = "";
+
+                    }
+                }
+            }
+            let contadorWeft = 0
+            let inputWeft = $("#NoOfWefts").val();
+            let input2Weft = $("#ShadesperWeft").val();
+            for (var i = 0; i < inputWeft; i++) {
+                for (var j = 0; j < input2Weft; j++) {
+                    //var count = $('#count' + i + '-' + j).val();
+                    var count = $('#countWeft' + i + '-' + j).val();
+
+                    if (count == '') {
+                        contadorWeft++
+                        $('#yarn' + i + '-' + j).show();
+                        $('#yarn' + i + '-' + j).text('Debes ingresar un dato');
+                    } else {
+                        $('#yarn' + i + '-' + j).hide();
+                        document.getElementById('yarn' + i + '-' + j).value = "";
+
+                    }
+                }
+            }
+
+            debugger
+            if (contador != 0) {
+                AlertaErrorShadeWarp();
+
+            }
+            if (warpPlan == '') {
+                AlertaErrorWarp();
+
+            }
+            if (contadorWeft != 0) {
+                AlertaErrorShadeWeft();
+
+            }
+            if (weftPlan == '') {
+                AlertaErrorWeft();
+
+            }
+            if (contador == 0 && warpPlan != '' && contadorWeft == 0 && weftPlan != '') {
+                document.getElementById("save").click();
+
+            }
+        }
+
+    </script>
+
+
+
+
+    <script>
+        document.getElementById("checked").onclick = function () { check() };
+
+            function check() {
+                var _warpPlan = document.getElementById("WarpPlan").value
+                var _repeatsWarp = document.getElementById("RepeatsWarp").value
+                var endsRepeat = document.getElementById("EndsPerRepeat").value
+                if (_warpPlan != '') {
+                    $.ajax({
+                        type: 'GET',
+                        data: { warpPlan: _warpPlan, repeatsWarp: _repeatsWarp },
+                        url: '@Url.Action("CheckWarp", "Design")',
+                        success: function (result) {
+                            if (endsRepeat != result) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text:'Tienes ' +result+' de ' + endsRepeat,
+                                    target: document.getElementById('plan-warpingplan')
+                                })
+                            } else {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Exito',
+                                    text: 'Tienes ' + result + ' de ' + endsRepeat,  
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                    target: document.getElementById('plan-warpingplan')
+                                })
+                            }
+
+                            debugger
+                            console.log(result);
+                        }
+                    })
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Debes ingresar al menos un dato en el Warp plan',
+                        target: document.getElementById('plan-warpingplan')
+                    })
+                }
+
+            }
+    </script>
+}
+

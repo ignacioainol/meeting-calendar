@@ -1,0 +1,316 @@
+﻿@model DateTime
+@{
+    ViewData["Title"] = SharedLocalizer["dailyproduction"].ToString();
+    ViewData["PageName"] = "weaving_dailyproduction";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i>" + SharedLocalizer["dailyproduction"].ToString();
+    string PEffColorClass = "";
+    IEnumerable<TCS.EF.Entidades.ProductionHistory> prodListA = ViewBag.ProdQueryA;
+    IEnumerable<TCS.EF.Entidades.ProductionHistory> prodListB = ViewBag.ProdQueryB;
+    IEnumerable<TCS.EF.Entidades.ProductionHistory> prodListC = ViewBag.ProdQueryC;
+}
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+    <link rel="stylesheet" href="~/css/flatpickr/flatpickr.min.css">
+}
+
+<div class="panel">
+    <div class="panel-hdr">
+        <form asp-action="DailyProduction" style="width:50%">
+            <div class="form-group row pt-3 pl-3 align-items-center" style="height:60px;">
+                <input id="datepicker-2" type="date" class="form-control" value="@ViewBag.selectedDate" name="date">
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-container show">
+        <div class="grid-container-header">
+            <div>
+            </div>
+            <button class="btn btn-primary p-2" id="button-export-excel">
+                @SharedLocalizer["exporttoexcel"]
+            </button>
+            <div class="panel-toolbar">
+                <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+            </div>
+        </div>
+        <div class="panel-content flex-container">
+            <div class="flex-item">
+                <h2 style="text-align :center">
+                    @SharedLocalizer["nightshift"]
+                </h2>
+                <table class="display table table-bordered table-hover table-striped w-100">
+                    <thead class="bg-primary-500">
+                        <tr class="text-center" style="font-size: 16px;">
+                            <th class="text-center" style="vertical-align:middle"><strong>@SharedLocalizer["loom"]</strong></th>
+                            <th class="text-center" style="vertical-align:middle"><strong>@SharedLocalizer["standardefficiency"]</strong></th>
+                            <th class="text-center" style="vertical-align:middle"><strong>@SharedLocalizer["meters"]</strong></th>
+                            <th class="text-center" style="vertical-align:middle"><strong>Kpicks</strong></th>
+                            @*<th class="text-center" style="vertical-align:middle"><strong>Weaver</strong></th>*@
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-daily-production-a">
+                    </tbody>
+                </table>
+            </div>
+            <div class="flex-item">
+                <h2 style="text-align :center">
+                    @SharedLocalizer["morningshift"]
+                </h2>
+                <table class="display table table-bordered table-hover table-striped w-100">
+                    <thead class="bg-primary-500">
+                        <tr class="text-center" style="font-size: 16px;">
+                            <th class="text-center" style="vertical-align:middle"><strong>@SharedLocalizer["loom"]</strong></th>
+                            <th class="text-center" style="vertical-align:middle"><strong>@SharedLocalizer["standardefficiency"]</strong></th>
+                            <th class="text-center" style="vertical-align:middle"><strong>@SharedLocalizer["meters"]</strong></th>
+                            <th class="text-center" style="vertical-align:middle"><strong>Kpicks</strong></th>
+                            @*<th class="text-center" style="vertical-align:middle"><strong>Weaver</strong></th>*@
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-daily-production-b">
+                    </tbody>
+                </table>
+            </div>
+            <div class="flex-item">
+                <h2 style="text-align :center">
+                    @SharedLocalizer["afternoonshift"]
+                </h2>
+                <table class="display table table-bordered table-hover table-striped w-100">
+                    <thead class="bg-primary-500">
+                        <tr class="text-center" style="font-size: 16px;">
+                            <th class="text-center" style="vertical-align:middle"><strong>@SharedLocalizer["loom"]</strong></th>
+                            <th class="text-center" style="vertical-align:middle"><strong>@SharedLocalizer["standardefficiency"]</strong></th>
+                            <th class="text-center" style="vertical-align:middle"><strong>@SharedLocalizer["meters"]</strong></th>
+                            <th class="text-center" style="vertical-align:middle"><strong>Kpicks</strong></th>
+                            @*<th class="text-center" style="vertical-align:middle"><strong>Weaver</strong></th>*@
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-daily-production-c">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .grid-container-header {
+        display: grid;
+        grid-template-columns: 1fr 7.8rem 1.4rem;
+        padding: 0.7rem 1.1rem 0.7rem 1.1rem;
+        border-bottom: 0.1em solid lightgray;
+        grid-gap: 6px;
+    }
+
+    .badge-danger {
+        background-color: red
+    }
+
+    .badge-success {
+        background-color: forestgreen
+    }
+
+    .flex-item {
+        margin: 0.5em;
+        /*flex:1 0 auto;*/
+        min-width: 320px;
+    }
+
+    @@media screen and (min-width:480px) {
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
+        .flex-item {
+            flex: 0 1 calc(100% - 1rem);
+        }
+    }
+
+    @@media screen and (min-width:768px) {
+        .flex-item {
+            flex: 0 1 calc(49% - 1rem);
+        }
+    }
+
+    @@media screen and (min-width:1024px) {
+        .flex-item {
+            flex: 0 1 calc(33% - 1rem);
+        }
+    }
+</style>
+@section ScriptsBlock
+{
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.es.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/flatpickr/flatpickr.min.js"></script>
+    <script src="~/js/dependency/moment/moment.js"></script>
+    @{ if (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "es")
+        {
+            <script src="~/js/datagrid/datatables/datatables.bundle.es.js"></script>
+            <script src="~/js/flatpickr/languaje/es.js"></script>
+        }
+    }
+<script>
+    const inputDate = document.querySelector('#datepicker-2');
+    const datosBusqueda =
+    {
+        fecha: ''
+    }
+
+    eventListeners();
+
+    flatpickr(inputDate,
+        {
+        locale: "es",
+        altFormat: "d-m-Y",
+        altInput: true,
+        altInputClass: "flatpickr-custom form-control",
+        });
+
+    function eventListeners()
+    {
+        inputDate.valueAsDate = new Date();
+        datosBusqueda.fecha = inputDate.value;
+        inputDate.addEventListener('input', buscarFecha);
+        document.addEventListener('DOMContentLoaded', busquedaInicial);
+        document.querySelector('#button-export-excel').addEventListener('click', ExportarExcel);
+    }
+
+    function ExportarExcel()
+    {
+        let url = `Weaving/DailyProductionToExcel?selectedDate=${datosBusqueda.fecha}`;
+        window.location.href = url;
+    }
+
+    function buscarFecha(e) {
+        datosBusqueda.fecha = inputDate.value;
+        cargarTabla();
+    }
+
+    function busquedaInicial(e) {
+        cargarTabla();
+    }
+
+    async function cargarTabla(data)
+    {
+        const tbodyDailyProductionA = document.querySelector('#tbody-daily-production-a');
+        const tbodyDailyProductionB = document.querySelector('#tbody-daily-production-b');
+        const tbodyDailyProductionC = document.querySelector('#tbody-daily-production-c');
+
+        let url = "Weaving/DailyProductionJson?selectedDate=" + datosBusqueda.fecha;
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+        /*alert(datosBusqueda.fecha);*/
+        let htmlA = '';
+        let htmlB = '';
+        let htmlC = '';
+
+        const listShiftA = resultado.filter(x => x.shift === 'A');
+        const listShiftB = resultado.filter(x => x.shift === 'B');
+        const listShiftC = resultado.filter(x => x.shift === 'C');
+        let pEffColorClass = "";
+        listShiftA.forEach(data => {
+            if (data.stdEff <= 30) {
+                pEffColorClass = "badge badge-danger";
+            }
+            else if (data.stdEff > 30 && data.stdEff < 70) {
+                pEffColorClass = "badge badge-warning";
+            }
+            else if (data.stdEff >= 70) {
+                pEffColorClass = "badge badge-success";
+            }
+
+            htmlA += `<tr style="font-size: 15px; cursor: pointer;" onclick="GoMonitor(loomId = ${data.loomId})">
+                                <td class="text-center" style="vertical-align:middle">${data.loom.loomNumber}</td>
+                                <td class="text-center" style="vertical-align:middle"><span class="badge ${pEffColorClass}">${data.stdEff.toFixed(1)}%</span></td>
+                                <td class="text-center">${(data.lenght / 100).toFixed(1)} </td>
+                                <td class="text-center" style="vertical-align:middle">${(data.picks / 1000).toFixed(0)}</td>
+                    </tr>`;
+
+        });
+
+        listShiftB.forEach(data => {
+            if (data.stdEff <= 30) {
+                pEffColorClass = "badge badge-danger";
+            }
+            else if (data.stdEff > 30 && data.stdEff < 70) {
+                pEffColorClass = "badge badge-warning";
+            }
+            else if (data.stdEff >= 70) {
+                pEffColorClass = "badge badge-success";
+            }
+
+            htmlB += `<tr style="font-size: 15px; cursor: pointer;" onclick="GoMonitor(loomId = ${data.loomId})">
+                                <td class="text-center" style="vertical-align:middle">${data.loom.loomNumber}</td>
+                                <td class="text-center" style="vertical-align:middle"><span class="badge ${pEffColorClass}">${data.stdEff.toFixed(1)}%</span></td>
+                                <td class="text-center">${(data.lenght / 100).toFixed(1)} </td>
+                                <td class="text-center" style="vertical-align:middle">${(data.picks / 1000).toFixed(0)}</td>
+                    </tr>`;
+
+        });
+
+        listShiftC.forEach(data => {
+            if (data.stdEff <= 30) {
+                pEffColorClass = "badge badge-danger";
+            }
+            else if (data.stdEff > 30 && data.stdEff < 70) {
+                pEffColorClass = "badge badge-warning";
+            }
+            else if (data.stdEff >= 70) {
+                pEffColorClass = "badge badge-success";
+            }
+
+            htmlC += `<tr style="font-size: 15px; cursor: pointer;" onclick="GoMonitor(loomId = ${data.loomId})">
+                                <td class="text-center" style="vertical-align:middle">${data.loom.loomNumber}</td>
+                                <td class="text-center" style="vertical-align:middle"><span class="badge ${pEffColorClass}">${data.stdEff.toFixed(1)}%</span></td>
+                                <td class="text-center">${(data.lenght / 100).toFixed(1)} </td>
+                                <td class="text-center" style="vertical-align:middle">${(data.picks / 1000).toFixed(0)}</td>
+                    </tr>`;
+
+        });
+
+        tbodyDailyProductionA.innerHTML = htmlA;
+        tbodyDailyProductionB.innerHTML = htmlB;
+        tbodyDailyProductionC.innerHTML = htmlC;
+    }
+
+    function GoMonitor(loomId) {
+        let url = `Weaving/LoomMonitor?loomId=${loomId}`;
+        window.location.href = url;
+    }
+</script>
+    <script>
+		// Class definition
+		@*var controls = {
+			leftArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-left" style="font-size: 1.25rem"></i>',
+			rightArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-right" style="font-size: 1.25rem"></i>'
+		}
+
+        $('#datepicker-2').datepicker({
+            todayHighlight: true,
+            orientation: "bottom left",
+            templates: controls,
+            format: '@System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern.ToLower()',
+            language: '@System.Threading.Thread.CurrentThread.CurrentCulture.Name'
+        });
+
+        $(document).ready(function () {
+            // initialize datatable
+            $('table.display').dataTable({
+                responsive: true,
+                lengthChange: false,
+                fixedHeader: true,
+                paging : false,
+                pageLength: 50,
+                searching: false,
+                bInfo: false
+            });
+        });*@
+
+    </script>
+}

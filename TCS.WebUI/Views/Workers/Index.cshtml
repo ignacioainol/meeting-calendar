@@ -1,0 +1,142 @@
+﻿@model IEnumerable<TCS.EF.Entidades.Worker>
+
+@{
+    ViewData["Title"] = SharedLocalizer["workers"].ToString();
+    ViewData["PageName"] = "workers_index";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + SharedLocalizer["workers"].ToString();
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+}
+<div class="panel">
+    <div class="grid-container-header">
+        <div>
+        </div>
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            <div class="d-flex contenedor-special" style="width:100%">
+                <div class="mb-3 text-center">
+                    <a asp-action="Create" class="btn btn-primary">
+                        @SharedLocalizer["new"] @SharedLocalizer["worker"].ToString()
+                    </a>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="form-group mb-3 ml-sm-0 ml-md-2 ml-lg-2">
+                        <div class="input-group">
+                            <input type="search" id="search_textbox" class="form-control" placeholder="@SharedLocalizer["search"]..." autocomplete="off" />
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="@(Settings.Theme.IconPrefix) fa-search"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table id="dt-workers" class="table table-bordered table-hover table-striped w-100">
+                <thead class="bg-primary-500">
+                    <tr style="font-size: 16px;">
+                        <th>
+                            @SharedLocalizer["workername"]
+                        </th>
+                        <th>
+                            @SharedLocalizer["workergroup"]
+                        </th>
+                        <th>
+                            @SharedLocalizer["position"]
+                        </th>
+                        <th>
+                            @SharedLocalizer["status"]
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Ficha)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                    <tr style="font-size: 15px;">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.WorkerName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.WorkerGroup.WorkerGroupName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.WorkerPosition.Spdescr)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Status)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Ficha)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.WorkerId">@SharedLocalizer["edit"]</a> |
+                            <a asp-action="Details" asp-route-id="@item.WorkerId">@SharedLocalizer["details"]</a> |
+                            <a asp-action="Delete" asp-route-id="@item.WorkerId">@SharedLocalizer["delete"]</a>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .grid-container-header {
+        display: grid;
+        grid-template-columns: 1fr 1.4rem;
+        padding: 1.1rem;
+        border-bottom: 0.1em solid lightgray;
+        grid-gap: 6px;
+    }
+</style>
+
+@section ScriptsBlock {
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    @{ if (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "es")
+        {
+            <script src="~/js/datagrid/datatables/datatables.bundle.es.js"></script>
+        }
+    }
+    <script>
+        $(document).ready(function () {
+            var table = $('#dt-workers').DataTable({
+                dom: "lrtip",
+                responsive: true,
+                blurable: false,
+                order: [],
+                lengthChange: false,
+                pageLength: 15,
+                initComplete: function (settings, json) {
+                    $('#loadingSpinner').hide();
+                    $('#dt-basic-example').show();
+                }
+            });
+            $('#search_textbox').keyup(function () {
+                table.search($(this).val()).draw();
+            })
+            $('#search_textbox').change(function () {
+                table.search($(this).val()).draw();
+            })
+            $('#search_textbox').on("search", function () {
+                table.search($(this).val()).draw();
+            })
+        });
+        $(document).ready(function () {
+            $(window).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        });
+    </script>
+}

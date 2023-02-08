@@ -1,0 +1,108 @@
+﻿@model TCS.WebUI.Models.DesignDraw
+@using System.Globalization
+
+
+@{
+    int r = Model.Rows;
+    int? x = ViewBag.delete;
+    Matriz matriz = ViewBag.matriz;
+}
+<div class="div-container">
+    @{
+        int v = matriz.Filas.Count();
+<table id="design-table">
+    <thead>
+        <tr>
+            @for (int i = 0; i < matriz.Cols + 1; i++)
+            {
+                @if (matriz.Cols > 0)
+                {
+                    if (i == 0)
+                    {
+                        <th class="cube-size"></th>
+                    }
+                    else
+                    {
+                        <th class="cube-size">@i</th>
+                    }
+                }
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in matriz.Filas)
+        {
+            <tr class="cube-size">
+
+                @{
+                    <th>@v</th>
+                    v = v - 1;
+                }
+
+                @foreach (var item2 in item.Columnas)
+                {
+                    if (item2.Dato == "SieKipo")
+                    {
+                        <td class="cube-size" style="background-color:#0000ff;" onClick="toggleColor(this);"></td>
+                    }
+                    else
+                    {
+                        <td class="cube-size"></td>
+                    }
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+    }
+</div>
+
+<style>
+    .div-container {
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    table, th, td {
+        padding-right: 0.2em;
+        border: 0.05rem solid black;
+        border-collapse: collapse;
+    }
+    .cube-size {
+        height: 28px;
+        min-width: 28px;
+        font-size: 0.9rem;
+        text-align: end;
+    }
+</style>
+
+<script type="text/javascript">
+
+    function toggleColor(obj) {
+        var bgColor = obj.style.backgroundColor;
+        if (bgColor == "rgb(0, 0, 255)") {
+            obj.style.backgroundColor = "";
+        }
+        else {
+            obj.style.backgroundColor = "#0000ff";
+        }
+        $("#DraftPlan").val(getData())
+
+        console.log(getData());
+    };
+    function getData() {
+        var table = document.getElementById("design-table");
+        var data = '';
+        for (var i = 0, row; row = table.rows[i]; i++) {
+            for (var j = 0, col; col = row.cells[j]; j++) {
+                var bgColor = col.style.backgroundColor;
+                if (bgColor == "rgb(0, 0, 255)") {
+                    data = data + col.getAttribute("name") + "|";
+                }
+            }
+        }
+        console.log(data.slice(0, -1));
+
+        return data.slice(0, -1);
+    };
+</script>

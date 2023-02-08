@@ -1,0 +1,53 @@
+﻿@model DEVTOOLS.EF.Entidades.ColumnTemplate
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>ColumnTemplate</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ColumnTemplateId" />
+            <div class="form-group">
+                <label asp-for="ColumnId" class="control-label"></label>
+                <select asp-for="ColumnId" class="form-control" asp-items="ViewBag.ColumnId"></select>
+                <span asp-validation-for="ColumnId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ColumnTemplateSourceCodeType" class="control-label"></label>
+                <select asp-for="ColumnTemplateSourceCodeType" class="form-control" asp-items="ViewBag.ColumnTemplateSourceCodeType"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="ColumnTemplateName" class="control-label"></label>
+                <input asp-for="ColumnTemplateName" class="form-control" />
+                <span asp-validation-for="ColumnTemplateName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ColumnTemplateObservations" class="control-label"></label>
+                <input asp-for="ColumnTemplateObservations" class="form-control" />
+                <span asp-validation-for="ColumnTemplateObservations" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ColumnTemplateContent" class="control-label"></label>
+                <input asp-for="ColumnTemplateContent" class="form-control" />
+                <span asp-validation-for="ColumnTemplateContent" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a href="Columns/Edit?id=@Model.ColumnId">Back to Column</a>
+</div>
+
+@section ScriptsBlock {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

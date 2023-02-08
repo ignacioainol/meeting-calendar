@@ -1,0 +1,59 @@
+﻿@model IEnumerable<DEVTOOLS.EF.Entidades.ProjectTemplate>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProjectTemplateName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProjectTemplateObservations)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProjectTemplateSourceCodeType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProjectTemplateContent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Project)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProjectTemplateName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProjectTemplateObservations)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProjectTemplateSourceCodeType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProjectTemplateContent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Project.ProjectId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ProjectTemplateId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ProjectTemplateId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ProjectTemplateId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

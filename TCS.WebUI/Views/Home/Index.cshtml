@@ -1,0 +1,215 @@
+﻿@{
+    ViewData["Title"] = @SharedLocalizer["dashboard"].ToString();
+    ViewData["PageName"] = "home_index";
+    ViewData["Category1"] = @SharedLocalizer["home"].ToString();
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + @SharedLocalizer["dashboard"].ToString(); ;
+    TCS.EF.Entidades.Covid covid = ViewBag.covid;
+    string cl = ViewBag.cl;
+}
+
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+
+}
+
+
+<form id="form-covid">
+    <div class="modal fade" id="formulario" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        INFORMATIVO COVID
+                        <small class="m-0 text-muted">
+                            DECLARACION JURADA.DE SINTOMATOLOGIA Y CONTACTO ESTRECHO COVID-19
+
+                        </small>
+                    </h2>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="alerta" value="@covid" />
+                    <input type="hidden" id="cl" value="@cl" />
+
+                    <strong>Declaro</strong> que <u>
+                        no presento síntomas, ni he tenido contacto estrecho con ninguna persona
+                        COVID positivo
+                    </u>, tomo conciencia que es mi responsabilidad estar alerta a los síntomas del
+                    COVID, los cuales son: <strong>
+                        fiebre o escalofríos, tos, dificultad para respirar, fatiga, dolores
+                        musculares y corporales, dolor de cabeza, pérdida reciente del olfato o el gusto, dolor de
+                        garganta, congestión o moqueo, náuseas o vómitos, diarrea, u otros
+                    </strong>. Informaré
+                    inmediatamente a mi jefatura directa de alguna manifestación de síntomas o sospecha de
+                    contagio
+                    <p></p>
+                    <ul>
+                        <li>Para confirmar la declaración jurada presione SI</li>
+                        <br />
+                        <li>Para declarar  que ha tenido síntomas  o ha sido contacto estrecho marque NO</li>
+                    </ul>
+
+                </div>
+
+                <div class="modal-footer ">
+                    IMPORTANTE: En el caso que la información declarada sea falsa u omitida, será objeto de sumario
+                    sanitario por parte de la Autoridad competente, y arriesga medidas disciplinarias por parte de la
+                    empresa por incumplimiento grave al reglamento interno de orden, higiene y seguridad, por
+                    poner riesgo la salud de los demás trabajadores
+
+                    <div class="text-center">
+                        <button type="button" id="si" class="btn btn-success"><span class="glyphicon glyphicon-ok-sign"></span> Si</button>
+                        <button type="button" id="no" value="no" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> No</button>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</form>
+
+<div class="flex-container">
+    <div class="flex-item">
+        @if (@ViewBag.OpenOrClose)
+        {
+
+            <a href="@Url.Action("Index", "Inventory")">
+                <div class="card-body_custom">
+                    <i class="fal fa-chart-bar fa-5x p-2"></i>
+                    <h2>@ViewBag.Porcentaje%</h2>
+                    <h2>@SharedLocalizer["currentinventory"]</h2>
+                    <h4>@SharedLocalizer["startedby"]:  @ViewBag.CreatorOwner</h4>
+                </div>
+                <div class="card-footer_custom">
+                    <p><strong>@SharedLocalizer["pieces"]: @ViewBag.Encontradas @SharedLocalizer["of"]  @ViewBag.Total</strong></p>
+                </div>
+            </a>
+        }
+        else
+        {
+            <a href="@Url.Action("Index", "Inventory")">
+                <div class="card-body_custom">
+                    <i class="fal fa-chart-bar fa-5x p-2"></i>
+                    <h2>@SharedLocalizer["inventoryclosed"]</h2>
+                    <h4>@SharedLocalizer["noinventoryopenatthistime"]</h4>
+                </div>
+                <div class="card-footer_custom">
+                    <p><strong>@SharedLocalizer["lastinventory"]: @ViewBag.Fecha</strong></p>
+                </div>
+            </a>
+        }
+    </div>
+    <div class="flex-item">
+        <a href="@Url.Action("Loomlist", "Weaving")">
+            <div class="card-body_custom">
+                <i class="fal fa-chart-pie fa-5x p-2"></i>
+                <h3>@string.Format("{0:0.#}%", ViewBag.GetRunningEfficiencyCurrentShiftAvg)</h3>
+                <h2>@SharedLocalizer["weaving"]</h2>
+                <h4>@DateTime.Now</h4>
+            </div>
+            <div class="card-footer_custom">
+                <p><strong>@SharedLocalizer["standardefficiency"]: @string.Format("{0:0.#}%", ViewBag.GetStandardEfficiencyCurrentShiftAvg)</strong></p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<style>
+    .card-body_custom {
+        text-align: center;
+        font-size: 1.4em;
+        padding: 10px;
+        border-radius: 5px 5px 0px 0px;
+        background: #038387;
+        color: white;
+        height: 230px;
+    }
+
+    .card-footer_custom {
+        text-align: center;
+        font-size: 1.3em;
+        color: white;
+        background: #2864a0;
+        padding-bottom: 10px;
+        padding-top: 15px;
+        border-radius: 0px 0px 5px 5px;
+    }
+
+    .flex-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .flex-item {
+        width: 30em;
+        max-width: 45em;
+        margin: 0.5em;
+        flex-shrink: 1;
+        flex-grow: 1;
+    }
+</style>
+
+@section ScriptsBlock {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/notifications/toastr/toastr.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function () {
+            var alerta = document.getElementById("alerta").value
+            var chilean = document.getElementById("cl").value
+
+            
+            //if (alerta == '' && chilean != '') {
+            //    $('#formulario').modal('show');
+
+            //}
+
+        });
+
+    $("#si").click(function () {
+        var formContainer = $('#form-covid');
+            $.ajax({
+                type: 'GET',
+                //data: { nombre: _nombre },
+                data: formContainer.serialize(),
+                url: '@Url.Action("Covid", "Home")',
+                success: function () {
+                    $('#formulario').modal('hide');
+
+
+                    Swal.fire({
+
+                        title: 'Gracias',
+                        icon: 'success',
+                        text: 'Su declaración ha sido enviada exitosamente',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            })
+    })
+
+    $("#no").click(function () {
+        var respuesta = 'no'
+
+        $.ajax({
+            type: 'GET',
+            data: { respuesta: respuesta },
+            //data: formContainer.serialize(),
+            url: '@Url.Action("Covid", "Home")',
+            success: function () {
+                $('#formulario').modal('hide');
+
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Alerta',
+                    text: 'Dírijase al departamento de Prevención de Riesgos de forma inmediata',
+                })
+            }
+        })
+})
+    </script>
+
+}

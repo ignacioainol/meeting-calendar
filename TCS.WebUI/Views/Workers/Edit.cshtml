@@ -1,0 +1,82 @@
+﻿@model TCS.EF.Entidades.Worker
+
+@{
+    ViewData["Title"] = SharedLocalizer["workers"].ToString();
+    ViewData["PageName"] = "workers_index";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + SharedLocalizer["workers"].ToString();
+}
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="WorkerId" />
+            <div class="form-group">
+                <label asp-for="WorkerName" class="control-label">@SharedLocalizer["workername"]</label>
+                <input asp-for="WorkerName" class="form-control" />
+                <span asp-validation-for="WorkerName" class="text-danger"></span>
+            </div>
+            <div id="div-worker-group" class="form-group">
+                <label asp-for="WorkerGroupId" class="control-label">@SharedLocalizer["workergroup"]</label>
+                <select id="select-worker-group" asp-for="WorkerGroupId" class="form-control" asp-items="ViewBag.WorkerGroupId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="PositionId" class="control-label">@SharedLocalizer["position"]</label>
+                <select id="select-position" asp-for="PositionId" class="form-control" asp-items="ViewBag.PositionId"></select>
+            </div>
+            <div class="custom-control custom-switch mb-3">
+                <input type="checkbox" asp-for="Status" class="custom-control-input" id="customSwitch" />
+                <label asp-for="Status" class="custom-control-label" for="customSwitch">@SharedLocalizer["status"]</label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ficha" class="control-label"></label>
+                <input asp-for="Ficha" class="form-control" />
+                <span asp-validation-for="Ficha" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <button type="submit" value="Save" class="btn btn-primary mb-3">@SharedLocalizer["save"]</button>
+                <a asp-action="Index" class="btn btn-primary mb-3">
+                    @SharedLocalizer["goback"]
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+<script>
+    const divWorkerGroup = document.querySelector('#div-worker-group');
+    const selectWorkerGroup = document.querySelector('#select-worker-group');
+    const selectPosition = document.querySelector('#select-position');
+
+    selectPosition.addEventListener('change', ChangePosition);
+    ChangePositionFirst();
+
+    function ChangePosition()
+    {
+        if (selectPosition.value == 1)
+        {
+            divWorkerGroup.hidden = true;
+            selectWorkerGroup.value = null;
+        }
+        else
+        {
+            divWorkerGroup.hidden = false;
+            selectWorkerGroup.value = 1;
+        }
+    }
+
+    function ChangePositionFirst()
+    {
+        if (selectPosition.value == 1)
+        {
+            divWorkerGroup.hidden = true;
+            selectWorkerGroup.value = null;
+        }
+        else 
+        {
+            divWorkerGroup.hidden = false;
+        }
+    }
+</script>

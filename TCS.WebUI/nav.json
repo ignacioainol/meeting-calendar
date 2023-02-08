@@ -1,0 +1,234 @@
+{
+  "version": "4.5",
+  "lists": [
+    {
+      "title": "Inicio",
+      "icon": "fal fa-home",
+      "roles": [],
+      "items": [
+        {
+          "title": "Tablero",
+          "showOnSeed": false,
+          "href": "home_index.html",
+          "roles": []
+        },
+        {
+          "title": "Directorio",
+          "showOnSeed": false,
+          "href": "home_directory.html",
+          "roles": []
+        }
+      ]
+    },
+    {
+      "title": "Usuarios",
+      "icon": "fal fa-table",
+      "roles": [],
+      "items": [
+        {
+          "title": "Asignacion de Permisos",
+          "showOnSeed": false,
+          "href": "assignpermissions_index.html",
+          "roles": []
+        },
+        {
+          "title": "Usuarios",
+          "showOnSeed": false,
+          "href": "users_index.html",
+          "roles": []
+        },
+        {
+          "title": "Modulos",
+          "showOnSeed": false,
+          "href": "modules_index.html",
+          "roles": []
+        },
+        {
+          "title": "Permisos",
+          "showOnSeed": false,
+          "href": "permissions_index.html",
+          "roles": []
+        }
+      ]
+    },
+    {
+      "title": "Design",
+      "icon": "fal fa-table",
+      "roles": [],
+      "items": [
+        {
+          "title": "Draft",
+          "showOnSeed": false,
+          "href": "drafts_index.html",
+          "roles": []
+        },
+        {
+          "title": "Sley",
+          "showOnSeed": false,
+          "href": "sleys_index.html",
+          "roles": []
+        },
+        {
+          "title": "DraftSley",
+          "showOnSeed": false,
+          "href": "draftsleys_index.html",
+          "roles": []
+        },
+        {
+          "title": "Design",
+          "showOnSeed": false,
+          "href": "design_index.html",
+          "roles": []
+        }
+      ]
+    },
+    {
+      "title": "Hiladeria",
+      "icon": "fal fa-table",
+      "roles": [],
+      "items": [
+        {
+          "title": "Tablero",
+          "showOnSeed": false,
+          "href": "spinning_dashboard.html",
+          "roles": []
+        },
+        {
+          "title": "Turno Actual",
+          "showOnSeed": false,
+          "href": "spinning_spinninglist.html",
+          "roles": []
+        },
+        {
+          "title": "Produccion Diaria",
+          "showOnSeed": false,
+          "href": "spinning_dailyproduction.html",
+          "roles": []
+        },
+        {
+          "title": "Produccion Turno",
+          "showOnSeed": false,
+          "href": "spinning_shiftproduction.html",
+          "roles": []
+        },
+        {
+          "title": "Sumario de Produccion",
+          "showOnSeed": false,
+          "href": "spinning_generalproduction.html",
+          "roles": []
+        },
+        {
+          "title": "Detalle de Paros",
+          "showOnSeed": false,
+          "href": "spinning_stopdetails.html",
+          "roles": []
+        }
+      ]
+    },
+    {
+      "title": "Terminacion",
+      "icon": "fal fa-table",
+      "roles": [],
+      "items": [
+        {
+          "title": "Estado de Piezas",
+          "showOnSeed": false,
+          "href": "finish_pieceroute.html",
+          "roles": []
+        },
+        {
+          "title": "Ruta de Pieza",
+          "showOnSeed": false,
+          "href": "finish_piecestatus.html",
+          "roles": []
+        }
+      ]
+    },
+    {
+      "title": "Telares",
+      "icon": "fal fa-table",
+      "roles": [],
+      "items": [
+        {
+          "title": "Tablero",
+          "showOnSeed": false,
+          "href": "weaving_dashboard.html",
+          "roles": []
+        },
+        {
+          "title": "Turno Actual",
+          "showOnSeed": false,
+          "href": "weaving_loomlist.html",
+          "roles": []
+        },
+        {
+          "title": "Produccion Diaria",
+          "showOnSeed": false,
+          "href": "weaving_dailyproduction.html",
+          "roles": []
+        },
+        {
+          "title": "Produccion Turno",
+          "showOnSeed": false,
+          "href": "weaving_shiftproduction.html",
+          "roles": []
+        },
+        {
+          "title": "Sumario de Produccion",
+          "showOnSeed": false,
+          "href": "weaving_generalproduction.html",
+          "roles": []
+        },
+        {
+          "title": "Asignacion de Turnos",
+          "showOnSeed": false,
+          "href": "weaving_weekassignation.html",
+          "roles": []
+        },
+        {
+          "title": "Paros por Turno",
+          "showOnSeed": false,
+          "href": "weaving_shiftstop.html",
+          "roles": []
+        },
+        {
+          "title": "Historial de Paros",
+          "showOnSeed": false,
+          "href": "weaving_stopproductionhistory.html",
+          "roles": []
+        },
+        {
+          "title": "Detalle de Paro",
+          "showOnSeed": false,
+          "href": "weaving_stopproductionhistorydetail.html",
+          "roles": []
+        },
+        {
+          "title": "Telares por Terminar",
+          "showOnSeed": false,
+          "href": "weaving_penultimatepiece.html",
+          "roles": []
+        }
+      ]
+    },
+    {
+      "title": "Inventario",
+      "icon": "fal fa-table",
+      "roles": [],
+      "items": [
+        {
+          "title": "Estado de Inventario",
+          "showOnSeed": false,
+          "href": "inventory_index.html",
+          "roles": []
+        },
+        {
+          "title": " Inventarios Anteriores",
+          "showOnSeed": false,
+          "href": "inventory_inventories.html",
+          "roles": []
+        }
+      ]
+    }
+  ]
+}

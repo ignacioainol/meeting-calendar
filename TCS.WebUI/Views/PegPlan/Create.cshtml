@@ -1,0 +1,514 @@
+﻿@model TCS.EF.Entidades.PegPlan
+
+@{
+    ViewData["Title"] = "Create";
+    ViewData["PageName"] = "pegplan_index";
+    ViewData["Category1"] = "PegPlan";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> PegPlan";
+
+
+    string puntos = ViewBag.coordMalas;
+    var i = "";
+
+
+}
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/summernote/summernote.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+@if (ViewBag.repeat == true)
+{
+    i = "";
+}
+else
+{
+    i = "display:none";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div id="panel-2" class="panel">
+            <div class="panel-hdr">
+                <h2>
+                    Información  <span class="fw-300"><i>básica</i></span>
+                </h2>
+
+                <div class="panel-toolbar" id="panel_repeats" style="@i">
+                    <!-- Button trigger modal -->
+                    @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                        Repeats
+                    </button>*@
+                    <form class="needs-validation" novalidate>
+
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Repeats</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body row">
+                                        <div class="col-md-4 mb-3">
+                                            <label class="control-label">Inicio</label>
+                                            <input id="inicio" type="text"
+                                                   data-inputmask="'alias': 'integer'" class="form-control" required />
+                                            <label class="text-danger" id="ini_val" style="display:none"></label>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="control-label">Fin</label>
+                                            <input id="fin" type="text"
+                                                   data-inputmask="'alias': 'integer'" class="form-control" required />
+                                            <span class="text-danger" id="fin_val" style="display:none"></span>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="control-label">Cantidad</label>
+                                            <input id="cantidad" type="text"
+                                                   data-inputmask="'alias': 'integer'" class="form-control" />
+                                            <span class="text-danger" id="canti" style="display:none"></span>
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" id="cerrar" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="button" id="repeat" class="btn btn-primary">Save</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- Modal -->
+
+                </div>
+            </div>
+
+            <div class="panel-container show">
+                <div class="panel-content p-0">
+                    <form action="" method="post">
+                        <div class="panel-content">
+                            <div class="form-row">
+                                <div class="col-12 mb-3">
+                                    <label class="control-label">Description</label>
+                                    <textarea class="form-control content-area" asp-for="Description"></textarea>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+                                <input hidden asp-for="DraftPlan" />
+                                <input hidden name="data" id="data" value="0" />
+                                <input asp-for="Repeats" class="form-control" hidden />
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="control-label">Code</label>
+                                    <input asp-for="Code" class="form-control" />
+                                    <span asp-validation-for="Code" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-4" style="display:none" id="re">
+                                    <label class="control-label form-label">Repeats</label>
+                                    <select id="RepeatId" class="select2-demo form-control">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3" style="display:none" id="botonElminar">
+                                    <label class="control-label">&nbsp</label>
+                                    <button id="guat" type="button" class="btn btn-warning  btn-block waves-effect waves-themed">Eliminar repeat</button>
+
+                                </div>
+                                <div class="col-md-12 mb-3 text-center">
+                                    <div class="custom-control custom-switch">
+                                        <input asp-for="Authorized" type="checkbox" class="custom-control-input" id="customSwitchIVA" />
+                                        <label class="custom-control-label" for="customSwitchIVA">Autorizado</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="control-label">Shafts</label>
+                                    <input type="text"
+                                           data-inputmask="'alias': 'integer'"
+                                           asp-for="Shafts" class="form-control" autocomplete="off" />
+                                    <span asp-validation-for="Shafts" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="control-label">Ends</label>
+                                    <input type="text"
+                                           data-inputmask="'alias': 'integer'"
+                                           asp-for="Ends" class="form-control" autocomplete="off" />
+                                    <span asp-validation-for="Ends" class="text-danger"></span>
+                                </div>
+
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="control-label">&nbsp</label>
+                                    <button id="SubmitBtn" type="button" class="btn btn-success  btn-block waves-effect waves-themed"> Ajustar grilla</button>
+                                    <button id="SubmitBtn2" hidden type="button" class="btn btn-success  btn-block waves-effect waves-themed"> Ajustar grilla</button>
+                                    <button id="SubmitBtn3" hidden type="button" class="btn btn-success  btn-block waves-effect waves-themed"> Ajustar grilla</button>
+                                </div>
+
+                            </div>
+                            @if (ViewBag.MsgError != null)
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true"><i class="@(Settings.Theme.IconPrefix) fa-times-square"></i></span>
+                                    </button>
+                                    <strong>¡Error!</strong> @ViewBag.MsgError
+                                </div>
+                            }
+                            <div class="panel-content text-center">
+                                <div class="row" id="draw">
+                                    @if (ViewBag.hola != null)
+                                    {
+                                        if (puntos != null)
+                                        {
+                                            @await Component.InvokeAsync("DesignDraw", new { cols = Model.Shafts, rows = Model.Ends, data = Model.DraftPlan, puntos, repeats = Model.Repeats })
+
+                                        }
+                                        else
+                                        {
+                                            @await Component.InvokeAsync("DesignDraw", new { cols = Model.Shafts, rows = Model.Ends, data = Model.DraftPlan, repeats = Model.Repeats })
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        @await Component.InvokeAsync("DesignDraw")
+
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="text-right card-body">
+                            <a asp-action="Index" id="atras" class="btn btn-warning ml-auto mb-3 btn-sm-block">Cancelar</a>
+                            <button class="btn btn-primary ml-auto mb-3 btn-sm-block" type="submit">Guardar</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<nav id ="nav-repeat"class="shortcut-menu" hidden>
+    <button id="button-repeat" style="height: 2em; width:2em; font-size:2.5em"
+            data-toggle="tooltip" data-placement="left"
+            title="Agregar Repetición"
+            class="menu-item btn" type="button">
+        +
+    </button>
+</nav>
+
+@section ScriptsBlock {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script src="~/js/formplugins/inputmask/inputmask.bundle.js"></script>
+    <script src="~/js/numeros.js"></script>
+    <script src="~/js/formplugins/summernote/summernote.js"></script>
+    <script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+    <script>
+        customInputmask.init();
+
+        $(document).ready(function () {
+            $(window).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+
+        });
+
+        const buttonRepeat = document.querySelector('#button-repeat');
+
+        eventListeners();
+        function eventListeners() {
+            buttonRepeat.addEventListener('click', ShowModal);
+        }
+
+        function ShowModal() {
+            $('#exampleModal').modal('show');
+        }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            var hola = $('#Repeats').val();
+            var array = hola.split('|');
+            var s = '<option value ="" disabled>Seleccione</option>';
+            for (var i = 0; i < array.length; i++) {
+                s += '<option value = "' + array[i] + '"> Inicio: ' + array[i].split(',')[0] + ', Fin: ' + array[i].split(',')[1] + ', Repeticiones: ' + array[i].split(',')[2] + ' </option>';
+            }
+            $('#RepeatId').html(s);
+
+            if (hola.length > 1) {
+                $('#botonElminar').show();
+                $('#re').show();
+
+            }
+
+        });
+    </script>
+
+    <script>
+        $('#SubmitBtn2').on('click', function () {
+
+            var _Shafts = $('#Shafts').val();
+            var _Ends = $('#Ends').val();
+            var _Repeats = $('#Repeats').val();
+            var _data = $('#data').val();
+            var container = $("#draw");
+            $.get('@Url.Action("GetColsDraws", "PegPlan")',
+                { Shafts: _Shafts, Ends: _Ends, data: _data, Repeats: _Repeats },
+                function (data) { container.html(data); }
+            );
+        });
+
+         $('#SubmitBtn3').on('click', function () {
+
+            var _Shafts = $('#Shafts').val();
+            var _Ends = $('#Ends').val();
+            var _Repeats = $('#Repeats').val();
+            var _data = $('#DraftPlan').val();
+            var container = $("#draw");
+            $.get('@Url.Action("GetColsDraws", "PegPlan")',
+                { Shafts: _Shafts, Ends: _Ends, data: _data, Repeats: _Repeats },
+                function (data) { container.html(data); }
+            );
+         });
+
+        $('#cerrar').on('click', function () {
+
+            document.getElementById("inicio").value = "";
+            document.getElementById("fin").value = "";
+            document.getElementById("cantidad").value = "";
+            $('#ini_val').hide();
+            $('#fin_val').hide();
+         });
+
+
+    </script>
+
+    <script>
+        $('#repeat').on('click', function () {
+            
+            document.getElementById("ini_val").value = "";
+            document.getElementById("fin_val").value = "";
+            var repeat = $('#Repeats').val();
+            var inicio = parseInt($('#inicio').val());
+            var fin = parseInt($('#fin').val());
+            var cantidad = parseInt($('#cantidad').val());
+            var _Ends = parseInt($('#Ends').val());
+            
+            if (isNaN(inicio) || inicio < 1) {
+                $('#ini_val').show();
+                $('#ini_val').text('Debes ingresar un inicio');
+            }
+            else {
+                $('#ini_val').hide();
+                document.getElementById("ini_val").value = "";
+            }
+            if (isNaN(fin) || fin < 1) {
+                $('#fin_val').show();
+                $('#fin_val').text('Debes ingresar un fin');
+            }
+            else {
+                $('#fin_val').hide();
+                document.getElementById("fin_val").value = "";
+            }
+
+            if (isNaN(cantidad) || cantidad < 1 || inicio >= fin) {
+
+
+                if (isNaN(cantidad) || cantidad < 1) {
+                    $('#canti').show();
+                    $('#canti').text('La cantidad debe ser superior a 0');
+                }
+                if (inicio > fin) {
+                    $('#ini_val').show();
+                    $('#ini_val').text('El inicio debe ser menor');
+
+                }
+                else if (inicio == fin) {
+                    $('#fin_val').show();
+                    $('#fin_val').text('El fin no puede ser igual al inicio');
+
+                }
+            }
+            else {
+                document.getElementById("canti").value = "";
+                $('#canti').hide();
+                if (inicio <= _Ends && fin <= _Ends) {
+
+                    if (inicio != '' && fin != '' && cantidad != '') {
+                        if (repeat == '') {
+                            var result = '' + inicio + ',' + fin + ',' + cantidad + '';
+
+                        }
+                        else {
+                            var result = '|' + inicio + ',' + fin + ',' + cantidad + '';
+
+                        }
+
+                        $('#Repeats').val(repeat + result);
+                        document.getElementById("inicio").value = "";
+                        document.getElementById("fin").value = "";
+                        document.getElementById("cantidad").value = "";
+                        $('#ini_val').hide();
+                        $('#fin_val').hide();
+                        $('#exampleModal').modal('hide');
+                        var hola = $('#Repeats').val();
+                        var array = hola.split('|');
+                        var s = '<option value ="" disabled> Seleccione </option>';
+                        for (var i = 0; i < array.length; i++) {
+                            s += '<option value = "' + array[i] + '"> Inicio: ' + array[i].split(',')[0] + ', Fin: ' + array[i].split(',')[1] + ', Repeticiones: ' + array[i].split(',')[2] + ' </option>';
+                        }
+                        $('#RepeatId').html(s);
+                        $('#botonElminar').show();
+                        $('#re').show();
+                        document.getElementById("ini_val").value = "";
+                        document.getElementById("fin_val").value = "";
+                        $("#SubmitBtn3").click();
+
+
+                    }
+                }
+                else {
+                    if (inicio > _Ends) {
+                        document.getElementById("ini_val").value = "";
+                        $('#ini_val').show();
+                        $('#ini_val').text('Debes ingresar un inicio el porte de la matriz');
+                    }
+                    if (fin > _Ends) {
+                        document.getElementById("fin_val").value = "";
+                        $('#fin_val').show();
+                        $('#fin_val').text('Debes ingresar un fin el porte de la matriz');
+                    }
+
+                }
+
+
+            }
+        });
+    </script>
+
+    <script>
+
+        $("#guat").click(function () {
+
+            var RepeatId = $('#RepeatId option:selected').val();
+            var hola = $('#Repeats').val();
+            var array = hola.split('|');
+
+            array = array.filter(function (item) {
+                return item !== RepeatId
+            })
+
+            //console.log("valores originales :", hola);
+            //console.log("valores filtrados :", array);
+
+            var s = '<option value ="" disabled> Seleccione </option>';
+            for (var i = 0; i < array.length; i++) {
+                s += '<option value = "' + array[i] + '"> Inicio: ' + array[i].split(',')[0] + ', Fin: ' + array[i].split(',')[1] + ', Repeticiones: ' + array[i].split(',')[2] + ' </option>';
+            }
+            $('#RepeatId').html(s);
+
+            var x = '';
+
+            for (var i = 0; i < array.length; i++) {
+                if (i == array.length - 1) {
+                    x = x + array[i]
+                }
+                else {
+
+                    x = x + array[i] + '|'
+                }
+
+            }
+            document.getElementById("Repeats").value = "";
+            $('#Repeats').val(x);
+            if (x.length > 2) {
+                $('#botonElminar').show();
+                $('#re').show();
+            }
+            else {
+                $('#botonElminar').hide();
+                $('#re').hide();
+            }
+            $("#SubmitBtn3").click();
+        });
+    </script>
+
+    <script>
+        $("#SubmitBtn").click(function () {
+
+            Swal.fire({
+                title: 'Ajustando grilla',
+                text: 'Al ajustar la grila se perdera el dibujo anterior.',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Continuar',
+                cancelButtonText: "Volver",
+                customClass: {
+                    confirmButton: 'btn btn-primary btn-lg',
+                    cancelButton: 'btn btn-secondary btn-lg'
+                }
+            }).then((result) => {
+
+                if (result.value) {
+                    $("#panel_repeats").show();
+                    $("#SubmitBtn2").click();
+                    document.getElementById("DraftPlan").value = "";
+                    document.querySelector('#nav-repeat').hidden = false;
+                }
+            });
+        });
+
+
+        $('.content-area').summernote({
+            height: 150,
+            tabsize: 2,
+            placeholder: "Descripción aqui...",
+            dialogsFade: true,
+            toolbar: [
+					@* ['style', ['style']], *@
+        ['font', ['strikethrough', 'superscript', 'subscript']],
+        ['font', ['bold', 'italic', 'underline', 'clear']],
+            ['fontsize', ['fontsize']],
+					@* ['fontname', ['fontname']], *@
+        ['color', ['color']],
+        ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']]
+            ['table', ['table']],
+					@* ['insert', ['link', 'picture', 'video']],*@
+        ['view', ['codeview']]
+				]
+			});
+    </script>
+
+
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+
+
+}

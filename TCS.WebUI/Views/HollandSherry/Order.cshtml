@@ -1,0 +1,588 @@
+﻿ @model TCS.WebUI.Models.HeaderOrderModel
+@{
+    ViewData["Title"] = SharedLocalizer["ordertracking"].ToString();
+    ViewData["PageName"] = "hollandsherry_order";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i>" + SharedLocalizer["ordertracking"].ToString();
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+    <link rel="stylesheet" href="~/css/notifications/sweetalert2/sweetalert2.min.css">
+}
+<head>
+</head>
+
+<div class="panel">
+    <div class="panel-hdr">
+        <div style="width : 97%; font-size : 0.9rem">
+            <strong>Enter order number</strong>
+        </div>
+    </div>
+    <div class="form-group row pt-3 pb-0 pl-3 align-items-center" style="height:65px; width:100%">
+        <input id="searchOrderInput" type="text" class="form-control mr-2 ml-2" style="width:50%;" placeholder="e.g. P94618">
+        <button id="searchOrder" type="button" class="btn btn-primary">@SharedLocalizer["search"]</button>
+    </div>
+</div>
+<div id="panel-info" hidden class="panel">
+    <div class="panel-hdr">
+        <div style="width : 97%">
+        </div>
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            <div id="div-panel-header">
+                <table cellpadding="1" id="dt-header" class="table table-bordered w-100">
+                    <thead class="bg-primary-500">
+                        <tr>
+                            <th>Order No</th>
+                            <th>Delivery Address</th>
+                            <th>Date Ordered</th>
+                            <th>Delivery</th>
+                            <th>Payment Terms</th>
+                            <th>Terms descr</th>
+                            <th>Samples</th>
+                            <th>Mtrs Ordered</th>
+                        </tr>
+                    </thead>
+                    <tbody id="headerOrder">
+                    </tbody>
+                </table>
+            </div>
+            <div class="border p-1 rounded mb-0">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#div-panel-table-order-details">
+                            Order Details
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#div-panel-table-dispatch-details">
+                            Dispatch Details
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#div-panel-table-order-sumary">
+                            Order Summary
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content border border-top-0 p-3">
+                    <div class="tab-pane fade show active" id="div-panel-table-order-details" role="tabpanel">
+                        <table id="dt-order_details" class="table-custom">
+                            <thead class="bg-primary-500">
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Piece No</th>
+                                    <th>Yarn Status</th>
+                                    <th>Quality Design Shade</th>
+                                    <th>Customer Ref</th>
+                                    <th>Length</th>
+                                    <th>Job No</th>
+                                    <th>Ticket Issued</th>
+                                    <th>To Warp</th>
+                                    <th>Warped</th>
+                                    <th>In Loom</th>
+                                    <th>Loom No</th>
+                                    <th>Woven</th>
+                                    <th>Mended</th>
+                                    <th>In Finish</th>
+                                    <th>Out Finish</th>
+                                    <th>In WHSE</th>
+                                    <th>Despatched</th>
+                                    <th>Invoice No</th>
+                                    <th>Method of Shipment</th>
+                                    <th>Finish Length</th>
+                                    <th>Invoice Length</th>
+                                </tr>
+                            </thead>
+                            <tbody id="contenidoOrderDetails">
+                            </tbody>
+                        </table>
+                        <div id="panel-detailtotal">
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="div-panel-table-dispatch-details" role="tabpanel">
+                        <table cellpadding="1" class="table-custom">
+                            <thead class="bg-primary-500">
+                                <tr>
+                                    <th>Customer Ref</th>
+                                    <th>Piece No</th>
+                                    <th>Quality Design Shade</th>
+                                    <th>Date Despatched</th>
+                                    <th>Date Invoiced</th>
+                                    <th>Carton No.</th>
+                                    <th>Delivery Note No.</th>
+                                    <th>Invoice No.</th>
+                                    <th>Mtrs Despatched</th>
+                                </tr>
+                            </thead>
+                            <tbody id="contenidoDispatchDetails">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane fade" id="div-panel-table-order-sumary" role="tabpanel">
+                        <table cellpadding="1" class="table-custom">
+                            <thead class="bg-primary-500">
+                                <tr>
+                                    <th>Quality Design Shade</th>
+                                    <th>Customer Reference</th>
+                                    <th>Mtrs Ordered</th>
+                                    <th>Mtrs Woven</th>
+                                    <th>Mtrs Finished</th>
+                                    <th>Mtrs Invoiced</th>
+                                    <th>Mtrs Despatched</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="contenidoOrderSummary">
+                            </tbody>
+                            <tfoot id="footOrderSummary">
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    #panel-message {
+        font-size: 2rem;
+        padding-left: 1rem;
+        padding-top: 0.3rem;
+    }
+    #panel-error {
+        font-size: 1.1rem;
+        padding-left: 1rem;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        color: #FF0000;
+        background: rgba(255, 0, 0, 0.13);
+        border: 0.12rem solid red;
+        border-radius: 0.6rem;
+        font-weight: bold;
+    }
+
+    #panel-detailtotal {
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        margin-left: 1rem;
+    }
+
+    #div-panel-table-order-details {
+        overflow-x: scroll;
+        overflow-y: auto;
+        max-height: 45vh;
+    }
+
+    #div-panel-table-dispatch-details {
+        overflow-x: auto;
+        overflow-y: auto;
+        max-height: 45vh;
+    }
+
+    #div-panel-table-order-sumary {
+        overflow-x: auto;
+        max-height: 45vh;
+    }
+
+    #div-panel-header {
+        overflow-x: auto;
+    }
+
+    .span-detailtotal {
+        font-size: 1.3rem;
+        margin-right: 2rem;
+    }
+
+    .number-tableformart {
+        text-align:right;
+    }
+
+    #footOrderSummary {
+        font-weight: bold;
+    }
+    .sweet-title {
+        color: #FF0000;
+    }
+    .table-custom th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: #1976D2;
+        padding: 0.8rem;
+    }
+
+    .table-custom td {
+        border: 0.02rem solid lightgray;
+        padding: 0.8rem;
+    }
+
+    .table-custom tbody tr:hover {
+        background: #E9E9E9;
+        box-shadow: 0rem 0rem 1rem #E9E9E9;
+    }
+    .table-custom {
+        white-space: nowrap;
+        table-layout: auto;
+        width:99%;
+    }
+</style>
+@section ScriptsBlock
+{
+    <script src="~/js/datagrid/datatables/datatables.bundle.js" > </script >
+    <script src="~/js/datagrid/datatables/datatables.export.js" > </script >
+    <script src="~/js/notifications/sweetalert2/sweetalert2.min.js"></script>
+    @{ if (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "es")
+        {
+             <script src="~/js/datagrid/datatables/datatables.bundle.es.js" > </script >
+        }
+    }
+    <script >
+
+    </script >
+    <script>
+        const searchOrderInput = document.querySelector('#searchOrderInput');
+        const searchOrder = document.querySelector('#searchOrder');
+
+        document.addEventListener('DOMContentLoaded', () => {
+        });
+
+        searchOrder.addEventListener('click', () =>
+        {
+            Search();
+        });
+
+        searchOrderInput.addEventListener('keyup', () => {
+            if (event.keyCode === 13) {
+                Search();
+            }
+        });
+
+        function Search()
+        {
+            const orderNo = searchOrderInput.value.toUpperCase();
+
+            document.querySelector("#panel-info").hidden = true;
+
+            let reg = new RegExp(/^P\d\d\d\d\d/);
+            if (reg.test(orderNo)) {
+                Load(orderNo);
+            }
+            else
+            {
+                if (orderNo.trim().length === 0)
+                {
+                    Swal.fire({
+                        title: "Order number cannot be empty.",
+                        confirmButtonText: "Close",
+                    });
+                }
+                else
+                {
+                    Swal.fire({
+                        title: "Invalid order number.",
+                        confirmButtonText: "Close",
+                    });
+                }
+            }
+        }
+
+        async function Load(orderNo)
+        {
+            const url = "https://services.crossvillefabric.com/service/iWarehouse.asmx/GetSalesOrder?OrderNo=" + orderNo;
+            LoadSpinner();
+            try {
+                const respuesta = await fetch(url);
+                const resultado = await respuesta.json();
+
+                ShowHeader(resultado);
+                ShowOrderDetails(resultado);
+                ShowDispatchDetails(resultado);
+                ShowOrderSummary(resultado);
+                ShowMeters(resultado);
+
+                document.querySelector("#panel-info").hidden = false;
+                Swal.close();
+            }
+            catch (e)
+            {
+                console.error(e);
+                document.querySelector("#panel-info").hidden = true;
+                Swal.close();
+
+                Swal.fire({
+                    title: "Order not found.",
+                    confirmButtonText: "Close",
+                });
+            }
+        }
+
+            function ShowHeader(datos) {
+                const contenido = document.getElementById('headerOrder');
+                let html = '';
+                html += `<td>${datos.Order_No}</td>
+                        <td>${datos.Delivery_Address}</td>
+                        <td>${datos.Date_Ordered}</td>
+                        <td>${datos.Pieces[0].Delivery}</td>
+                        <td>${datos.Payment_Terms}</td>
+                        <td>${datos.Termsdescr}</td>
+                        <td>${datos.Samples}</td>
+                        <td class = "number-tableformart">${datos.Mtrs_Ordered}</td>`;
+
+                contenido.innerHTML = html;
+            }
+
+            function ShowOrderDetails(datos) {
+                const contenido = document.getElementById('contenidoOrderDetails');
+                let html = '';
+                let backgroudColor = "";
+                let QualityDesignShadePast = '';
+                datos.Pieces.forEach(data => {
+                    const { Status, Piece_No, Yarn_Status, Quality, Design, Warp_Shade, Weft_Shade, Customer_No, Length, Job_No
+                        , Ticket_Issued, To_Warp, Warp_Date, InLoom_Date, Loom_No, OOLoom_Date, Mended_Date, ToFinish_Date, Date_Scoured
+                        , InWarehouse_Date, Despatch_Date, Invoice_No, Finish_Length, Invoice_Length, Mode_Of_Transport } = data;
+                    if (Status === 'Cancelled') { backgroudColor = "red"; }
+                    const QualityDesignShade = `${Quality} ${Design} ${Warp_Shade}${Weft_Shade}`;
+
+                    if (QualityDesignShade != QualityDesignShadePast && QualityDesignShadePast != '') {
+                        html += `<tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>`;
+                        QualityDesignShadePast = QualityDesignShade;
+                    }
+                    else {
+                        QualityDesignShadePast = QualityDesignShade;
+                    }
+
+                    html += `<tr>
+                                    <td style ="'background-color': ${backgroudColor}">${Status}</td>
+                                    <td>${Piece_No.trim()}</td>
+                                    <td>${Yarn_Status}</td>
+                                    <td>${QualityDesignShade}</td>
+                                    <td>${Customer_No.trim()}</td>
+                                    <td class = "number-tableformart">${Length}</td>
+                                    <td>${Job_No.trim()}</td>
+                                    <td>${(Ticket_Issued)? Ticket_Issued.replace('0:00:00', ' '):''}</td>
+                                    <td>${(To_Warp)? To_Warp.replace('0:00:00', ' '):''}</td>
+                                    <td>${(Warp_Date) ? Warp_Date.replace('0:00:00', ' ') : ''}</td>
+                                    <td>${(InLoom_Date) ? InLoom_Date.replace('0:00:00', ' ') : ''}</td>
+                                    <td>${Loom_No.trim()}</td>
+                                    <td>${(OOLoom_Date) ? OOLoom_Date.replace('0:00:00', ' ') : ''}</td>
+                                    <td>${(Mended_Date) ? Mended_Date.replace('0:00:00', ' ') : ''}</td>
+                                    <td>${(ToFinish_Date) ? ToFinish_Date.replace('0:00:00', ' ') : ''}</td>
+                                    <td>${(Date_Scoured) ? Date_Scoured.replace('0:00:00', ' ') : ''}</td>
+                                    <td>${(InWarehouse_Date) ? InWarehouse_Date.replace('0:00:00', ' ') : ''}</td>
+                                    <td>${(Despatch_Date) ? Despatch_Date.replace('0:00:00', ' ') : ''}</td>
+                                    <td>${Invoice_No}</td>
+                                    <td>${Mode_Of_Transport}</td>
+                                    <td class = "number-tableformart">${Finish_Length}</td>
+                                    <td class = "number-tableformart">${Invoice_Length}</td>
+                                </tr>`;
+
+                });
+
+                contenido.innerHTML = html;
+            }
+
+            function ShowDispatchDetails(datos) {
+                const contenido = document.getElementById('contenidoDispatchDetails');
+                let html = '';
+                datos.Pieces.filter(pieza => pieza.Status === "Despatched").forEach(data => {
+                    const { Customer_No, Piece_No, Yarn_Status, Quality, Design, Warp_Shade, Weft_Shade, Despatch_Date, Date_Invoiced, Carton_No
+                        , Delivery_Note_No, Invoice_No, Invoice_Length } = data;
+                    html += `<tr>
+                             <td>${Customer_No}</td>
+                             <td>${Piece_No.trim()}</td>
+                             <td>${Yarn_Status.trim()} ${Quality.trim()} ${Design.trim()} ${Warp_Shade.trim()}${Weft_Shade.trim()}</td>
+                             <td>${(Despatch_Date)? Despatch_Date.replace('0:00:00', ' '):''}</td>
+                             <td>${(Date_Invoiced)? Date_Invoiced.replace('0:00:00', ' '):''}</td>
+                             <td>${Carton_No}</td>
+                             <td>${Delivery_Note_No}</td>
+                             <td>${Invoice_No}</td>
+                             <td class = "number-tableformart">${Invoice_Length}</td>
+                          </tr>`;
+                });
+
+                contenido.innerHTML = html;
+            }
+
+            function ShowOrderSummary(datos) {
+                const contenido = document.querySelector('#contenidoOrderSummary');
+                const foot = document.querySelector('#footOrderSummary');
+                let htmlContenido = '';
+                let htmlFoot = '';
+                //let Piezas = [];
+
+                //datos.Pieces.filter(pieza => pieza.Status === "Despatched").forEach(data =>
+                //{
+                //    Piezas.push(new Pieza(data.Design, data.Quality, data.Weft_Shade, data.Warp_Shade, data.Yarn_Status))
+                //});
+
+                //console.log(Piezas);
+
+                //const groupBy = (array, key) => {
+                //    return array.reduce((result, currentValue) => {
+                //        (result[currentValue.Full] = result[currentValue.Full] || []).push(
+                //            currentValue
+                //        );
+                //        return result;
+                //    }, {});
+                //};
+
+                //const piezasAgrupadas = groupBy(Piezas, "Full");
+                //console.log(piezasAgrupadas);
+                const Piezas = datos.Pieces; //.filter(pieza => pieza.Status === "Despatched");
+                const result = Object.values(Piezas.reduce((a, { Design, Quality, Warp_Shade, Weft_Shade, Yarn_Status, Length, Greasy_Length, Finish_Length, Cut_Length, Invoice_Length, Customer_No}) => {
+                    var key = [Design, Quality, Warp_Shade, Weft_Shade, Yarn_Status].join('|');
+                    (a[key] || (a[key] = { Design, Quality, Warp_Shade, Weft_Shade, Yarn_Status, PiezasAgrupadas: [] })).PiezasAgrupadas.push({ Design, Quality, Warp_Shade, Weft_Shade, Yarn_Status, Length, Greasy_Length, Finish_Length, Cut_Length, Invoice_Length, Customer_No });
+                    return a;
+                }, {}));
+
+                result.forEach(data => {
+                    data.MtrsOrdered = data.PiezasAgrupadas.reduce((total, pieza) => total + pieza.Length, 0);
+                    data.MtrsWoven = data.PiezasAgrupadas.reduce((total, pieza) => total + pieza.Greasy_Length, 0);
+                    data.MtrsFinished = data.PiezasAgrupadas.reduce((total, pieza) => total + pieza.Finish_Length, 0);
+                    data.MtrsInvoiced = data.PiezasAgrupadas.reduce((total, pieza) => total + pieza.Cut_Length, 0);
+                    data.MtrsDespatched = data.PiezasAgrupadas.reduce((total, pieza) => total + pieza.Invoice_Length, 0);
+                    data.Balance = data.PiezasAgrupadas.reduce((total, pieza) => total + pieza.Length, 0) - data.PiezasAgrupadas.reduce((total, pieza) => total + pieza.Invoice_Length, 0);
+                    data.CustomerNo = data.PiezasAgrupadas[0].Customer_No;
+                });
+
+                result.forEach(data => {
+                    htmlContenido +=
+                     `<tr>
+                            <td>${data.Yarn_Status.trim()} ${data.Quality.trim()} ${data.Design.trim()} ${data.Warp_Shade.trim()}${data.Weft_Shade.trim()}</td>
+                            <td>${data.CustomerNo.trim()}</td>
+                            <td class = "number-tableformart">${data.MtrsOrdered.toFixed(1)}</td>
+                            <td class = "number-tableformart">${data.MtrsWoven.toFixed(1)}</td>
+                            <td class = "number-tableformart">${data.MtrsFinished.toFixed(1)}</td>
+                            <td class = "number-tableformart">${data.MtrsInvoiced.toFixed(1)}</td>
+                            <td class = "number-tableformart">${data.MtrsDespatched.toFixed(1)}</td>
+                            <td class = "number-tableformart">${data.Balance.toFixed(1)}</td>
+                     </tr>`;
+                });
+
+                htmlFoot += `<tr>
+                                <td></td>
+                                <td>Total</td>
+                                <td class = "number-tableformart">${result.reduce((total, pieza) => total + pieza.MtrsOrdered, 0).toFixed(1)}</td>
+                                <td class = "number-tableformart">${result.reduce((total, pieza) => total + pieza.MtrsWoven, 0).toFixed(1)}</td>
+                                <td class = "number-tableformart">${result.reduce((total, pieza) => total + pieza.MtrsFinished, 0).toFixed(1)}</td>
+                                <td class = "number-tableformart">${result.reduce((total, pieza) => total + pieza.MtrsInvoiced, 0).toFixed(1)}</td>
+                                <td class = "number-tableformart">${result.reduce((total, pieza) => total + pieza.MtrsDespatched, 0).toFixed(1)}</td>
+                                <td class = "number-tableformart">${result.reduce((total, pieza) => total + pieza.Balance, 0).toFixed(1)}</td>
+                          </tr>`;
+
+                contenido.innerHTML = htmlContenido;
+                foot.innerHTML = htmlFoot;
+            }
+
+        function ShowMeters(datos)
+        {
+            const panelDetailtotal = document.querySelector('#panel-detailtotal');
+
+            while (panelDetailtotal.firstChild)
+            {
+                panelDetailtotal.removeChild(panelDetailtotal.firstChild);
+            }
+
+            const mtrsWoven = document.createElement('span');
+            const mtrsInspected = document.createElement('span');
+            const mtrsInvoiced = document.createElement('span');
+            const mtrsDespatched = document.createElement('span');
+
+            let totalWoven = datos.Pieces.reduce((total, order) => total + order.Greasy_Length, 0);
+            let totalInspected = datos.Pieces.reduce((total, order) => total + order.Finish_Length, 0);
+            let totalInvoiced = datos.Pieces.reduce((total, order) => total + order.Cut_Length, 0);
+            let totalDespatched = datos.Pieces.reduce((total, order) => total + order.Invoice_Length, 0);
+
+            mtrsWoven.classList.add("span-detailtotal");
+            mtrsWoven.innerHTML = `${totalWoven.toFixed(1)} Mtrs Woven`;
+
+            mtrsInspected.classList.add("span-detailtotal");
+            mtrsInspected.innerHTML = `${totalInspected.toFixed(1)} Mtrs Inspected`;
+
+            mtrsInvoiced.classList.add("span-detailtotal");
+            mtrsInvoiced.innerHTML = `${totalInvoiced.toFixed(1)} Mtrs Invoiced`;
+
+            mtrsDespatched.classList.add("span-detailtotal");
+            mtrsDespatched.innerHTML = `${totalDespatched.toFixed(1)} Mtrs Despatched`;
+
+            panelDetailtotal.appendChild(mtrsWoven);
+            panelDetailtotal.appendChild(mtrsInspected);
+            panelDetailtotal.appendChild(mtrsInvoiced);
+            panelDetailtotal.appendChild(mtrsDespatched);
+        }
+
+        function LoadSpinner() {
+            let timerInterval;
+
+            Swal.fire({
+                title: 'Loading',
+                didOpen: () => {
+                    Swal.showLoading()
+                    timerInterval = setInterval(() => {
+                        const content = Swal.getContent()
+                        if (content) {
+                            const b = content.querySelector('b')
+                            if (b) {
+                                b.textContent = Swal.getTimerLeft()
+                            }
+                        }
+                    }, 100)
+                },
+                allowOutsideClick: () => !swal.isLoading(),
+                willClose: () => {
+                    clearInterval(timerInterval)
+                }
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.timer) {
+                }
+            })
+        }
+
+            //class Pieza
+            //{
+            //    constructor(Design, Quality, Warp_Shade, Weft_Shade, Yarn_Status)
+            //    {
+            //        this.Design = Design;
+            //        this.Quality = Quality;
+            //        this.Warp_Shade = Warp_Shade;
+            //        this.Weft_Shade = Weft_Shade;
+            //        this.Yarn_Status = Yarn_Status;
+            //    }
+
+            //    get Full() {
+            //        return `${this.Design} ${this.Quality} ${this.Warp_Shade} ${this.Weft_Shade} ${this.Yarn_Status}`;
+            //    }
+            //}
+    </script>
+}
+

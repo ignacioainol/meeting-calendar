@@ -1,0 +1,48 @@
+﻿@model DEVTOOLS.EF.Entidades.Entity
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Entity</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Project)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Project.ProjectName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EntityName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EntityName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EntityTableName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EntityTableName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EntityProjectDatabaseSource)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EntityProjectDatabaseSource.DatabaseSourceName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Active)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Active)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.EntityId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

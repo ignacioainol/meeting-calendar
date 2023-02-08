@@ -1,0 +1,66 @@
+﻿@using System.Globalization
+
+<!DOCTYPE html>
+<html class="default-style" lang="es-cl">
+<head>
+    <base href="@ViewData["wwwrootpath"]/" />
+    <title>@ViewData["Title"]</title>
+    <meta charset="utf-8">
+    @* <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="x-ua-compatible" content="IE=edge,chrome=1">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900" rel="stylesheet"> *@
+
+    <!-- Icon fonts -->
+    <link rel="stylesheet" href="@ViewData["wwwrootpath"]/assets/vendor/fonts/fontawesome.css">
+    <link rel="stylesheet" href="@ViewData["wwwrootpath"]/assets/vendor/fonts/ionicons.css">
+    <link rel="stylesheet" href="@ViewData["wwwrootpath"]/assets/vendor/fonts/linearicons.css">
+    <link rel="stylesheet" href="@ViewData["wwwrootpath"]/assets/vendor/fonts/open-iconic.css">
+    <link rel="stylesheet" href="@ViewData["wwwrootpath"]/assets/vendor/fonts/pe-icon-7-stroke.css">
+    <link rel="stylesheet" href="@ViewData["wwwrootpath"]/assets/Fonts/Fonts.css" />
+
+    <!-- Core stylesheets -->
+    @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css" class="theme-settings-bootstrap-css">*@
+    <link rel="stylesheet" href="@ViewData["wwwrootpath"]/assets/vendor/css/rtl/bootstrap.css" class="theme-settings-bootstrap-css">
+    <link rel="stylesheet" href="@ViewData["wwwrootpath"]/assets/vendor/css/appwork.css" class="theme-settings-appwork-css">
+    <link rel="stylesheet" href="@ViewData["wwwrootpath"]/assets/vendor/css/rtl/theme-air.css" class="theme-settings-theme-css">
+    <link rel="stylesheet" href="@ViewData["wwwrootpath"]/assets/vendor/css/rtl/colors.css" class="theme-settings-colors-css">
+    <link rel="stylesheet" href="@ViewData["wwwrootpath"]/assets/vendor/css/rtl/uikit.css">
+    @* <link rel="stylesheet" href="@ViewData["wwwrootpath"]/assets/css/demo.css"> *@
+
+    @* <script src="@ViewData["wwwrootpath"]/assets/vendor/js/material-ripple.js"></script>
+    <script src="@ViewData["wwwrootpath"]/assets/vendor/js/layout-helpers.js"></script> *@
+
+    <!-- Core scripts -->
+    @*<script src="assets/vendor/js/pace.js"></script>*@
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+
+    <!-- Libs -->
+    @* <link rel="stylesheet" href="@ViewData["wwwrootpath"]/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css"> *@
+    <link rel="stylesheet" href="@ViewData["wwwrootpath"]/Araucoapp.css">
+
+    <script src="@ViewData["wwwrootpath"]/assets/vendor/libs/numeral/numeral.js"></script>
+    @* <script src="@ViewData["wwwrootpath"]/assets/vendor/libs/select2/select2.js"></script> *@
+
+    @RenderSection("Styles", required: false)
+</head>
+<body style="background-color:white!important">
+
+    @RenderBody()
+
+    <!-- Core scripts -->
+    <script src="@ViewData["wwwrootpath"]/assets/vendor/libs/popper/popper.js"></script>
+    <script src="@ViewData["wwwrootpath"]/assets/vendor/js/bootstrap.js"></script>
+    <script src="@ViewData["wwwrootpath"]/assets/vendor/js/sidenav.js"></script>
+    <script src="@ViewData["wwwrootpath"]/assets/vendor/libs/validate/jquery.validate.js"></script>
+    <script src="@ViewData["wwwrootpath"]/assets/vendor/libs/validate/jquery.validate.unobtrusive.js"></script>
+    <script src="@ViewData["wwwrootpath"]/assets/vendor/libs/growl/growl.js"></script>
+
+    <!-- Scripts -->
+    <script src="@ViewData["wwwrootpath"]/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="@ViewData["wwwrootpath"]/assets/js/demo.js"></script>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

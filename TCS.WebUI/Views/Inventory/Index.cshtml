@@ -1,0 +1,426 @@
+﻿@model TCS.WebUI.Controllers.InventoryData
+@{
+    ViewData["Title"] = SharedLocalizer["inventorydashboard"].ToString();
+    ViewData["PageName"] = "inventory_index";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> " + SharedLocalizer["inventorydashboard"].ToString();
+}
+@section HeadBlock
+ {
+    <link rel="stylesheet" href="~/css/notifications/sweetalert2/sweetalert2.min.css">
+}
+<div class="flex-container">
+    <div class="flex-item">
+        <div class="card-header_custom">
+            <h3>Inventario Actual</h3>
+        </div>
+        <div class="card-body_custom--first">
+            <p><strong>Fecha Inicio: @ViewBag.StartDate</strong></p>
+            <p><strong>Iniciado por: @ViewBag.Creator</strong></p>
+            <p><strong>Tiempo Transcurrido: @ViewBag.Duration</strong></p>
+        </div>
+        <div class="card-footer_custom">
+            @*<form asp-action="CloseInventory">*@
+            <p><strong>Para cerrar el inventario actual, presione el botón.</strong></p>
+            <button id="closeInventory" type="button" class="btn btn-warning">
+                <strong class="h5">@SharedLocalizer["closeinventory"]</strong>
+            </button>
+            @*<button id="closeInventory" type="submit" value="CloseInventory" class="btn btn-warning">
+                    <strong class="h5">@SharedLocalizer["closeinventory"]</strong>
+                </button>*@
+            @*</form>*@
+        </div>
+    </div>
+    <div class="flex-item">
+        <a href="@Url.Action("GeneralInventory", "Inventory")">
+            <div class="card-header_custom">
+                <h3>@SharedLocalizer["generalinventory"]</h3>
+            </div>
+            <div class="card-body_custom">
+                <p><strong>@SharedLocalizer["progress"]</strong></p>
+                <p><strong>Terminado: @Model.PorcentajeGeneral% | @SharedLocalizer["pieces"]: @Model.EncontradaGeneral @SharedLocalizer["of"] @Model.TotalGeneral </strong></p>
+                <p><strong>Fecha Inicio: @Model.PrimerScannGeneral </strong></p>
+                <div class="panel">
+                    <canvas id="timeSeries0" width="200" height="120" style="background-color:white"></canvas>
+                </div>
+                <div class="progress_custom progress">
+                    <div class="progress-bar bg-success" style="width:@Model.PorcentajeGeneralEntero%"></div>
+                </div>
+                </div>
+        </a>
+    </div>
+    <div class="flex-item">
+        <a href="@Url.Action("ToWarp", "Inventory")">
+            <div class="card-header_custom">
+                <h3>@SharedLocalizer["towarp"]</h3>
+            </div>
+            <div class="card-body_custom">
+                <p><strong>@SharedLocalizer["progress"]</strong></p>
+                <p><strong>Terminado: @Model.DepartmentsData()[6].Porcentaje% | @SharedLocalizer["pieces"]: @Model.DepartmentsData()[6].Encontrada @SharedLocalizer["of"] @Model.DepartmentsData()[6].Total </strong></p>
+                <p><strong>Fecha Inicio: @Model.DepartmentsData()[6].PrimerScann </strong></p>
+                <div class="panel">
+                    <canvas id="timeSeries1" width="200" height="120" style="background-color:white"></canvas>
+                </div>
+                <div class="progress_custom progress">
+                    <div class="progress-bar bg-success" style="width:@Model.DepartmentsData()[6].PorcentajeEntero%"></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="flex-item">
+        <a href="@Url.Action("Warping", "Inventory")">
+            <div class="card-header_custom">
+                <h3>@SharedLocalizer["warping"]</h3>
+            </div>
+            <div class="card-body_custom">
+                <p><strong>@SharedLocalizer["progress"]</strong></p>
+                <p><strong>Terminado: @Model.DepartmentsData()[5].Porcentaje% | @SharedLocalizer["pieces"]: @Model.DepartmentsData()[5].Encontrada @SharedLocalizer["of"] @Model.DepartmentsData()[5].Total </strong></p>
+                <p><strong>Fecha Inicio: @Model.DepartmentsData()[5].PrimerScann </strong></p>
+                <div class="panel">
+                    <canvas id="timeSeries2" width="200" height="120" style="background-color:white"></canvas>
+                </div>
+                <div class="progress_custom progress">
+                    <div class="progress-bar bg-success" style="width:@Model.DepartmentsData()[5].PorcentajeEntero%"></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="flex-item">
+        <a href="@Url.Action("Weaving", "Inventory")">
+            <div class="card-header_custom">
+                <h3>@SharedLocalizer["weaving"]</h3>
+            </div>
+            <div class="card-body_custom">
+                <p><strong>@SharedLocalizer["progress"]</strong></p>
+                <p><strong>Terminado: @Model.DepartmentsData()[0].Porcentaje% | @SharedLocalizer["pieces"]: @Model.DepartmentsData()[0].Encontrada @SharedLocalizer["of"] @Model.DepartmentsData()[0].Total </strong></p>
+                <p><strong>Fecha Inicio: @Model.DepartmentsData()[0].PrimerScann </strong></p>
+                <div class="panel">
+                    <canvas id="timeSeries3" width="200" height="120" style="background-color:white"></canvas>
+                </div>
+                <div class="progress_custom progress">
+                    <div class="progress-bar bg-success" style="width:@Model.DepartmentsData()[0].PorcentajeEntero%"></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="flex-item">
+        <a href="@Url.Action("Mending", "Inventory")">
+            <div class="card-header_custom">
+                <h3>@SharedLocalizer["mending"]</h3>
+            </div>
+            <div class="card-body_custom">
+                <p><strong>@SharedLocalizer["progress"]</strong></p>
+                <p><strong>Terminado: @Model.DepartmentsData()[1].Porcentaje% | @SharedLocalizer["pieces"]: @Model.DepartmentsData()[1].Encontrada @SharedLocalizer["of"] @Model.DepartmentsData()[1].Total </strong></p>
+                <p><strong>Fecha Inicio: @Model.DepartmentsData()[1].PrimerScann </strong></p>
+                <div class="panel">
+                    <canvas id="timeSeries4" width="200" height="120" style="background-color:white"></canvas>
+                </div>
+                <div class="progress_custom progress">
+                    <div class="progress-bar bg-success" style="width:@Model.DepartmentsData()[1].PorcentajeEntero%"></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="flex-item">
+        <a href="@Url.Action("Finish", "Inventory")">
+            <div class="card-header_custom">
+                <h3>@SharedLocalizer["finish"]</h3>
+            </div>
+            <div class="card-body_custom">
+                <p><strong>@SharedLocalizer["progress"]</strong></p>
+                <p><strong>Terminado: @Model.DepartmentsData()[2].Porcentaje% | @SharedLocalizer["pieces"]: @Model.DepartmentsData()[2].Encontrada @SharedLocalizer["of"] @Model.DepartmentsData()[2].Total </strong></p>
+                <p><strong>Fecha Inicio: @Model.DepartmentsData()[2].PrimerScann </strong></p>
+                <div class="panel">
+                    <canvas id="timeSeries5" width="200" height="120" style="background-color:white"></canvas>
+                </div>
+                <div class="progress_custom progress">
+                    <div class="progress-bar bg-success" style="width:@Model.DepartmentsData()[2].PorcentajeEntero%"></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="flex-item">
+        <a href="@Url.Action("DispatchWarehouse", "Inventory")">
+            <div class="card-header_custom">
+                <h3>@SharedLocalizer["dispatchwarehouse"]</h3>
+            </div>
+            <div class="card-body_custom">
+                <p><strong>@SharedLocalizer["progress"]</strong></p>
+                <p><strong>Terminado: @Model.DepartmentsData()[4].Porcentaje% | @SharedLocalizer["pieces"]: @Model.DepartmentsData()[4].Encontrada @SharedLocalizer["of"] @Model.DepartmentsData()[4].Total </strong></p>
+                <p><strong>Fecha Inicio: @Model.DepartmentsData()[4].PrimerScann </strong></p>
+                <div class="panel">
+                    <canvas id="timeSeries6" width="200" height="120" style="background-color:white"></canvas>
+                </div>
+                <div class="progress_custom progress">
+                    <div class="progress-bar bg-success" style="width:@Model.DepartmentsData()[4].PorcentajeEntero%"></div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="flex-item">
+        <a href="@Url.Action("Inspection", "Inventory")">
+            <div class="card-header_custom">
+                <h3>@SharedLocalizer["inspection"]</h3>
+            </div>
+            <div class="card-body_custom">
+                <p><strong>@SharedLocalizer["progress"]</strong></p>
+                <p><strong>Terminado: @Model.DepartmentsData()[3].Porcentaje% | @SharedLocalizer["pieces"]: @Model.DepartmentsData()[3].Encontrada @SharedLocalizer["of"] @Model.DepartmentsData()[3].Total </strong></p>
+                <p><strong>Fecha Inicio: @Model.DepartmentsData()[3].PrimerScann </strong></p>
+                <div class="panel">
+                    <canvas id="timeSeries7" width="200" height="120" style="background-color:white"></canvas>
+                </div>
+                <div class="progress_custom progress">
+                    <div class="progress-bar bg-success" style="width:@Model.DepartmentsData()[3].PorcentajeEntero%"></div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<style>
+    .card-header_custom {
+        text-align: center;
+        height: 3.5em;
+        border-radius: 5px 5px 0px 0px;
+        background: #038756;
+        color: white;
+    }
+
+        .card-header_custom h3 {
+            font-size: 1.7em;
+            padding-top: 10px;
+        }
+
+    .card-body_custom {
+        text-align: center;
+        font-size: 1.4em;
+        padding: 10px;
+        border-radius: 0px 0px 5px 5px;
+        background: #2864a0;
+        color: white;
+        /*se respalda este color porque me costo sacarlo
+            background: #2d2d31;*/
+    }
+
+    .card-body_custom--first {
+        text-align: left;
+        font-size: 1.4em;
+        padding: 10px;
+        background: #2864a0;
+        color: white;
+    }
+
+    .card-footer_custom {
+        text-align: center;
+        font-size: 1.3em;
+        padding-bottom: 10px;
+        padding-top: 10px;
+        border-radius: 0px 0px 5px 5px;
+        background: #038756;
+        color: white;
+    }
+
+    .progress_custom {
+        height: 1.5em;
+    }
+
+    .c3-axis-y text {
+        fill: white;
+    }
+
+    .c3-axis-x text {
+        fill: white;
+    }
+
+    .c3-axis-x path,
+    .c3-axis-x line,
+    .c3-axis-y path,
+    .c3-axis-y line {
+        stroke: white;
+    }
+
+    .flex-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .flex-item {
+        margin: 0.5em;
+        width: 32em;
+        flex-shrink: 1;
+        flex-grow: 1;
+    }
+</style>
+
+@section ScriptsBlock
+{
+    <script src="~/js/statistics/chartjs/chart.js"></script>
+    <script src="~/js/dependency/moment/moment.js"></script>
+    <script src="~/js/notifications/sweetalert2/sweetalert2.min.js"></script>
+    <script>
+        const colors = [color.success._500, color.danger._500, color.info._500, color.primary._500, color.warning._500];
+
+        const listas =JSON.parse('@Html.Raw(ViewBag.ListaPorcentajes)');
+
+        for (let i = 0; i < listas.length; i++)
+        {
+            let getLast24ActualEff;
+
+                listas[i].forEach(element => {
+                    const HoraFixed = `${moment(new Date(element.DatePoint)).format("HH:mm")}`;
+                    const ActualEffFixed = `${element.PercentajeScanned}`;
+                const pair = { [HoraFixed]: ActualEffFixed }
+                getLast24ActualEff = { ...getLast24ActualEff, ...pair };
+            });
+            
+            const data = {
+                datasets: [
+                    {
+                        label: 'Eficiencia Corriendo',
+                        data: getLast24ActualEff,
+                        backgroundColor: '#3C9F02',
+                        yAxisID: 'y',
+                    }
+                ]
+            };
+            const config =
+            {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    stacked: false,
+                    plugins: {
+                        title: {
+                            display: false,
+                            text: 'Chart.js Line Chart - Multi Axis'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                callback: function (value, index, values) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                    }
+                },
+            };
+            const idChar = 'timeSeries' + i;
+            const chart = document.getElementById(idChar);
+            new Chart(chart, config);
+
+        //    const dynamicId = $('#timeSeries'+i).attr('id');
+        //    console.log(dynamicId);
+        //    var timeSeries = c3.generate({
+        //        bindto: document.getElementById(dynamicId),
+        //        data: {
+        //            xFormat: '%Y-%M-%dT%H:%M:%S.%L',
+        //            json: listas[i],
+        //            keys: {
+        //                x: 'DatePoint',
+        //                value: ['PercentajeScanned']
+        //            },
+        //        },
+        //        color: {
+        //            pattern: colors
+        //        },
+        //        tooltip: {
+        //            show: false
+        //        },
+        //        legend: {
+        //            show: false
+        //        },
+        //        axis: {
+        //            x: {
+        //                type: 'timeseries',
+        //                // if true, treat x value as localtime (Default)
+        //                // if false, convert to UTC internally
+        //                localtime: false,
+        //                tick: {
+        //                    format: '%H:%M'
+        //                }
+        //            },
+        //            y: {
+        //                max: 100,
+        //                min: 10,
+        //                tick: {
+        //                    format: function (value) { return d3.format('.0%')(value / 100) }
+        //                }
+        //            }
+        //        }
+        //    });
+        }
+    </script>
+    <script>
+        closeInventory.addEventListener('click', () => {
+            Swal.fire({
+                title: 'Desea cerrar el Inventario?',
+                text: "",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#038387',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Cerrar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let url = "Inventory/CloseInventory";
+                    window.location.href = url;
+
+                    let timerInterval
+                    Swal.fire({
+                        title: 'Alerta, Cierre de Inventario!',
+                        html: '',
+                        didOpen: () => {
+                            Swal.showLoading()
+                            timerInterval = setInterval(() => {
+                                const content = Swal.getContent()
+                                if (content) {
+                                    const b = content.querySelector('b')
+                                    if (b) {
+                                        b.textContent = Swal.getTimerLeft()
+                                    }
+                                }
+                            }, 100)
+                        },
+                        allowOutsideClick: () => !swal.isLoading(),
+                        willClose: () => {
+                            clearInterval(timerInterval)
+                        }
+                    }).then((result) => {
+                        if (result.dismiss === Swal.DismissReason.timer) {
+                        }
+                    })
+                }
+                else {
+                    Swal.fire(
+                        'Cancelado!',
+                        '',
+                        'success'
+                    )
+                }
+            })
+    });
+
+    function ShowSpinner() {
+        const contenido = document.querySelector('#closeInventory');
+        let html = '';
+        html += `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <strong class="h5">@SharedLocalizer["closeinventory"]</strong>`;
+
+        contenido.innerHTML = html;
+    }
+    </script>
+}

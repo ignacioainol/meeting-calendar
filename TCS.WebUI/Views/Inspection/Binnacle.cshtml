@@ -1,0 +1,369 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["binnacle"].ToString();
+    ViewData["PageName"] = "inspection_binnacle";
+    ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i>" + SharedLocalizer["binnacle"].ToString();
+    string culture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" href="~/css/flatpickr/flatpickr.min.css">
+}
+
+<div class="panel">
+    <div class="grid-container-header">
+        <div>
+        </div>
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+        </div>
+    </div>
+    <div class="grid-container-body"> 
+        <div class="grid-container-search">
+             <label id="label-numero-inspeccionadas">Piezas Inspeccionadas: 0</label>  
+             <label class="label-since-until">Desde:</label>  
+             <input id="input-date-since" type="date" class="form-control" name="date" value="@ViewBag.Since"/>
+             <label class="label-since-until">Hasta:</label>
+             <input id="input-date-until" type="date" class="form-control" name="date" value="@ViewBag.Until">
+             <input id="input-check-todos" type="checkbox" >
+             <label class="label-check-info">Ver piezas de todos los inspectores</label>
+             <button id = "button-search">Buscar</button>
+        </div>
+        <div class="grid-container-listNoInspected">
+             <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            Código
+                        </th>
+                        <th>
+                            Calidad
+                        </th>
+                        <th>
+                            Artículo
+                        </th>
+                        <th>
+                            Color
+                        </th>
+                        <th>
+                            Cliente
+                        </th>
+                        <th>
+                            Fecha
+                        </th>
+                    </tr>
+                    </thead>
+                <tbody id="tdbody-uninspected-piece">
+                   <template id="template-uninspected-piece">
+                      <tr style="font-size: 15px;" cursor: pointer;">
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                      </tr>
+                    </template>
+                </tbody>
+             </table>
+        </div>
+        <div class="grid-container-listSearch">
+             <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            Código
+                        </th>
+                        <th>
+                            Fecha de Inspección
+                        </th>
+                        <th>
+                            Metros Finales
+                        </th>
+                        <th>
+                            Peso Final
+                        </th>
+                        <th>
+                            Ancho Final
+                        </th>
+                        <th>
+                            Calidad
+                        </th>
+                        <th>
+                            Despachada
+                        </th>
+                        <th>
+                            Inspeccionado por
+                        </th>
+                    </tr>
+                    </thead>
+                <tbody id="tdbody-piece">
+                     <template id="template-piece">
+                      <tr style="font-size: 15px;" cursor: pointer;">
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                      </tr>
+                    </template>
+                </tbody>
+             </table>
+        </div>
+        <div class="grid-container-info">
+               <p data-piece></p> 
+               <p data-piece></p> 
+               <p data-piece></p> 
+        </div>
+    </div>
+</div>
+<style>
+    .grid-container-header {
+        display: grid;
+        grid-template-columns: 1fr 1.4rem;
+        padding: 0.7rem 1.1rem 0.7rem 1.1rem;
+        border-bottom: 0.1em solid lightgray;
+        gap: 3px;
+    }
+
+    .grid-container-body {
+        display: grid;
+        grid-template-columns: 4fr 6fr;
+        grid-template-rows: 2fr 13fr 2fr;
+        grid-template-areas:
+        "listNoInspected   search"
+        "listNoInspected   listSearch"
+        "listNoInspected   info";
+        height:75vh;
+        padding: 3px;
+        gap: 3px;
+    }
+
+   .grid-container-search{
+       grid-area: search;
+       border-radius: 0.3rem;
+       display: grid;
+       grid-template-columns: 2fr 6fr 2fr 6fr 3fr;
+       grid-template-rows: 1fr 2fr 1fr;
+       gap: 1px;
+       align-items: center;
+    }
+
+    .grid-container-search > #button-search
+    {
+        grid-row: 2;
+        grid-column: 5;
+        font-size: 2rem;
+        border-radius: 0.3rem;
+        color: white;
+        background-color: #167BBF;
+        border: 0;
+        width:100%;
+        height:100%;
+    }
+
+    .grid-container-search > #label-numero-inspeccionadas
+    {
+        grid-row: 1;
+        grid-column: 1 /  span 5;
+        font-size: 1rem;
+        text-align: left;
+        margin:0;
+        padding-left:0.5rem;
+    }
+
+    #input-check-todos{
+        border-radius: 0.3rem;
+        border: 0.015rem solid gray;
+        margin-left: 1.5rem;
+        width:50%;
+        height:50%;
+    }
+    .grid-container-search > .label-since-until{
+        font-size: 1rem;
+        text-align: left;
+        margin:0;
+        padding-left:0.5rem;
+    }
+
+   .grid-container-search > .label-check-info{
+        font-size: 1rem;
+        text-align: left;
+        margin:0;
+        padding-left:0.1rem;
+    }
+
+    .grid-container-search > button{
+        font-size: 1rem;
+        border-radius: 0.3rem;
+        color: white;
+        background-color: #167BBF;
+        border: 0;
+        width:100%;
+        height:100%;
+    }
+
+    .grid-container-search > input{
+        border-radius: 0.3rem;
+        border: 0.015rem solid gray;
+        padding-right: 0.6rem;
+        padding-left: 0.6rem;
+        width:100%;
+        height:100%;
+    }
+
+    .grid-container-listNoInspected{
+       grid-area: listNoInspected;
+       border-radius: 0.3rem;
+       overflow-y:auto;
+    }
+    .grid-container-listSearch{
+       grid-area: listSearch;
+       background-color: lightgray;
+       border-radius: 0.3rem;
+       overflow-y:auto;
+    }
+
+    .grid-container-info{
+        grid-area: info;
+        background-color: lightgray;
+        border-radius: 0.3rem;
+    }
+
+    [data-piece] {
+        margin: 2px 2px 2px 10px
+}
+</style>
+@section ScriptsBlock
+{
+    <script src="~/js/dependency/moment/moment.js"></script>
+    <script src="~/js/flatpickr/flatpickr.min.js"></script>
+
+    @{ if (System.Threading.Thread.CurrentThread.CurrentCulture.Name == "es")
+        {
+            <script src="~/js/flatpickr/languaje/es.js"></script>
+        }
+    }
+
+    <script>
+        const inputDateSince = document.querySelector('#input-date-since');
+        const inputDateUntil = document.querySelector('#input-date-until');
+        const inputCheckTodos = document.querySelector('#input-check-todos');
+        const buttonSearch = document.querySelector('#button-search');
+        const labelNumeroInspeccionadas = document.querySelector('#label-numero-inspeccionadas');
+        const dataPiece = document.querySelectorAll('[data-piece]');
+
+        const tbodyPiece = document.querySelector('#tdbody-piece');
+        const templatePiece = document.querySelector('#template-piece');
+        const fragmentPiece = document.createDocumentFragment();
+
+        const tbodyUninspectedPiece = document.querySelector('#tdbody-uninspected-piece');
+        const templateUninspectedPiece = document.querySelector('#template-uninspected-piece');
+        const fragmentUninspectedPiece = document.createDocumentFragment();
+
+        let userName = '';
+
+        eventListeners();
+
+        function eventListeners()
+        {
+            userName = '@Html.Raw(ViewBag.User)';
+            labelNumeroInspeccionadas.textContent = `Piezas Inspeccionadas por: ${userName} [0]`;
+            dataPiece[0].textContent = `Pieza # ???, Inspeccionado por: ???`;
+            dataPiece[1].textContent = `Retazos: ???, Bonificacion: ???, Cortes: ???`;
+            dataPiece[2].textContent = `Fallas => Fallas amarillas: ???, Fallas verdes: ???, Fallas blancas: ???`;
+            CargarTabla();
+            buttonSearch.addEventListener('click', LoadInspectedPieces);
+        }
+
+        async function CargarTabla() 
+        {
+            let url = `Inspection/GetNoInspectedPiece`;
+            const respuesta = await fetch(url);
+            const resultado = await respuesta.json();
+
+            tbodyUninspectedPiece.innerHTML = '';
+
+            resultado.forEach(data => {
+                const td = templateUninspectedPiece.content.querySelectorAll('td');
+
+                td[0].textContent = data.codeTmsPiece;
+                td[1].textContent = data.quality;
+                td[2].textContent = data.design;
+                td[3].textContent = data.shade;
+                td[4].textContent = data.nameCustomer;
+                td[5].textContent = moment(data.inspectionDate).format('DD-MM-YYYY HH:mm:ss');
+
+                const clone = templateUninspectedPiece.content.cloneNode(true);
+                fragmentUninspectedPiece.appendChild(clone);
+            });
+
+            tbodyUninspectedPiece.appendChild(fragmentUninspectedPiece);
+        }
+
+        async function LoadInspectedPieces() 
+        {
+            let url = `Inspection/GetInspectedPieces?since=${inputDateSince.value}&until=${inputDateUntil.value}&inspectedby=${userName}&isAllInspector=${inputCheckTodos.checked}`;
+            const respuesta = await fetch(url);
+            const resultado = await respuesta.json();
+
+            tbodyPiece.innerHTML = '';
+
+            resultado.forEach(data => {
+                const td = templatePiece.content.querySelectorAll('td');
+
+                td[0].textContent = data.codeTmsPiece;
+                td[1].textContent = moment(data.inspectionDate).format('DD-MM-YYYY HH:mm:ss');
+                td[2].textContent = data.finalMeters;
+                td[3].textContent = data.finalWeigth;
+                td[4].textContent = data.finalWidth;
+                td[5].textContent = data.pieceQuality
+                td[6].textContent = (data.dispatch == true) ? 'Sí' : 'No';
+                td[7].textContent = data.inspectedby;
+
+                const clone = templatePiece.content.cloneNode(true);
+                fragmentPiece.appendChild(clone);
+            });
+
+            tbodyPiece.appendChild(fragmentPiece);
+
+            tbodyPiece.childNodes.forEach(tr => {
+                tr.addEventListener('click', async () =>{ 
+                    GetPieceInfo(tr.children[0].textContent);
+                });
+            });
+
+            labelNumeroInspeccionadas.textContent = `Piezas Inspeccionadas por: ${(inputCheckTodos.checked == true)? 'Todo' : userName} [${resultado.length}]`;
+        }
+
+        async function GetPieceInfo(pieceNumber)
+        {
+            let url = `Inspection/GetPieceInfoDetails?pieceNumber=${pieceNumber}`;
+            const respuesta = await fetch(url);
+            const resultado = await respuesta.json();
+
+            dataPiece[0].textContent = `Pieza # ${resultado.codeTmsPiece}, Inspeccionado por: ${resultado.inspectedby}`;
+            dataPiece[1].textContent = `Retazos: ${resultado.retazos}, Bonificacion: ${resultado.bonus.toFixed(2)}, Cortes: ${resultado.count}`;
+            dataPiece[2].textContent = `Fallas => Fallas amarillas: ${resultado.yellow}, Fallas verdes: ${resultado.green}, Fallas blancas: ${resultado.white}`;
+        }
+
+        flatpickr(inputDateSince, {
+            locale: "es",
+            altFormat: "d-m-Y",
+            altInput: true,
+            altInputClass: "flatpickr-custom form-control",
+        });
+        
+        flatpickr(inputDateUntil, {
+            locale: "es",
+            altFormat: "d-m-Y",
+            altInput: true,
+            altInputClass: "flatpickr-custom form-control",
+        });
+
+    </script>
+}
